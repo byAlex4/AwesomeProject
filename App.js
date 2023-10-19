@@ -5,7 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import 'react-native-gesture-handler';
 import Login from "./Components/Login";
 import Registro from "./Components/Register";
-import Contacto from "./Components/Contactos";
+import Main from "./Components/Menu";
+import Navbar from './Components/Navbar';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,12 +14,13 @@ export default function () {
   return (
     <NativeBaseProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Login" screenOptions={{ headerTintColor: 'white', statusBarColor:"white" }}>
           <Stack.Screen
             name={"Login"}
             component={Login}
             options={{
               headerShown: false,
+              statusBarColor: "white"
             }}
           />
 
@@ -26,28 +28,27 @@ export default function () {
             name={"Registro"}
             component={Registro}
             options={{
-              headerStyle : {
+              headerStyle: {
                 backgroundColor: "#4b2ba0",
-                color : "#ffff",
-                border: "0px solid #4b2ba0"
+                color: "white",
+                border: "1px solid #4b2ba0",
+                statusBarColor: "white"
               }
             }}
           />
-
+          
           <Stack.Screen
-            name={"Contacto"}
-            component={Contacto}
+            name={"Nav"}
+            component={Navbar}
             options={{
               headerShown: false,
-              headerStyle : {
+              headerStyle: {
                 backgroundColor: "#4b2ba0",
-                color : "#ffff",
-                border: "0px solid #4b2ba0"
+                color: "#white"
               }
             }}
           />
         </Stack.Navigator>
-
       </NavigationContainer>
     </NativeBaseProvider>
   )

@@ -11,7 +11,7 @@ import {
     Center,
     View,
     Image,
-    Pressable, 
+    Pressable,
     Icon
 } from "native-base";
 
@@ -67,7 +67,7 @@ const Login = () => {
     };
 
     const onSubmit = () => {
-        validate() ? navigation.navigate('Contacto') : console.log("Validation Failed", errors, formData.email, formData.password);
+        validate() ? navigation.navigate('Nav') : console.log("Validation Failed", errors, formData.email, formData.password);
     };
 
     return (
@@ -78,7 +78,7 @@ const Login = () => {
             <Image source={{
                 uri: "https://i.postimg.cc/MTgfg8Z1/Log-In.png"
             }} alt="Txt" size="lg" mt={-15} style={{ width: 300 }} resizeMode="contain" />
-            <Box p="8" minW="100%" minH={"60%"} bg={"#ffff"} roundedTopLeft={25} roundedTopRight={25}>
+            <Box p="8" minW="100%" bottom={0} mt={"5%"} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
                 <Center w={"80%"} ml={"10%"}>
                     <VStack minW={"100%"} >
                         <FormControl isRequired isInvalid={'email' in errors}>
@@ -87,8 +87,8 @@ const Login = () => {
                                 onChangeText={value => setData({
                                     ...formData,
                                     email: value
-                                })} bg={"white"} minW={"100%"} fontSize={"lg"} 
-                                InputLeftElement={<Icon as={<AntDesign name="user" size={24} color="black" />} ml="5"></Icon>} placeholder="example@email.com"/>
+                                })} bg={"white"} minW={"100%"} fontSize={"lg"}
+                                InputLeftElement={<Icon as={<AntDesign name="user" size={24} color="black" />} ml="5"></Icon>} placeholder="example@email.com" />
                             {'email' in errors ?
                                 <FormControl.ErrorMessage>{errors.email}</FormControl.ErrorMessage> : " "
                             }
@@ -99,7 +99,7 @@ const Login = () => {
                                 onChangeText={value => setData({
                                     ...formData,
                                     password: value
-                                })} bg={"white"} minW={"100%"} fontSize={"lg"}/>
+                                })} bg={"white"} minW={"100%"} fontSize={"lg"} />
                             {'password' in errors ?
                                 <FormControl.ErrorMessage>{errors.password}</FormControl.ErrorMessage> : ""
                             }
@@ -111,7 +111,7 @@ const Login = () => {
                                 Olvidaste la contraseña?
                             </Link>
                         </FormControl>
-                        <Button title="Sign" onPress={onSubmit} size="lg" mt="4" colorScheme="indigo" borderRadius="full">
+                        <Button title="Sign" onPress={onSubmit} size="lg" mt="10" colorScheme="indigo" borderRadius="full">
                             Iniciar sesión
                         </Button>
                         <VStack mt="6">
@@ -123,10 +123,10 @@ const Login = () => {
                                 </Text>
                             </HStack>
                             <HStack justifyContent="center" space={4} maxH={"40px"}>
-                                <Button variant={"link"} onPress={() => console.log("I'm Pressed")}><AntDesign name="google" size={30} color="#4b2ba0"/></Button>
-                                <Button variant={"link"} onPress={() => console.log("I'm Pressed")}><AntDesign name="facebook-square" size={30} color="#4b2ba0"/></Button>
-                                <Button variant={"link"} onPress={() => console.log("I'm Pressed")}><AntDesign name="github" size={30} color="#4b2ba0"/></Button>
-                                <Button variant={"link"} onPress={() => console.log("I'm Pressed")}><AntDesign name="apple1" size={30} color="#4b2ba0"/></Button>
+                                <Link variant={"link"} href="https://accounts.google.com/"><Icon as={<AntDesign name="google"/>} size={30}></Icon></Link>
+                                <Link variant={"link"} href="https://www.facebook.com/"><Icon as={<AntDesign name="facebook-square"/>} size={30}></Icon></Link>
+                                <Link variant={"link"} href="https://github.com/login"><Icon as={<AntDesign name="github"/>} size={30}></Icon></Link>
+                                <Link variant={"link"} href="https://appleid.apple.com/sign-in"><Icon as={<AntDesign name="apple1" />} size={30}></Icon></Link>
                             </HStack>
                             <HStack mt="6" justifyContent="center">
                                 <Text fontSize="sm" color="warmGray.500" _dark={{
@@ -153,7 +153,7 @@ const Login = () => {
 
 export default function ({ porps }) {
     return (
-        <View minH={"100%"} minW={"100%"} bg={"#4b2ba0"} pt={"15%"} >
+        <View minH={"100%"} minW={"100%"} bg={"#4b2ba0"} pt={"5%"} >
             <Login />
         </View>
     )

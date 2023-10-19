@@ -10,7 +10,8 @@ import {
   Center,
   View,
   Image,
-  Pressable
+  Link,
+  Icon
 } from "native-base";
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
@@ -75,10 +76,10 @@ const Registro = () => {
       <Image source={{
         uri: "https://i.postimg.cc/7Yhm3xfr/Sing-up.png"
       }} alt="Txt" size="lg" mt={-15} style={{ width: 300 }} resizeMode="contain" />
-      <Box p="8" minW="100%" minH={"60%"} bg={"#ffff"} roundedTopLeft={25} roundedTopRight={25}>
+      <Box p="8" minW="100%" minH={"60%"} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
         <Center w={"80%"} ml={"10%"}>
           <VStack minW={"100%"} >
-          <FormControl isRequired>
+            <FormControl isRequired>
               <FormControl.Label><Text fontSize={"lg"}>Nombre completo</Text></FormControl.Label>
               <Input variant="rounded" placeholder="Maria Jose"
                 onChangeText={value => setData({
@@ -131,10 +132,10 @@ const Registro = () => {
                 </Text>
               </HStack>
               <HStack justifyContent="center" space={4}>
-              <Button variant={"link"} onPress={() => console.log("I'm Pressed")}><AntDesign name="google" size={30} color="#4b2ba0"/></Button>
-                                <Button variant={"link"} onPress={() => console.log("I'm Pressed")}><AntDesign name="facebook-square" size={30} color="#4b2ba0"/></Button>
-                                <Button variant={"link"} onPress={() => console.log("I'm Pressed")}><AntDesign name="github" size={30} color="#4b2ba0"/></Button>
-                                <Button variant={"link"} onPress={() => console.log("I'm Pressed")}><AntDesign name="apple1" size={30} color="#4b2ba0"/></Button>
+              <Link variant={"link"} href="https://accounts.google.com/"><Icon as={<AntDesign name="google"/>} size={30}></Icon></Link>
+                                <Link variant={"link"} href="https://www.facebook.com/"><Icon as={<AntDesign name="facebook-square"/>} size={30}></Icon></Link>
+                                <Link variant={"link"} href="https://github.com/login"><Icon as={<AntDesign name="github"/>} size={30}></Icon></Link>
+                                <Link variant={"link"} href="https://appleid.apple.com/sign-in"><Icon as={<AntDesign name="apple1" />} size={30}></Icon></Link>
               </HStack>
             </VStack>
           </VStack>
@@ -147,7 +148,7 @@ const Registro = () => {
 
 export default function ({ porps }) {
   return (
-    <View minH={"100%"} minW={"100%"} bg={"#4b2ba0"} pt={"15%"} >
+    <View minH={"100%"} minW={"100%"} bg={"#4b2ba0"} pt={"5%"} >
       <Registro />
     </View>
   )
