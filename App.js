@@ -3,18 +3,20 @@ import { NativeBaseProvider } from "native-base";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import 'react-native-gesture-handler';
-import Login from "./Components/Login";
-import Registro from "./Components/Register";
-import Main from "./Components/Menu";
-import Navbar from './Components/Navbar';
+import Login from "./screens/Login";
+import Registro from "./screens/Register";
+import Main from "./screens/Menu";
+import Navbar from './screens/Navbar';
+import Categorias from './screens/Categorias';
 
 const Stack = createNativeStackNavigator();
+
 
 export default function () {
   return (
     <NativeBaseProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Login" screenOptions={{ headerTintColor: 'white', statusBarColor:"white" }}>
+        <Stack.Navigator initialRouteName="Nav" screenOptions={{ headerTintColor: 'white', statusBarColor: "white" }}>
           <Stack.Screen
             name={"Login"}
             component={Login}
@@ -36,12 +38,22 @@ export default function () {
               }
             }}
           />
-          
+
           <Stack.Screen
             name={"Nav"}
             component={Navbar}
             options={{
               headerShown: false,
+              headerStyle: {
+                backgroundColor: "#4b2ba0",
+                color: "#white"
+              }
+            }}
+          />
+          <Stack.Screen
+            name={"Categoria"}
+            component={Categorias}
+            options={{
               headerStyle: {
                 backgroundColor: "#4b2ba0",
                 color: "#white"

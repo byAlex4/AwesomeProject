@@ -14,60 +14,28 @@ import {
     Pressable,
     Icon
 } from "native-base";
-
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
+import { doc, getDoc } from "firebase/firestore";
+import firebase from "./../backend/Firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const Login = () => {
     const navigation = useNavigation();
     const [formData, setData] = React.useState({});
     const [errors, setErrors] = React.useState({});
 
-    let regex_email = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-    let re = /^[A-Z][a-z0-9_-]{8,32}$/
-
-    const digit = /[0-9]/
-    const upperCase = /[A-Z]/
-    const lowerCase = /[a-z]/
-    const nonAlphanumeric = /[^0-9A-Za-z]/
-
-    const isStrongPassword = (password) =>
-        [digit, upperCase, lowerCase, nonAlphanumeric].every((re) => re.test(password))
-        && password.length >= 8
-        && password.length <= 32
-
-
-
-    const validate = () => {
-        if (regex_email.test(formData.email) == false) {
-            console.log("El correo no es valido")
-            setErrors({
-                ...errors,
-                email: "Correo invalido"
-            });
-            return false;
-        } else if (formData.email == undefined) {
-            console.log("Ingrese un correo")
-            setErrors({
-                ...errors,
-                email: "Ingrese un correo"
-            });
-            return false;
-        }
-        if (isStrongPassword(formData.password) == false) {
-            console.log("Contraseña invalida")
-            setErrors({
-                ...errors,
-                password: "Contraseña invalida"
-            });
-            return false;
-        }
-
-        return true;
-    };
-
     const onSubmit = () => {
-        validate() ? navigation.navigate('Nav') : console.log("Validation Failed", errors, formData.email, formData.password);
+        signInWithEmailAndPassword(firebase.auth, formData.email, formData.password)
+            .then((userCredential) => {
+                console.log('Sesión iniciada');
+                const user = userCredential.user;
+                console.log(user);
+                navigation.navigate('Nav');
+            })
+            .catch((errors) => {
+                console.log("Error:" + errors);
+            });
     };
 
     return (
@@ -123,9 +91,9 @@ const Login = () => {
                                 </Text>
                             </HStack>
                             <HStack justifyContent="center" space={4} maxH={"40px"}>
-                                <Link variant={"link"} href="https://accounts.google.com/"><Icon as={<AntDesign name="google"/>} size={30}></Icon></Link>
-                                <Link variant={"link"} href="https://www.facebook.com/"><Icon as={<AntDesign name="facebook-square"/>} size={30}></Icon></Link>
-                                <Link variant={"link"} href="https://github.com/login"><Icon as={<AntDesign name="github"/>} size={30}></Icon></Link>
+                                <Link variant={"link"} href="https://accounts.google.com/"><Icon as={<AntDesign name="google" />} size={30}></Icon></Link>
+                                <Link variant={"link"} href="https://www.facebook.com/"><Icon as={<AntDesign name="facebook-square" />} size={30}></Icon></Link>
+                                <Link variant={"link"} href="https://github.com/login"><Icon as={<AntDesign name="github" />} size={30}></Icon></Link>
                                 <Link variant={"link"} href="https://appleid.apple.com/sign-in"><Icon as={<AntDesign name="apple1" />} size={30}></Icon></Link>
                             </HStack>
                             <HStack mt="6" justifyContent="center">

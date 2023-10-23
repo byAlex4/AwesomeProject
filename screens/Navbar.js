@@ -35,24 +35,30 @@ export default function Footer() {
     return (
         <Tab.Navigator
             initialRouteName="Home"
-            tabBarOptions={{
-                activeTintColor: 'lightgray',
-                inactiveTintColor: 'white',
-                activeBackgroundColor: '#7356bf',
-                inactiveBackgroundColor: '#4b2ba0'
+            screenOptions={{
+                "tabBarActiveTintColor": "lightgray",
+                "tabBarInactiveTintColor": "white",
+                "tabBarActiveBackgroundColor": "#7356bf",
+                "tabBarInactiveBackgroundColor": "#4b2ba0",
+                "tabBarStyle": [
+                    {
+                        "display": "flex"
+                    },
+                    null
+                ]
             }}
         >
             <Tab.Screen name="Account" component={ProfileScreen} options={{
                 headerShown: false,
-                tabBarIcon: () => (<Icon as={<AntDesign name="user" size={24} color={'white'} />}></Icon>)
+                tabBarIcon: () => (<Icon as={<AntDesign name="user" size={24} />} color={'white'}></Icon>)
             }} />
             <Tab.Screen name="Home" component={HomeScreen} options={{
                 headerShown: false,
-                tabBarIcon: () => (<Icon as={<AntDesign name="home" size={24} color={"white"} />}></Icon>)
+                tabBarIcon: () => (<Icon as={<AntDesign name="home" size={24} />} color={"white"}></Icon>)
             }} />
             <Tab.Screen name="Favorites" component={ProfileScreen} options={{
                 headerShown: false,
-                tabBarIcon: () => (<Icon as={<AntDesign name="heart" size={24} color={"white"} />}></Icon>)
+                tabBarIcon: () => (<Icon as={<AntDesign name="heart" size={24} />} color={"white"} ></Icon>)
             }} />
         </Tab.Navigator>
     );

@@ -15,11 +15,15 @@ import {
 } from "native-base";
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
+import firebase from "../backend/Firebase";
+import { collection, addDoc, doc, setDoc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 const Registro = () => {
   const navigation = useNavigation();
   const [formData, setData] = React.useState({});
   const [errors, setErrors] = React.useState({});
+  const [isOpen, setIsOpen] = React.useState(false);
 
   let regex_email = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
   let re = /^[A-Z][a-z0-9_-]{8,32}$/
@@ -34,9 +38,49 @@ const Registro = () => {
     && password.length >= 8
     && password.length <= 32
 
+  const saveUser = async (user) => {
+    try {
+      const data = {
+        img: 'https://i.postimg.cc/VLQdNJPY/default-user-icon-4.jpg',
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        tel: "",
+        desc: ""
+      }
+      await setDoc(doc(firebase.db, 'users', user), data);
+    } catch (errors) {
+      console.error("Error adding document: ", errors);
+    }
+  }
 
+  const createUser = (correo, contra) => {
+    createUserWithEmailAndPassword(firebase.auth, correo, contra)
+      .then((userCredential) => {
+        setIsOpen(true)
+        console.log('Cuenta creada')
+        const user = userCredential.user;
+        console.log(user)
+
+        saveUser(user.uid)
+
+      })
+      .catch((error) => {
+        console.log("Error:" + errors);
+        alert("Error:" + errors);
+      });
+
+  }
 
   const validate = () => {
+    if (formData.name == undefined) {
+      console.log("Ingrese el nombre")
+      setErrors({
+        ...errors,
+        name: "Ingrese el nombre"
+      });
+      return false;
+    }
     if (regex_email.test(formData.email) == false) {
       console.log("El correo no es valido")
       setErrors({
@@ -59,14 +103,38 @@ const Registro = () => {
         password: "Contraseña invalida"
       });
       return false;
+    } else if (formData.password == undefined) {
+      console.log("Ingrese una constraseña")
+      setErrors({
+        ...errors,
+        password: "Ingrese una constraseña"
+      });
+      return false;
     }
+    if (formData.repassword === undefined) {
+      console.log("Confirme la contraseña")
+      setErrors({
+        ...errors,
+        repassword: "Confirme la contraseña"
+      });
+      return false;
 
+    } else if (formData.repassword != formData.password) {
+      console.log("Las contraseñas no coinciden")
+      setErrors({
+        ...errors,
+        repassword: "Las contraseñas no coinciden"
+      });
+      return false;
+    }
+    createUser(formData.email, formData.password);
     return true;
   };
 
   const onSubmit = () => {
-    validate() ? navigation.navigate('Contacto') : console.log("Validation Failed", errors, formData.email, formData.password);
+    validate() ? navigation.navigate('Nav') : console.log("Validation Failed", errors, formData.email, formData.password);
   };
+
 
   return (
     <Center>
@@ -79,13 +147,16 @@ const Registro = () => {
       <Box p="8" minW="100%" minH={"60%"} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
         <Center w={"80%"} ml={"10%"}>
           <VStack minW={"100%"} >
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={'name' in errors}>
               <FormControl.Label><Text fontSize={"lg"}>Nombre completo</Text></FormControl.Label>
               <Input variant="rounded" placeholder="Maria Jose"
                 onChangeText={value => setData({
                   ...formData,
-                  email: value
+                  name: value
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} />
+              {'name' in errors ?
+                <FormControl.ErrorMessage>{errors.name}</FormControl.ErrorMessage> : " "
+              }
             </FormControl>
             <FormControl isRequired isInvalid={'email' in errors}>
               <FormControl.Label color={"white"}> <Text fontSize={"lg"}>Correo electronico</Text></FormControl.Label>
@@ -109,15 +180,15 @@ const Registro = () => {
                 <FormControl.ErrorMessage>{errors.password}</FormControl.ErrorMessage> : " "
               }
             </FormControl>
-            <FormControl isRequired isInvalid={'password' in errors}>
+            <FormControl isRequired isInvalid={'repassword' in errors}>
               <FormControl.Label><Text fontSize={"lg"}>Confirmar contraseña</Text></FormControl.Label>
               <Input variant="rounded" placeholder="********" type="password"
                 onChangeText={value => setData({
                   ...formData,
-                  password: value
+                  repassword: value
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} />
-              {'password' in errors ?
-                <FormControl.ErrorMessage>{errors.password}</FormControl.ErrorMessage> : " "
+              {'repassword' in errors ?
+                <FormControl.ErrorMessage>{errors.repassword}</FormControl.ErrorMessage> : " "
               }
             </FormControl>
             <Button title="Sign" onPress={onSubmit} size="lg" mt="4" colorScheme="indigo" borderRadius="full">
@@ -132,10 +203,10 @@ const Registro = () => {
                 </Text>
               </HStack>
               <HStack justifyContent="center" space={4}>
-              <Link variant={"link"} href="https://accounts.google.com/"><Icon as={<AntDesign name="google"/>} size={30}></Icon></Link>
-                                <Link variant={"link"} href="https://www.facebook.com/"><Icon as={<AntDesign name="facebook-square"/>} size={30}></Icon></Link>
-                                <Link variant={"link"} href="https://github.com/login"><Icon as={<AntDesign name="github"/>} size={30}></Icon></Link>
-                                <Link variant={"link"} href="https://appleid.apple.com/sign-in"><Icon as={<AntDesign name="apple1" />} size={30}></Icon></Link>
+                <Link variant={"link"} href="https://accounts.google.com/"><Icon as={<AntDesign name="google" />} size={30}></Icon></Link>
+                <Link variant={"link"} href="https://www.facebook.com/"><Icon as={<AntDesign name="facebook-square" />} size={30}></Icon></Link>
+                <Link variant={"link"} href="https://github.com/login"><Icon as={<AntDesign name="github" />} size={30}></Icon></Link>
+                <Link variant={"link"} href="https://appleid.apple.com/sign-in"><Icon as={<AntDesign name="apple1" />} size={30}></Icon></Link>
               </HStack>
             </VStack>
           </VStack>
