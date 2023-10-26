@@ -10,7 +10,8 @@ import {
     HStack,
     Text,
     Image,
-    ScrollView
+    ScrollView,
+    Fab
 }
     from 'native-base';
 import { useNavigation } from '@react-navigation/native';
@@ -80,50 +81,97 @@ function Main({ props }) {
         <Box w={"100%"} bg={"white"} rounded={'xl'} m={"5%"}>
             <VStack m={"5%"} w={"90%"} space={5}>
                 <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Recomendaciones</Text>
-                <Box w={"100%"}>
-                    <HStack space={4}>
-                        <Image source={{
-                            uri: "https://i.postimg.cc/d1V71MPQ/Desayono.jpg"
-                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                        <VStack>
-                            <Text>Hot cakes con huevo frito</Text>
-                            <Text>Categoria: Desayuno</Text>
-                            <Text>Por: Alejandro</Text>
-                        </VStack>
-                    </HStack>
-                </Box>
-                <Box w={"100%"}>
-                    <HStack>
-                        <Image source={{
-                            uri: "https://i.postimg.cc/6pwt5jR7/tacos.jpg"
-                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                        <VStack>
-                            <Text>Tacos de bistec</Text>
-                            <Text>Categoria: Mexicana</Text>
-                            <Text>Por: Veronica</Text>
-                        </VStack>
-                    </HStack>
-                </Box>
-                <Box w={"100%"}>
-                    <HStack>
-                        <Image source={{
-                            uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
-                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                        <VStack>
-                            <Text>Arrroz con leche</Text>
-                            <Text>Categoria: Postres</Text>
-                            <Text>Por: Alejandro</Text>
-                        </VStack>
-                    </HStack>
-                </Box>
+                <ScrollView>
+                    <Box w={"100%"}>
+                        <HStack space={4}>
+                            <Image source={{
+                                uri: "https://i.postimg.cc/d1V71MPQ/Desayono.jpg"
+                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                            <VStack>
+                                <Text>Hot cakes con huevo frito</Text>
+                                <Text>Categoria: Desayuno</Text>
+                                <Text>Por: Alejandro</Text>
+                            </VStack>
+                        </HStack>
+                    </Box>
+                    <Box w={"100%"}>
+                        <HStack>
+                            <Image source={{
+                                uri: "https://i.postimg.cc/6pwt5jR7/tacos.jpg"
+                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                            <VStack>
+                                <Text>Tacos de bistec</Text>
+                                <Text>Categoria: Mexicana</Text>
+                                <Text>Por: Veronica</Text>
+                            </VStack>
+                        </HStack>
+                    </Box>
+                    <Box w={"100%"}>
+                        <HStack>
+                            <Image source={{
+                                uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
+                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                            <VStack>
+                                <Text>Arrroz con leche</Text>
+                                <Text>Categoria: Postres</Text>
+                                <Text>Por: Alejandro</Text>
+                            </VStack>
+                        </HStack>
+                    </Box>
+                    <Box w={"100%"}>
+                        <HStack>
+                            <Image source={{
+                                uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
+                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                            <VStack>
+                                <Text>Arrroz con leche</Text>
+                                <Text>Categoria: Postres</Text>
+                                <Text>Por: Alejandro</Text>
+                            </VStack>
+                        </HStack>
+                    </Box>
+                    <Box w={"100%"}>
+                        <HStack>
+                            <Image source={{
+                                uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
+                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                            <VStack>
+                                <Text>Arrroz con leche</Text>
+                                <Text>Categoria: Postres</Text>
+                                <Text>Por: Alejandro</Text>
+                            </VStack>
+                        </HStack>
+                    </Box>
+                    <Box w={"100%"}>
+                        <HStack>
+                            <Image source={{
+                                uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
+                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                            <VStack>
+                                <Text>Arrroz con leche</Text>
+                                <Text>Categoria: Postres</Text>
+                                <Text>Por: Alejandro</Text>
+                            </VStack>
+                        </HStack>
+                    </Box>
+                </ScrollView>
             </VStack>
         </Box>
     </Center>;
 }
 
+const ButtonA = () => {
+    return <Fab renderInPortal={false}
+        style={{ backgroundColor: '#7356bf', position: 'relative', right: '0', top: '820px' }}
+        shadow={2} size="sm"
+        icon={<Icon color="white" as={AntDesign}
+            name="plus" size="sm" />} />
+}
+
 export default function ({ props }) {
     return (
-        <View maxH={"100%"} minW={"100%"} pt={"5%"} bg={"gray.200"}>
+        <View flex={1} maxH={"100%"} minW={"100%"} pt={"5%"} bg={"gray.200"}>
+            <ButtonA />
             <Main />
         </View>
     );
