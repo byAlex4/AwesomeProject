@@ -79,7 +79,7 @@ const Login = () => {
                                 Olvidaste la contraseña?
                             </Link>
                         </FormControl>
-                        <Button title="Sign" onPress={onSubmit} size="lg" mt="10" colorScheme="indigo" borderRadius="full">
+                        <Button title="Sign" onPress={() => onSubmit} size="lg" mt="10" colorScheme="indigo" borderRadius="full">
                             Iniciar sesión
                         </Button>
                         <VStack mt="6">

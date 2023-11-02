@@ -191,7 +191,7 @@ const Registro = () => {
                 <FormControl.ErrorMessage>{errors.repassword}</FormControl.ErrorMessage> : " "
               }
             </FormControl>
-            <Button title="Sign" onPress={onSubmit} size="lg" mt="4" colorScheme="indigo" borderRadius="full">
+            <Button title="Sign" onPress={() => onSubmit} size="lg" mt="4" colorScheme="indigo" borderRadius="full">
               Registrarse
             </Button>
             <VStack mt="6">

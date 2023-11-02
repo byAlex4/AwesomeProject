@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     FormControl,
     Center,
@@ -11,15 +11,58 @@ import {
     Text,
     Image,
     ScrollView,
-    Fab
+    Fab,
+    Button,
 }
     from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Categorias from './Categorias';
+import firebase from "../backend/Firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { Pressable } from 'react-native';
 
-function Main({ props }) {
+const Main = ({ props }) => {
+    const getDatos = async () => {
+        const q = query(collection(firebase.db, "recipes")); //, where("capital", "==", true));
+        try {
+            const querySnapshot = await getDocs(q);
+            console.log('Recetas')
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.data());
+            });
+        } catch (errors) {
+            console.log("No such document!", errors);
+        }
+    }
+
+    const getCategory = async () => {
+        const q = query(collection(firebase.db, "category")); //, where("capital", "==", true));
+        try {
+            const querySnapshot = await getDocs(q);
+            console.log('Categorias')
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                console.log(doc.data());
+            });
+        } catch (errors) {
+            console.log("No such document!", errors);
+        }
+    }
+
+    useEffect(() => {
+        getDatos();
+        getCategory();// Llama a la función getDatos
+    }, []); // Pasa un arreglo vacío como segundo argumento para que solo se ejecute una vez
     const navigation = useNavigation();
+    const firebaseId = "2";
+    const navCategory = (firebaseId) => {
+        // Navega a la pantalla donde quieres mostrar los productos
+        // y pasa el firebaseId como un parámetro
+        navigation.navigate("Categoria", { firebaseId });
+    };
+
     return <Center w={"80%"} ml={"10%"}>
         <Box w={"100%"} bg={"white"} rounded={'xl'}>
             <VStack m={"5%"} w={"90%"}>
@@ -34,12 +77,14 @@ function Main({ props }) {
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}>
                         <VStack m={1} w={"75px"} h={"105px"}>
-                            <Box bg={"#5249EB"} rounded={"xl"} w={"75px"} h={"75px"}>
-                                <Icon as={<Ionicons name="ios-sunny-outline" />} color='white' size={60} m={"10%"} />
-                            </Box>
-                            <Text fontSize={"sm"} textAlign={"center"} color={"black"} >
-                                Desayunos
-                            </Text>
+                            <Pressable onPress={() => navCategory(firebaseId)}>
+                                <Box bg={"#5249EB"} rounded={"xl"} w={"75px"} h={"75px"}>
+                                    <Icon as={<Ionicons name="ios-sunny-outline" />} color='white' size={60} m={"10%"} />
+                                </Box>
+                                <Text fontSize={"sm"} textAlign={"center"} color={"black"} >
+                                    Desayunos
+                                </Text>
+                            </Pressable>
                         </VStack>
                         <VStack m={1} w={"75px"} h={"105px"}>
                             <Box bg={"#C857EA"} rounded={"xl"} w={"75px"} h={"75px"}>
@@ -81,66 +126,66 @@ function Main({ props }) {
         <Box w={"100%"} bg={"white"} rounded={'xl'} m={"5%"}>
             <VStack m={"5%"} w={"90%"} space={5}>
                 <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Recomendaciones</Text>
-                    <Box w={"100%"}>
-                        <HStack space={4}>
-                            <Image source={{
-                                uri: "https://i.postimg.cc/d1V71MPQ/Desayono.jpg"
-                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                            <VStack>
-                                <Text>Hot cakes con huevo frito</Text>
-                                <Text>Categoria: Desayuno</Text>
-                                <Text>Por: Alejandro</Text>
-                            </VStack>
-                        </HStack>
-                    </Box>
-                    <Box w={"100%"}>
-                        <HStack>
-                            <Image source={{
-                                uri: "https://i.postimg.cc/6pwt5jR7/tacos.jpg"
-                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                            <VStack>
-                                <Text>Tacos de bistec</Text>
-                                <Text>Categoria: Mexicana</Text>
-                                <Text>Por: Veronica</Text>
-                            </VStack>
-                        </HStack>
-                    </Box>
-                    <Box w={"100%"}>
-                        <HStack>
-                            <Image source={{
-                                uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
-                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                            <VStack>
-                                <Text>Arrroz con leche</Text>
-                                <Text>Categoria: Postres</Text>
-                                <Text>Por: Alejandro</Text>
-                            </VStack>
-                        </HStack>
-                    </Box>
-                    <Box w={"100%"}>
-                        <HStack>
-                            <Image source={{
-                                uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
-                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                            <VStack>
-                                <Text>Arrroz con leche</Text>
-                                <Text>Categoria: Postres</Text>
-                                <Text>Por: Alejandro</Text>
-                            </VStack>
-                        </HStack>
-                    </Box>
-                    <Box w={"100%"}>
-                        <HStack>
-                            <Image source={{
-                                uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
-                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                            <VStack>
-                                <Text>Arrroz con leche</Text>
-                                <Text>Categoria: Postres</Text>
-                                <Text>Por: Alejandro</Text>
-                            </VStack>
-                        </HStack>
-                    </Box>
+                <Box w={"100%"}>
+                    <HStack space={4}>
+                        <Image source={{
+                            uri: "https://i.postimg.cc/d1V71MPQ/Desayono.jpg"
+                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                        <VStack>
+                            <Text>Hot cakes con huevo frito</Text>
+                            <Text>Categoria: Desayuno</Text>
+                            <Text>Por: Alejandro</Text>
+                        </VStack>
+                    </HStack>
+                </Box>
+                <Box w={"100%"}>
+                    <HStack space={4}>
+                        <Image source={{
+                            uri: "https://i.postimg.cc/6pwt5jR7/tacos.jpg"
+                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                        <VStack>
+                            <Text>Tacos de bistec</Text>
+                            <Text>Categoria: Mexicana</Text>
+                            <Text>Por: Veronica</Text>
+                        </VStack>
+                    </HStack>
+                </Box>
+                <Box w={"100%"}>
+                    <HStack space={4}>
+                        <Image source={{
+                            uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
+                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                        <VStack>
+                            <Text>Arrroz con leche</Text>
+                            <Text>Categoria: Postres</Text>
+                            <Text>Por: Alejandro</Text>
+                        </VStack>
+                    </HStack>
+                </Box>
+                <Box w={"100%"}>
+                    <HStack space={4}>
+                        <Image source={{
+                            uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
+                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                        <VStack>
+                            <Text>Arrroz con leche</Text>
+                            <Text>Categoria: Postres</Text>
+                            <Text>Por: Alejandro</Text>
+                        </VStack>
+                    </HStack>
+                </Box>
+                <Box w={"100%"}>
+                    <HStack space={4}>
+                        <Image source={{
+                            uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
+                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                        <VStack>
+                            <Text>Arrroz con leche</Text>
+                            <Text>Categoria: Postres</Text>
+                            <Text>Por: Alejandro</Text>
+                        </VStack>
+                    </HStack>
+                </Box>
             </VStack>
         </Box>
     </Center>;
