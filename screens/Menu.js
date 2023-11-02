@@ -81,7 +81,6 @@ function Main({ props }) {
         <Box w={"100%"} bg={"white"} rounded={'xl'} m={"5%"}>
             <VStack m={"5%"} w={"90%"} space={5}>
                 <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Recomendaciones</Text>
-                <ScrollView>
                     <Box w={"100%"}>
                         <HStack space={4}>
                             <Image source={{
@@ -142,37 +141,15 @@ function Main({ props }) {
                             </VStack>
                         </HStack>
                     </Box>
-                    <Box w={"100%"}>
-                        <HStack>
-                            <Image source={{
-                                uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
-                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                            <VStack>
-                                <Text>Arrroz con leche</Text>
-                                <Text>Categoria: Postres</Text>
-                                <Text>Por: Alejandro</Text>
-                            </VStack>
-                        </HStack>
-                    </Box>
-                </ScrollView>
             </VStack>
         </Box>
     </Center>;
 }
 
-const ButtonA = () => {
-    return <Fab renderInPortal={false}
-        style={{ backgroundColor: '#7356bf', position: 'relative', right: '0', top: '820px' }}
-        shadow={2} size="sm"
-        icon={<Icon color="white" as={AntDesign}
-            name="plus" size="sm" />} />
-}
-
 export default function ({ props }) {
     return (
-        <View flex={1} maxH={"100%"} minW={"100%"} pt={"5%"} bg={"gray.200"}>
-            <ButtonA />
+        <ScrollView flex={1} h={'100%'} minW={"100%"} pt={"5%"} bg={"gray.200"}>
             <Main />
-        </View>
+        </ScrollView>
     );
 };

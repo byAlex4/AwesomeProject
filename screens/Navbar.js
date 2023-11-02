@@ -2,9 +2,10 @@ import React from "react";
 import {
     Icon,
     View,
-    Center,
-    ScrollView
+    ScrollView,
+    Fab
 } from 'native-base';
+import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Main from "./Menu";
@@ -31,8 +32,25 @@ function ProfileScreen() {
 }
 const Tab = createBottomTabNavigator();
 
-export default function Footer() {
+const ButtonA = () => {
+    const navigation = useNavigation();
+    return <Fab renderInPortal={false}
+        style={{
+            backgroundColor: '#7356bf', width: '80',
+            height: '80', position: 'absolute',
+            bottom: '60px',
+            right: '8px',
+        }}
+        shadow={2} size="2xl"
+        icon={<Icon color="white" as={AntDesign}
+            name="plus" size="2xl" />}
+        onPress={() => navigation.navigate('Crear una receta')}/>
+}
+
+export default function Footer(props) {
     return (
+        <>
+            <ButtonA/>
         <Tab.Navigator
             initialRouteName="Home"
             screenOptions={{
@@ -60,6 +78,7 @@ export default function Footer() {
                 headerShown: false,
                 tabBarIcon: () => (<Icon as={<AntDesign name="heart" size={24} />} color={"white"} ></Icon>)
             }} />
-        </Tab.Navigator>
+            </Tab.Navigator>
+        </>
     );
 }

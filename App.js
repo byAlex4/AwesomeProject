@@ -8,6 +8,7 @@ import Registro from "./screens/Register";
 import Main from "./screens/Menu";
 import Navbar from './screens/Navbar';
 import Categorias from './screens/Categorias';
+import FormReceta from './screens/FormRecepta'
 
 const Stack = createNativeStackNavigator();
 
@@ -16,7 +17,7 @@ export default function () {
   return (
     <NativeBaseProvider>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Nav" screenOptions={{ headerTintColor: 'white', statusBarColor: "white" }}>
+        <Stack.Navigator initialRouteName="Login" screenOptions={{ headerTintColor: 'white', statusBarColor: "white" }}>
           <Stack.Screen
             name={"Login"}
             component={Login}
@@ -38,7 +39,6 @@ export default function () {
               }
             }}
           />
-
           <Stack.Screen
             name={"Nav"}
             component={Navbar}
@@ -57,6 +57,17 @@ export default function () {
               headerStyle: {
                 backgroundColor: "#4b2ba0",
                 color: "#white"
+              }
+            }}
+          />
+          <Stack.Screen
+            name={"Crear una receta"}
+            component={FormReceta}
+            options={{
+              headerStyle: {
+                backgroundColor: "#4b2ba0",
+                color: "#white",
+                statusBarColor: "white"
               }
             }}
           />
