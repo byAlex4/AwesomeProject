@@ -10,7 +10,8 @@ import {
     HStack,
     Text,
     Image,
-    ScrollView
+    ScrollView,
+    Button
 }
     from 'native-base';
 import { TouchableOpacity } from "react-native";
@@ -53,11 +54,22 @@ function Categorias({ props }) {
             <Box w={"100%"} bg={"white"} rounded={'xl'} m={"5%"}>
                 <VStack m={"5%"} w={"90%"} space={5}>
                     <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Recomendaciones</Text>
+                    <Button onPress={() => alert("Presionaste el botón")}>Hola</Button>
                     {firebaseData.map((item) => (
-                        <Button key={item.name} onPress={() => alert("Presionaste el botón")} >
-                            {/* Usa un componente Text para mostrar el id de Firebase dentro del botón */}
-                            Hola{item.name}
-                        </Button>
+                        <View
+                            style={{
+                                width: 100,
+                                margin: 10,
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <Button style={{ backgroundColor: "red", color: "black", borderRadius: 0 }}
+                                onPress={() => alert("Presionaste el botón")}>
+                                {/* Usa un componente Text para mostrar el id de Firebase dentro del botón */}
+                                Hola{item.name}
+                            </Button>
+                        </View>
                     ))}
 
                     <Box w={"100%"}>
