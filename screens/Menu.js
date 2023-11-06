@@ -1,37 +1,38 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     FormControl,
     Center,
     Input,
     Icon,
-    View,
     VStack,
     Box,
     HStack,
     Text,
     Image,
-    ScrollView,
-    Fab,
-    Button,
+    ScrollView
 }
     from 'native-base';
 import { useNavigation } from '@react-navigation/native';
-import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import Categorias from './Categorias';
+import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import firebase from "../backend/Firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, getDocs } from "firebase/firestore";
 import { Pressable } from 'react-native';
 
-const Main = ({ props }) => {
+const Main = () => {
+    const [recetas, setRecetas] = useState([]);
+    const [categorias, setCategorias] = useState([]);
+
+    const fireCategory = [];
+    const fireRecipe = [];
     const getDatos = async () => {
         const q = query(collection(firebase.db, "recipes")); //, where("capital", "==", true));
         try {
             const querySnapshot = await getDocs(q);
-            console.log('Recetas')
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
-                console.log(doc.data());
+                fireRecipe.push(doc.data());
             });
+            setRecetas(fireRecipe);
         } catch (errors) {
             console.log("No such document!", errors);
         }
@@ -41,11 +42,11 @@ const Main = ({ props }) => {
         const q = query(collection(firebase.db, "category")); //, where("capital", "==", true));
         try {
             const querySnapshot = await getDocs(q);
-            console.log('Categorias')
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
-                console.log(doc.data());
+                fireCategory.push(doc.data());
             });
+            setCategorias(fireCategory);
         } catch (errors) {
             console.log("No such document!", errors);
         }
@@ -53,14 +54,20 @@ const Main = ({ props }) => {
 
     useEffect(() => {
         getDatos();
-        getCategory();// Llama a la función getDatos
-    }, []); // Pasa un arreglo vacío como segundo argumento para que solo se ejecute una vez
+        getCategory();
+    }, []);
+
     const navigation = useNavigation();
-    const firebaseId = "2";
-    const navCategory = (firebaseId) => {
+    const navRecipe = (recipeId) => {
         // Navega a la pantalla donde quieres mostrar los productos
         // y pasa el firebaseId como un parámetro
-        navigation.navigate("Categoria", { firebaseId });
+        navigation.navigate("Receta", { recipeId });
+    };
+
+    const navCategory = (categoryId) => {
+        // Navega a la pantalla donde quieres mostrar los productos
+        // y pasa el firebaseId como un parámetro
+        navigation.navigate("Categoria", { categoryId });
     };
 
     return <Center w={"80%"} ml={"10%"}>
@@ -76,48 +83,18 @@ const Main = ({ props }) => {
                     <ScrollView
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}>
-                        <VStack m={1} w={"75px"} h={"105px"}>
-                            <Pressable onPress={() => navCategory(firebaseId)}>
-                                <Box bg={"#5249EB"} rounded={"xl"} w={"75px"} h={"75px"}>
-                                    <Icon as={<Ionicons name="ios-sunny-outline" />} color='white' size={60} m={"10%"} />
-                                </Box>
-                                <Text fontSize={"sm"} textAlign={"center"} color={"black"} >
-                                    Desayunos
-                                </Text>
-                            </Pressable>
-                        </VStack>
-                        <VStack m={1} w={"75px"} h={"105px"}>
-                            <Box bg={"#C857EA"} rounded={"xl"} w={"75px"} h={"75px"}>
-                                <Icon as={<Ionicons name="md-moon-sharp" />} color='white' size={60} m={"10%"} />
-                            </Box>
-                            <Text fontSize={"sm"} textAlign={"center"} color={"black"} >
-                                Cena
-                            </Text>
-                        </VStack>
-                        <VStack m={1} w={"75px"} h={"105px"}>
-                            <Box bg={"#9049EB"} rounded={"xl"} w={"75px"} h={"75px"}>
-                                <Icon as={<MaterialCommunityIcons name="taco" />} color='white' size={60} m={"10%"} />
-                            </Box>
-                            <Text fontSize={"sm"} textAlign={"center"} color={"black"} >
-                                Mexicana
-                            </Text>
-                        </VStack>
-                        <VStack m={1} w={"75px"} h={"105px"}>
-                            <Box bg={"#496AEB"} rounded={"xl"} w={"75px"} h={"75px"}>
-                                <Icon as={<MaterialCommunityIcons name="hamburger" />} color='white' size={60} m={"10%"} />
-                            </Box>
-                            <Text fontSize={"sm"} textAlign={"center"} color={"black"} >
-                                Rapida
-                            </Text>
-                        </VStack>
-                        <VStack m={1} w={"75px"} h={"105px"}>
-                            <Box bg={"#F06CD9"} rounded={"xl"} w={"75px"} h={"75px"}>
-                                <Icon as={<MaterialCommunityIcons name="carrot" />} color='white' size={60} m={"10%"} />
-                            </Box>
-                            <Text fontSize={"sm"} textAlign={"center"} color={"black"} >
-                                Saludable
-                            </Text>
-                        </VStack>
+                        {categorias.map((category) => (
+                            <VStack m={1} w={"75px"} h={"105px"}>
+                                <Pressable onPress={() => navCategory(category.name)} key={category.name}>
+                                    <Box bg={"#5249EB"} rounded={"xl"} w={"75px"} h={"75px"}>
+                                        <Icon as={<MaterialCommunityIcons name={category.icon} />} color='white' size={60} m={"10%"} />
+                                    </Box>
+                                    <Text fontSize={"sm"} textAlign={"center"} color={"black"} >
+                                        {category.name}
+                                    </Text>
+                                </Pressable>
+                            </VStack>
+                        ))}
                     </ScrollView>
                 </HStack>
             </VStack>
@@ -126,66 +103,22 @@ const Main = ({ props }) => {
         <Box w={"100%"} bg={"white"} rounded={'xl'} m={"5%"}>
             <VStack m={"5%"} w={"90%"} space={5}>
                 <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Recomendaciones</Text>
-                <Box w={"100%"}>
-                    <HStack space={4}>
-                        <Image source={{
-                            uri: "https://i.postimg.cc/d1V71MPQ/Desayono.jpg"
-                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                        <VStack>
-                            <Text>Hot cakes con huevo frito</Text>
-                            <Text>Categoria: Desayuno</Text>
-                            <Text>Por: Alejandro</Text>
-                        </VStack>
-                    </HStack>
-                </Box>
-                <Box w={"100%"}>
-                    <HStack space={4}>
-                        <Image source={{
-                            uri: "https://i.postimg.cc/6pwt5jR7/tacos.jpg"
-                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                        <VStack>
-                            <Text>Tacos de bistec</Text>
-                            <Text>Categoria: Mexicana</Text>
-                            <Text>Por: Veronica</Text>
-                        </VStack>
-                    </HStack>
-                </Box>
-                <Box w={"100%"}>
-                    <HStack space={4}>
-                        <Image source={{
-                            uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
-                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                        <VStack>
-                            <Text>Arrroz con leche</Text>
-                            <Text>Categoria: Postres</Text>
-                            <Text>Por: Alejandro</Text>
-                        </VStack>
-                    </HStack>
-                </Box>
-                <Box w={"100%"}>
-                    <HStack space={4}>
-                        <Image source={{
-                            uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
-                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                        <VStack>
-                            <Text>Arrroz con leche</Text>
-                            <Text>Categoria: Postres</Text>
-                            <Text>Por: Alejandro</Text>
-                        </VStack>
-                    </HStack>
-                </Box>
-                <Box w={"100%"}>
-                    <HStack space={4}>
-                        <Image source={{
-                            uri: "https://i.postimg.cc/xCkSFWrZ/arroz.webp"
-                        }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                        <VStack>
-                            <Text>Arrroz con leche</Text>
-                            <Text>Categoria: Postres</Text>
-                            <Text>Por: Alejandro</Text>
-                        </VStack>
-                    </HStack>
-                </Box>
+                {recetas.map((recipes, index) => (
+                    <Pressable onPress={() => navRecipe(recipes.name)}>
+                        <Box w={"100%"}>
+                            <HStack space={4}>
+                                <Image key={index} source={{
+                                    uri: recipes.img
+                                }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                                <VStack flexWrap={'wrap'} maxW={'148px'}>
+                                    <Text>{recipes.name}</Text>
+                                    <Text>Categoria: {recipes.category}</Text>
+                                    <Text>Tiempo: {recipes.time}</Text>
+                                </VStack>
+                            </HStack>
+                        </Box>
+                    </Pressable>
+                ))}
             </VStack>
         </Box>
     </Center>;

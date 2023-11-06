@@ -24,18 +24,71 @@ const Login = () => {
     const navigation = useNavigation();
     const [formData, setData] = React.useState({});
     const [errors, setErrors] = React.useState({});
+    let regex_email = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    let re = /^[A-Z][a-z0-9_-]{8,32}$/
 
-    const onSubmit = () => {
+    const digit = /[0-9]/
+    const upperCase = /[A-Z]/
+    const lowerCase = /[a-z]/
+    const nonAlphanumeric = /[^0-9A-Za-z]/
+
+    const isStrongPassword = (password) =>
+        [digit, upperCase, lowerCase, nonAlphanumeric].every((re) => re.test(password))
+        && password.length >= 8
+        && password.length <= 32
+    
+    const validate = () => {
+        if (regex_email.test(formData.email) == false) {
+            console.log("El correo no es valido")
+            setErrors({
+                ...errors,
+                email: "Correo invalido"
+            });
+            return false;
+        } else if (formData.email == undefined) {
+            console.log("Ingrese un correo")
+            setErrors({
+                ...errors,
+                email: "Ingrese un correo"
+            });
+            return false;
+        }
+        if (isStrongPassword(formData.password) == false) {
+            console.log("Contraseña invalida")
+            setErrors({
+                ...errors,
+                password: "Contraseña invalida"
+            });
+            return false;
+        } else if (formData.password == undefined) {
+            console.log("Ingrese una constraseña")
+            setErrors({
+                ...errors,
+                password: "Ingrese una constraseña"
+            });
+            return false;
+        }
+
         signInWithEmailAndPassword(firebase.auth, formData.email, formData.password)
             .then((userCredential) => {
                 console.log('Sesión iniciada');
                 const user = userCredential.user;
                 console.log(user);
                 navigation.navigate('Nav');
+                return true;
             })
             .catch((errors) => {
                 console.log("Error:" + errors);
+                setErrors({
+                    ...errors
+                });
+                return false;
             });
+        return true;
+    };
+
+    const onSubmit = () => {
+        validate() ? navigation.navigate('Nav') : console.log("Validation Failed", errors, formData.email, formData.password);
     };
 
     return (
@@ -79,7 +132,7 @@ const Login = () => {
                                 Olvidaste la contraseña?
                             </Link>
                         </FormControl>
-                        <Button title="Sign" onPress={() => onSubmit} size="lg" mt="10" colorScheme="indigo" borderRadius="full">
+                        <Button title="Sign" onPress={onSubmit} size="lg" mt="10" colorScheme="indigo" borderRadius="full">
                             Iniciar sesión
                         </Button>
                         <VStack mt="6">

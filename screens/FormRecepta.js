@@ -19,25 +19,47 @@ import { useNavigation } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as ImagePicker from "expo-image-picker";
 import firebase from "../backend/Firebase";
-import { collection, addDoc, doc, setDoc } from "firebase/firestore";
+import { collection, getDocs, query, setDoc } from "firebase/firestore";
 
 // Exportar el componente CrearReceta
 const CrearReceta = () => {
+    const [categorias, setCategorias] = useState([]);
+    const fireCategory = [];
 
-    const saveRecipe = async (nombre, descripcion, categoria, tiempo, pasos) => {
+    const getCategory = async () => {
+        const q = query(collection(firebase.db, "category")); //, where("capital", "==", true));
+        try {
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+                // doc.data() is never undefined for query doc snapshots
+                fireCategory.push(doc.data());
+            });
+            setCategorias(fireCategory);
+        } catch (errors) {
+            console.log("No such document!", errors);
+        }
+    }
+
+    useEffect(() => {
+        getCategory();
+    }, []);
+
+    const saveRecipe = async (nombre, descripcion, ingredientes, imagen, categoria, tiempo, pasos) => {
         try {
             const data = {
                 name: nombre,
                 description: descripcion,
-                ingredientes: formData.ingredientes,
+                ingredientes: ingredientes,
                 steps: pasos,
                 category: categoria,
                 time: tiempo,
-                img: ""
+                img: imagen
             }
             await setDoc(doc(firebase.db, 'recipes', nombre), data);
+            return true;
         } catch (errors) {
             console.error("Error adding document: ", errors);
+            return false;
         }
     }
 
@@ -70,7 +92,7 @@ const CrearReceta = () => {
     const [errors, setErrors] = React.useState({});
 
     const onSubmit = () => {
-        saveRecipe(formData.name, formData.description, formData.category, formData.time, formData.steps) ? navigation.navigate('Nav') : console.log("Validation Failed", errors, formData.name, formData.description, formData.category);
+        saveRecipe(formData.name, formData.description, formData.ingredient, formData.img, formData.category, formData.time, formData.steps) ? navigation.navigate('Nav') : console.log("Validation Failed", errors, formData.name, formData.description, formData.category);
     };
 
     return <Center w={"90%"} ml={"5%"}>
@@ -103,9 +125,9 @@ const CrearReceta = () => {
                             ...formData,
                             category: value
                         })}>
-                            <Select.Item label="Mexicana" value="1" />
-                            <Select.Item label="Rapida" value="2" />
-                            <Select.Item label="Postre" value="3" />
+                            {categorias.map((category) => (
+                                <Select.Item key={category.name} label={category.name} value={category.name} />
+                            ))}
                         </Select>
                         {'category' in errors ?
                             <FormControl.ErrorMessage>{errors.category}</FormControl.ErrorMessage> : " "
@@ -118,6 +140,16 @@ const CrearReceta = () => {
                             time: value
                         })} bg={"white"} minW={"100%"} fontSize={"lg"} />
                         {'time' in errors ?
+                            <FormControl.ErrorMessage>{errors.time}</FormControl.ErrorMessage> : " "
+                        }
+                    </FormControl>
+                    <FormControl isRequired isInvalid={'img' in errors}>
+                        <FormControl.Label >imagen:</FormControl.Label>
+                        <Input size="xs" placeholder="30 min aprox" onChangeText={value => setData({
+                            ...formData,
+                            img: value
+                        })} bg={"white"} minW={"100%"} fontSize={"lg"} />
+                        {'img' in errors ?
                             <FormControl.ErrorMessage>{errors.time}</FormControl.ErrorMessage> : " "
                         }
                     </FormControl>
@@ -134,14 +166,14 @@ const CrearReceta = () => {
                     }
                 </TextArea>
             </FormControl>
-            <FormControl isRequired isInvalid={'ingredientes' in errors}>
+            <FormControl isRequired isInvalid={'ingredient' in errors}>
                 <FormControl.Label >Ingredientes:</FormControl.Label>
                 <TextArea placeholder="-1Kg de arroz..." onChangeText={value => setData({
                     ...formData,
-                    ingredientes: value
+                    ingredient: value
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} >
                     {'time' in errors ?
-                        <FormControl.ErrorMessage>{errors.ingredientes}</FormControl.ErrorMessage> : " "
+                        <FormControl.ErrorMessage>{errors.ingredient}</FormControl.ErrorMessage> : " "
                     }
                 </TextArea>
             </FormControl>
@@ -157,7 +189,7 @@ const CrearReceta = () => {
             </FormControl>
 
             <HStack mt={8} space={1}>
-                <Button style={{ backgroundColor: "#483285", width: '50%' }} onPress={() => onSubmit} >Gurdar</Button>
+                <Button style={{ backgroundColor: "#483285", width: '50%' }} onPress={onSubmit} >Gurdar</Button>
                 <Button style={{ backgroundColor: "#cacaca", width: '50%' }}
                     onPress={() => navigation.goBack()}>Cancelar</Button>
             </HStack>

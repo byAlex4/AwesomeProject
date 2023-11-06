@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     FormControl,
     Center,
@@ -24,15 +24,15 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 function Categorias({ props }) {
     const navigation = useNavigation();
     const route = useRoute();
+    const [recetas, setRecetas] = useState([]);
 
     // Obtiene el firebaseId del parámetro de navegación
-    const { firebaseId } = route.params;
-    console.log('firebaseID:', firebaseId);
-    // Usa el firebaseId para filtrar los datos de Firebase según la categoría
+    const { categoryId } = route.params;
+    console.log('firebaseID:', categoryId);
+
     const firebaseData = [];
-    // Puedes usar una consulta como esta:
     const getDatos = async () => {
-        const q = query(collection(firebase.db, "recipes"), where("category", "==", firebaseId));
+        const q = query(collection(firebase.db, "recipes"), where("category", "==", categoryId));
         try {
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
@@ -41,6 +41,7 @@ function Categorias({ props }) {
                 firebaseData.push(doc.data());
                 console.log(firebaseData);
             });
+            setRecetas(firebaseData);
         } catch (errors) {
             console.log("No such document!", errors);
         }
@@ -54,36 +55,21 @@ function Categorias({ props }) {
             <Box w={"100%"} bg={"white"} rounded={'xl'} m={"5%"}>
                 <VStack m={"5%"} w={"90%"} space={5}>
                     <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Recomendaciones</Text>
-                    <Button onPress={() => alert("Presionaste el botón")}>Hola</Button>
-                    {firebaseData.map((item) => (
-                        <View
-                            style={{
-                                width: 100,
-                                margin: 10,
-                                alignItems: "center",
-                                justifyContent: "center",
-                            }}
-                        >
-                            <Button style={{ backgroundColor: "red", color: "black", borderRadius: 0 }}
-                                onPress={() => alert("Presionaste el botón")}>
-                                {/* Usa un componente Text para mostrar el id de Firebase dentro del botón */}
-                                Hola{item.name}
-                            </Button>
-                        </View>
-                    ))}
 
-                    <Box w={"100%"}>
-                        <HStack space={4}>
-                            <Image source={{
-                                uri: "https://i.postimg.cc/d1V71MPQ/Desayono.jpg"
-                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                            <VStack>
-                                <Text>Hot cakes con huevo frito</Text>
-                                <Text>Categoria: Desayuno</Text>
-                                <Text>Por: Alejandro</Text>
-                            </VStack>
-                        </HStack>
-                    </Box>
+                    {recetas.map((recipes) => (
+                        <Box w={"100%"}>
+                            <HStack space={4}>
+                                <Image source={{
+                                    uri: recipes.img
+                                }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                                <VStack flexWrap={'wrap'} maxW={'148px'}>
+                                    <Text>{recipes.name}</Text>
+                                    <Text>{recipes.description}</Text>
+                                    <Text>{recipes.time}</Text>
+                                </VStack>
+                            </HStack>
+                        </Box>
+                    ))}
                 </VStack>
             </Box>
         </Center>

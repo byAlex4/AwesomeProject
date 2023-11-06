@@ -9,7 +9,8 @@ import Registro from "./screens/Register";
 import Main from "./screens/Menu";
 import Navbar from './screens/Navbar';
 import Categorias from './screens/Categorias';
-import FormReceta from './screens/FormRecepta'
+import FormReceta from './screens/FormRecepta';
+import Receta from './screens/Recipe';
 
 const Stack = createNativeStackNavigator();
 
@@ -65,6 +66,17 @@ export default function () {
             <Stack.Screen
               name={"Crear una receta"}
               component={FormReceta}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#4b2ba0",
+                  color: "#white",
+                  statusBarColor: "white"
+                }
+              }}
+            />
+            <Stack.Screen
+              name={"Receta"}
+              component={Receta}
               options={{
                 headerStyle: {
                   backgroundColor: "#4b2ba0",

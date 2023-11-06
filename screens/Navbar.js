@@ -38,8 +38,8 @@ const ButtonA = () => {
         style={{
             backgroundColor: '#7356bf', width: '80',
             height: '80', position: 'absolute',
-            bottom: 0,
-            right: 0
+            bottom: '65px',
+            right: '5px'
         }}
         shadow={2} size="2xl"
         icon={<Icon color="white" as={AntDesign}
