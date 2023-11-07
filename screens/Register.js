@@ -74,7 +74,6 @@ const Registro = () => {
 
   const validate = () => {
     if (formData.name == undefined) {
-      console.log("Ingrese el nombre")
       setErrors({
         ...errors,
         name: "Ingrese el nombre"
@@ -82,14 +81,12 @@ const Registro = () => {
       return false;
     }
     if (regex_email.test(formData.email) == false) {
-      console.log("El correo no es valido")
       setErrors({
         ...errors,
         email: "Correo invalido"
       });
       return false;
     } else if (formData.email == undefined) {
-      console.log("Ingrese un correo")
       setErrors({
         ...errors,
         email: "Ingrese un correo"
@@ -97,14 +94,12 @@ const Registro = () => {
       return false;
     }
     if (isStrongPassword(formData.password) == false) {
-      console.log("Contraseña invalida")
       setErrors({
         ...errors,
         password: "Contraseña invalida"
       });
       return false;
     } else if (formData.password == undefined) {
-      console.log("Ingrese una constraseña")
       setErrors({
         ...errors,
         password: "Ingrese una constraseña"
@@ -112,7 +107,6 @@ const Registro = () => {
       return false;
     }
     if (formData.repassword === undefined) {
-      console.log("Confirme la contraseña")
       setErrors({
         ...errors,
         repassword: "Confirme la contraseña"
@@ -120,7 +114,6 @@ const Registro = () => {
       return false;
 
     } else if (formData.repassword != formData.password) {
-      console.log("Las contraseñas no coinciden")
       setErrors({
         ...errors,
         repassword: "Las contraseñas no coinciden"

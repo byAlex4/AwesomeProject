@@ -27,7 +27,6 @@ const Receta = () => {
 
     // Obtiene el firebaseId del parámetro de navegación
     const { recipeId } = route.params;
-    console.log('firebaseID:', recipeId);
 
     const firebaseData = [];
     const getDatos = async () => {
@@ -36,9 +35,7 @@ const Receta = () => {
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
-                console.log("categoria: => ", doc.data());
                 firebaseData.push(doc.data());
-                console.log(firebaseData);
             });
             setReceta(firebaseData);
         } catch (errors) {

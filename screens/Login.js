@@ -36,17 +36,15 @@ const Login = () => {
         [digit, upperCase, lowerCase, nonAlphanumeric].every((re) => re.test(password))
         && password.length >= 8
         && password.length <= 32
-    
+
     const validate = () => {
         if (regex_email.test(formData.email) == false) {
-            console.log("El correo no es valido")
             setErrors({
                 ...errors,
                 email: "Correo invalido"
             });
             return false;
         } else if (formData.email == undefined) {
-            console.log("Ingrese un correo")
             setErrors({
                 ...errors,
                 email: "Ingrese un correo"
@@ -54,14 +52,12 @@ const Login = () => {
             return false;
         }
         if (isStrongPassword(formData.password) == false) {
-            console.log("Contraseña invalida")
             setErrors({
                 ...errors,
                 password: "Contraseña invalida"
             });
             return false;
         } else if (formData.password == undefined) {
-            console.log("Ingrese una constraseña")
             setErrors({
                 ...errors,
                 password: "Ingrese una constraseña"

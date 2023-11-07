@@ -28,7 +28,6 @@ function Categorias({ props }) {
 
     // Obtiene el firebaseId del parámetro de navegación
     const { categoryId } = route.params;
-    console.log('firebaseID:', categoryId);
 
     const firebaseData = [];
     const getDatos = async () => {
@@ -37,9 +36,7 @@ function Categorias({ props }) {
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
                 // doc.data() is never undefined for query doc snapshots
-                console.log("categoria: => ", doc.data());
                 firebaseData.push(doc.data());
-                console.log(firebaseData);
             });
             setRecetas(firebaseData);
         } catch (errors) {

@@ -19,7 +19,7 @@ import { useNavigation } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as ImagePicker from "expo-image-picker";
 import firebase from "../backend/Firebase";
-import { collection, getDocs, query, setDoc } from "firebase/firestore";
+import { collection, getDocs, doc, query, setDoc } from "firebase/firestore";
 
 // Exportar el componente CrearReceta
 const CrearReceta = () => {
@@ -79,8 +79,6 @@ const CrearReceta = () => {
             aspect: [4, 3],
             quality: 1,
         });
-
-        console.log(result);
 
         if (!result.canceled) {
             setImage(result.assets[0].uri);
