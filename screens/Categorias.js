@@ -51,21 +51,22 @@ function Categorias({ props }) {
         <Center w={"80%"} ml={"10%"}>
             <Box w={"100%"} bg={"white"} rounded={'xl'} m={"5%"}>
                 <VStack m={"5%"} w={"90%"} space={5}>
-                    <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Recomendaciones</Text>
-
                     {recetas.map((recipes) => (
-                        <Box w={"100%"}>
-                            <HStack space={4}>
-                                <Image source={{
-                                    uri: recipes.img
-                                }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                                <VStack flexWrap={'wrap'} maxW={'148px'}>
-                                    <Text>{recipes.name}</Text>
-                                    <Text>{recipes.description}</Text>
-                                    <Text>{recipes.time}</Text>
-                                </VStack>
-                            </HStack>
-                        </Box>
+                        <>
+                            <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>{recipes.category}</Text>
+                            <Box w={"100%"}>
+                                <HStack space={4}>
+                                    <Image source={{
+                                        uri: recipes.img
+                                    }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                                    <VStack flexWrap={'wrap'} maxW={'148px'}>
+                                        <Text>{recipes.name}</Text>
+                                        <Text>{recipes.description}</Text>
+                                        <Text>{recipes.time}</Text>
+                                    </VStack>
+                                </HStack>
+                            </Box>
+                        </>
                     ))}
                 </VStack>
             </Box>

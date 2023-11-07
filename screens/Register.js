@@ -54,14 +54,15 @@ const Registro = () => {
     }
   }
 
+  var user = '';
+
   const createUser = (correo, contra) => {
     createUserWithEmailAndPassword(firebase.auth, correo, contra)
       .then((userCredential) => {
         setIsOpen(true)
         console.log('Cuenta creada')
-        const user = userCredential.user;
+        var user = userCredential.user;
         console.log(user)
-
         saveUser(user.uid)
 
       })
@@ -69,7 +70,6 @@ const Registro = () => {
         console.log("Error:" + errors);
         alert("Error:" + errors);
       });
-
   }
 
   const validate = () => {
@@ -125,7 +125,7 @@ const Registro = () => {
   };
 
   const onSubmit = () => {
-    validate() ? navigation.navigate('Nav') : console.log("Validation Failed", errors, formData.email, formData.password);
+    validate() ? navigation.navigate('Nav', { uid: user.uid }) : console.log("Validation Failed", errors, formData.email, formData.password);
   };
 
 
@@ -184,7 +184,7 @@ const Registro = () => {
                 <FormControl.ErrorMessage>{errors.repassword}</FormControl.ErrorMessage> : " "
               }
             </FormControl>
-            <Button title="Sign" onPress={() => onSubmit} size="lg" mt="4" colorScheme="indigo" borderRadius="full">
+            <Button title="Sign" onPress={onSubmit} size="lg" mt="4" colorScheme="indigo" borderRadius="full">
               Registrarse
             </Button>
             <VStack mt="6">

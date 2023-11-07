@@ -53,7 +53,7 @@ const Receta = () => {
                     <HStack w={"95%"} space={2}>
                         <Image source={{
                             uri: recipe.img
-                        }} alt="Txt" size="lg" style={{ width: '120px', marginTop: '15px' }} resizeMode="contain"
+                        }} alt="Txt" size="lg" style={{ width: '45%', marginTop: '15px' }} resizeMode="contain"
                             onPress={() => pickImage} />
                         <VStack space={1} w={'60%'}>
                             <Text style={{ fontSize: '20px', color: 'rgb(115, 115, 115)' }}>Categoria:</Text>

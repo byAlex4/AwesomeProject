@@ -5,11 +5,12 @@ import {
     ScrollView,
     Fab
 } from 'native-base';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Main from "./Menu";
-import Profile from "./Acount"
+import Profile from "./Account";
+import Favs from './Favs';
 
 function HomeScreen() {
     return (
@@ -30,7 +31,15 @@ function ProfileScreen() {
         </ScrollView>
     );
 }
-const Tab = createBottomTabNavigator();
+function FavScreen() {
+    return (
+        <ScrollView >
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Favs />
+            </View>
+        </ScrollView>
+    );
+}
 
 const ButtonA = () => {
     const navigation = useNavigation();
@@ -47,7 +56,12 @@ const ButtonA = () => {
         onPress={() => navigation.navigate('Crear una receta')} />
 }
 
+const Tab = createBottomTabNavigator();
+
 export default function Footer(props) {
+    const route = useRoute();
+    let { uid } = route.params;
+    console.log(uid);
     return (
         <>
             <ButtonA />
@@ -66,15 +80,15 @@ export default function Footer(props) {
                     ]
                 }}
             >
-                <Tab.Screen name="Account" component={ProfileScreen} options={{
+                <Tab.Screen name="Account" component={ProfileScreen} initialParams={{ uid: uid }} options={{
                     headerShown: false,
                     tabBarIcon: () => (<Icon as={<AntDesign name="user" size={24} />} color={'white'}></Icon>)
                 }} />
-                <Tab.Screen name="Home" component={HomeScreen} options={{
+                <Tab.Screen name="Home" component={HomeScreen} initialParams={{ uid: uid }} options={{
                     headerShown: false,
                     tabBarIcon: () => (<Icon as={<AntDesign name="home" size={24} />} color={"white"}></Icon>)
                 }} />
-                <Tab.Screen name="Favorites" component={ProfileScreen} options={{
+                <Tab.Screen name="Favorites" component={FavScreen} initialParams={{ uid: uid }} options={{
                     headerShown: false,
                     tabBarIcon: () => (<Icon as={<AntDesign name="heart" size={24} />} color={"white"} ></Icon>)
                 }} />

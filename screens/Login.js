@@ -16,7 +16,6 @@ import {
 } from "native-base";
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
-import { doc, getDoc } from "firebase/firestore";
 import firebase from "./../backend/Firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 
@@ -31,6 +30,8 @@ const Login = () => {
     const upperCase = /[A-Z]/
     const lowerCase = /[a-z]/
     const nonAlphanumeric = /[^0-9A-Za-z]/
+
+    var user = '';
 
     const isStrongPassword = (password) =>
         [digit, upperCase, lowerCase, nonAlphanumeric].every((re) => re.test(password))
@@ -64,13 +65,12 @@ const Login = () => {
             });
             return false;
         }
-
         signInWithEmailAndPassword(firebase.auth, formData.email, formData.password)
             .then((userCredential) => {
                 console.log('Sesión iniciada');
-                const user = userCredential.user;
-                console.log(user);
-                navigation.navigate('Nav');
+                user = userCredential.user;
+                console.log(user.uid);
+                navigation.navigate('Nav', { uid: user.uid });
                 return true;
             })
             .catch((errors) => {
@@ -84,7 +84,7 @@ const Login = () => {
     };
 
     const onSubmit = () => {
-        validate() ? navigation.navigate('Nav') : console.log("Validation Failed", errors, formData.email, formData.password);
+        validate() ? navigation.navigate('Nav', { user }) : console.log("Validation Failed", errors, formData.email, formData.password);
     };
 
     return (
@@ -95,7 +95,7 @@ const Login = () => {
             <Image source={{
                 uri: "https://i.postimg.cc/MTgfg8Z1/Log-In.png"
             }} alt="Txt" size="lg" mt={-15} style={{ width: 300 }} resizeMode="contain" />
-            <Box p="8" minW="100%" bottom={0} mt={"5%"} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
+            <Box p="8" minW="100%" bottom={0} mt={'15%'} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
                 <Center w={"80%"} ml={"10%"}>
                     <VStack minW={"100%"} >
                         <FormControl isRequired isInvalid={'email' in errors}>

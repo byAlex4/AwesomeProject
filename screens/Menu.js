@@ -12,7 +12,7 @@ import {
     ScrollView
 }
     from 'native-base';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import firebase from "../backend/Firebase";
 import { collection, query, getDocs } from "firebase/firestore";
