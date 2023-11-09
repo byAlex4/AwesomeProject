@@ -4,13 +4,10 @@ import {
     Button, HStack, VStack, Text, AspectRatio, Stack, Heading, Image, ScrollView
 } from 'native-base';
 import firebase from "../backend/Firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, doc, getDoc, getDocs } from "firebase/firestore";
 
-function Profile({ route }) {
+function Profile({ props }) {
     const [recetas, setRecetas] = useState([]);
-    //const { uid } = route.params || {};
-    //console.log(uid);
-
     const firebaseData = [];
     const getDatos = async () => {
         const q = query(collection(firebase.db, "recipes"));//, where("category", "==", 'Desayunos'));
@@ -24,9 +21,35 @@ function Profile({ route }) {
         } catch (errors) {
             console.log("No such document!", errors);
         }
-    }
+    };
+
+    const [user, SetUser] = useState([]);
+    const userData = [];
+    const getUser = async () => {
+        // Usa la función doc() para obtener una referencia al documento por su id
+        const docRef = doc(firebase.db, "users", "OE1yjhyduUTTkBxbyWL215nX8No2");
+        try {
+            // Pasa la referencia del documento a la función getDocs()
+            const docSnapshot = await getDoc(docRef);
+            // Verifica si el documento existe
+            if (docSnapshot.exists()) {
+                // Agrega los datos del documento al array firebaseData
+                userData.push(docSnapshot.data());
+                SetUser(userData);
+                console.log(userData);
+            } else {
+                // Muestra un mensaje si el documento no existe
+                console.log("No such document!");
+            }
+        } catch (errors) {
+            // Muestra los errores en la consola
+            console.log("Error getting document:", errors);
+        }
+    };
+
     useEffect(() => {
-        getDatos();// Llama a la función getDatos
+        getDatos();
+        getUser();// Llama a la función getDatos
     }, []); // Pasa un arreglo vacío como segundo argumento para que solo se ejecute una vez
     return (
         <View>
@@ -34,38 +57,46 @@ function Profile({ route }) {
                 This is a Box with Linear Gradient
             </Box>
             <Box ml={"9%"} w={"84%"}>
-                <HStack>
-                    <VStack>
-                        <Avatar bg="amber.500" source={{
-                            uri: "https://images.unsplash.com/photo-1614289371518-722f2615943d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80"
-                        }} size="2xl" mt={"-40%"}>
-                            <Avatar.Badge bg="green.500" />
-                        </Avatar>
-                        <Button size="sm" variant="outline" mt={4}>Editar perfil</Button>
-                    </VStack>
-                    <HStack ml={"auto"} mt={4} right={2} space={4}>
-                        <VStack>
-                            <Text bold textAlign={"center"}>23</Text>
-                            <Text>Recetas</Text>
-                        </VStack>
-                        <VStack>
-                            <Text bold textAlign={"center"}>1456</Text>
-                            <Text>Seguidores</Text>
-                        </VStack>
-                        <VStack>
-                            <Text bold textAlign={"center"}>68</Text>
-                            <Text>Seguidos</Text>
-                        </VStack>
-                    </HStack>
-                </HStack>
+                {user.map((usuario) => (
+                    <>
+                        <HStack space={4}>
+                            <VStack>
+                                <Avatar bg="amber.500" source={{
+                                    uri: usuario.img
+                                }} size="2xl" mt={"-65%"}>
+                                    <Avatar.Badge bg="green.500" />
+                                </Avatar>
+                                <Button size="sm" variant="outline" mt={4}>Editar perfil</Button>
+                            </VStack>
+                            <VStack space={3}>
+                                <Text fontSize={"2xl"} fontStyle={'italic'} color={'white'} fontWeight={'bold'} mt={'-20%'}>{usuario.name}</Text>
+                                <HStack ml={"auto"} right={0} space={4} display={'absolute'}>
+                                    <VStack>
+                                        <Text bold textAlign={"center"}>23</Text>
+                                        <Text>Recetas</Text>
+                                    </VStack>
+                                    <VStack>
+                                        <Text bold textAlign={"center"}>1456</Text>
+                                        <Text>Seguidores</Text>
+                                    </VStack>
+                                    <VStack>
+                                        <Text bold textAlign={"center"}>68</Text>
+                                        <Text>Seguidos</Text>
+                                    </VStack>
+                                </HStack>
+                            </VStack>
+                        </HStack>
 
-                <VStack mt={5}>
-                    <Text bold>About</Text>
-                    <Text>Chef de mexico</Text>
-                    <Text>Ganador de 3 premios en master chef</Text>
-                    <Text>5 estrellas michelin</Text>
-                    <Text>Comparto recetas por gusto</Text>
-                </VStack>
+                        <VStack mt={5}>
+                            <Text bold>About</Text>
+                            <Text>{usuario.desc}</Text>
+                            <Text bold>Contact</Text>
+                            <Text>{usuario.email}</Text>
+                            <Text>{usuario.tel}</Text>
+                        </VStack>
+                    </>
+                ))}
+
 
                 <VStack mt={5} space={4}>
                     <Text bold>Ultimas recetas</Text>

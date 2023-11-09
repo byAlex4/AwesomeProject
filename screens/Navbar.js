@@ -26,10 +26,10 @@ function ProfileScreen() {
     return (
         <ScrollView >
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Profile />
+                <Profile uid={uid} />
             </View>
         </ScrollView>
-    );
+    )
 }
 function FavScreen() {
     return (
@@ -41,7 +41,7 @@ function FavScreen() {
     );
 }
 
-const ButtonA = () => {
+const ButtonA = ({ props }) => {
     const navigation = useNavigation();
     return <Fab renderInPortal={false}
         style={{
@@ -53,18 +53,17 @@ const ButtonA = () => {
         shadow={2} size="2xl"
         icon={<Icon color="white" as={AntDesign}
             name="plus" size="2xl" />}
-        onPress={() => navigation.navigate('Crear una receta')} />
+        onPress={() => navigation.navigate('Crear una receta', uid)} />
 }
 
 const Tab = createBottomTabNavigator();
 
 export default function Footer(props) {
     const route = useRoute();
-    let { uid } = route.params;
-    console.log(uid);
+    const { uid } = route.params;
     return (
         <>
-            <ButtonA />
+            <ButtonA uid={uid} />
             <Tab.Navigator
                 initialRouteName="Home"
                 screenOptions={{
