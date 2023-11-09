@@ -91,8 +91,6 @@ const CrearReceta = (props) => {
 
     const route = useRoute();
     const { uid } = route.params;
-    console.log('receta', uid);
-
     const onSubmit = () => {
         saveRecipe(formData.name, formData.description, formData.ingredient, formData.img, formData.category, formData.time, formData.steps, uid)
             ? navigation.navigate('Nav') : console.log("Validation Failed", errors, uid, formData.name, formData.description, formData.category);

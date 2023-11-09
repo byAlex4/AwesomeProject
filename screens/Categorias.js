@@ -53,7 +53,6 @@ function Categorias({ props }) {
                 <VStack m={"5%"} w={"90%"} space={5}>
                     {recetas.map((recipes) => (
                         <>
-                            <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>{recipes.category}</Text>
                             <Box w={"100%"}>
                                 <HStack space={4}>
                                     <Image source={{
