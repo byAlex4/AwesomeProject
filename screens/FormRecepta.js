@@ -15,17 +15,16 @@ import {
     Button
 }
     from 'native-base';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import * as ImagePicker from "expo-image-picker";
 import firebase from "../backend/Firebase";
 import { collection, getDocs, doc, query, setDoc } from "firebase/firestore";
 
 // Exportar el componente CrearReceta
-const CrearReceta = () => {
+const CrearReceta = (props) => {
     const [categorias, setCategorias] = useState([]);
     const fireCategory = [];
-
     const getCategory = async () => {
         const q = query(collection(firebase.db, "category")); //, where("capital", "==", true));
         try {
@@ -44,7 +43,7 @@ const CrearReceta = () => {
         getCategory();
     }, []);
 
-    const saveRecipe = async (nombre, descripcion, ingredientes, imagen, categoria, tiempo, pasos) => {
+    const saveRecipe = async (nombre, descripcion, ingredientes, imagen, categoria, tiempo, pasos, userid) => {
         try {
             const data = {
                 name: nombre,
@@ -53,7 +52,8 @@ const CrearReceta = () => {
                 steps: pasos,
                 category: categoria,
                 time: tiempo,
-                img: imagen
+                img: imagen,
+                userid: userid
             }
             await setDoc(doc(firebase.db, 'recipes', nombre), data);
             return true;
@@ -89,8 +89,13 @@ const CrearReceta = () => {
     const [formData, setData] = React.useState({});
     const [errors, setErrors] = React.useState({});
 
+    const route = useRoute();
+    const { uid } = route.params;
+    console.log('receta', uid);
+
     const onSubmit = () => {
-        saveRecipe(formData.name, formData.description, formData.ingredient, formData.img, formData.category, formData.time, formData.steps) ? navigation.navigate('Nav') : console.log("Validation Failed", errors, formData.name, formData.description, formData.category);
+        saveRecipe(formData.name, formData.description, formData.ingredient, formData.img, formData.category, formData.time, formData.steps, uid)
+            ? navigation.navigate('Nav') : console.log("Validation Failed", errors, uid, formData.name, formData.description, formData.category);
     };
 
     return <Center w={"90%"} ml={"5%"}>

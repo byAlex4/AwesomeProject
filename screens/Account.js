@@ -1,55 +1,73 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
     Box, Center, NativeBaseProvider, View, Avatar,
     Button, HStack, VStack, Text, AspectRatio, Stack, Heading, Image, ScrollView
 } from 'native-base';
 import firebase from "../backend/Firebase";
 import { collection, query, where, doc, getDoc, getDocs } from "firebase/firestore";
+import { useRoute } from '@react-navigation/native';
+import RouteContext from './Navbar';
+import { onAuthStateChanged } from 'firebase/auth';
+import Firebase from '../backend/Firebase';
+
 
 function Profile({ props }) {
-    const [recetas, setRecetas] = useState([]);
-    const firebaseData = [];
-    const getDatos = async () => {
-        const q = query(collection(firebase.db, "recipes"));//, where("category", "==", 'Desayunos'));
-        try {
-            const querySnapshot = await getDocs(q);
-            querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                firebaseData.push(doc.data());
-            });
-            setRecetas(firebaseData);
-        } catch (errors) {
-            console.log("No such document!", errors);
-        }
-    };
-
     const [user, SetUser] = useState([]);
     const userData = [];
     const getUser = async () => {
-        // Usa la función doc() para obtener una referencia al documento por su id
-        const docRef = doc(firebase.db, "users", "OE1yjhyduUTTkBxbyWL215nX8No2");
-        try {
-            // Pasa la referencia del documento a la función getDocs()
-            const docSnapshot = await getDoc(docRef);
-            // Verifica si el documento existe
-            if (docSnapshot.exists()) {
-                // Agrega los datos del documento al array firebaseData
-                userData.push(docSnapshot.data());
-                SetUser(userData);
-                console.log(userData);
-            } else {
-                // Muestra un mensaje si el documento no existe
-                console.log("No such document!");
+        onAuthStateChanged(Firebase.auth, async (user) => {
+            if (user) {
+                // User is signed in, see docs for a list of available properties
+                const uid = user.uid;
+                const docRef = doc(firebase.db, "users", uid);
+                try {
+                    // Pasa la referencia del documento a la función getDocs()
+                    const docSnapshot = await getDoc(docRef);
+                    // Verifica si el documento existe
+                    if (docSnapshot.exists()) {
+                        // Agrega los datos del documento al array firebaseData
+                        userData.push(docSnapshot.data());
+                        SetUser(userData);
+                        console.log(userData);
+                    } else {
+                        // Muestra un mensaje si el documento no existe
+                        console.log("No such document!");
+                    }
+                } catch (errors) {
+                    // Muestra los errores en la consola
+                    console.log("Error getting document:", errors);
+                }
             }
-        } catch (errors) {
-            // Muestra los errores en la consola
-            console.log("Error getting document:", errors);
-        }
+        });
+    };
+
+    const [recetas, setRecetas] = useState([]);
+    const firebaseData = [];
+    const getDatos = async () => {
+        onAuthStateChanged(Firebase.auth, async (user) => {
+            if (user) {
+                // User is signed in, see docs for a list of available properties
+                const uid = user.uid;
+                console.log('accont', uid);
+                const q = query(collection(firebase.db, "recipes"), where("userid", "==", uid));
+                try {
+                    const querySnapshot = await getDocs(q);
+                    querySnapshot.forEach((doc) => {
+                        // doc.data() is never undefined for query doc snapshots
+                        firebaseData.push(doc.data());
+                    });
+                    setRecetas(firebaseData);
+                    console.log(firebaseData);
+                } catch (errors) {
+                    console.log("No such document!", errors);
+                };
+            }
+        });
     };
 
     useEffect(() => {
         getDatos();
-        getUser();// Llama a la función getDatos
+        getUser();
     }, []); // Pasa un arreglo vacío como segundo argumento para que solo se ejecute una vez
     return (
         <View>
@@ -89,10 +107,10 @@ function Profile({ props }) {
 
                         <VStack mt={5}>
                             <Text bold>About</Text>
-                            <Text>{usuario.desc}</Text>
+                            <Text>{usuario.desc} </Text>
                             <Text bold>Contact</Text>
-                            <Text>{usuario.email}</Text>
-                            <Text>{usuario.tel}</Text>
+                            <Text>{usuario.email} </Text>
+                            <Text>{usuario.tel} </Text>
                         </VStack>
                     </>
                 ))}
@@ -103,7 +121,7 @@ function Profile({ props }) {
                     <HStack space={4} flexWrap={'wrap'}>
                         {recetas.map((recipes) => (
                             <>
-                                <Box w="45%" h='45%' mb={3} rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1">
+                                <Box w="45%" h='45%' mb={3} rounded="lg" borderColor="coolGray.200" borderWidth="1">
                                     <Box>
                                         <AspectRatio minW="100%" ratio={16 / 9}>
                                             <Image source={{

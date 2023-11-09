@@ -5,12 +5,14 @@ import {
     ScrollView,
     Fab
 } from 'native-base';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, NavigationContainer } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Main from "./Menu";
 import Profile from "./Account";
 import Favs from './Favs';
+import { onAuthStateChanged } from "firebase/auth";
+import Firebase from "../backend/Firebase";
 
 function HomeScreen() {
     return (
@@ -23,14 +25,17 @@ function HomeScreen() {
 }
 
 function ProfileScreen() {
+    const route = useRoute();
+    const uid = route.params;
     return (
         <ScrollView >
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Profile uid={uid} />
+                <Profile />
             </View>
         </ScrollView>
     )
 }
+
 function FavScreen() {
     return (
         <ScrollView >
@@ -41,29 +46,51 @@ function FavScreen() {
     );
 }
 
-const ButtonA = ({ props }) => {
+const ButtonA = () => {
     const navigation = useNavigation();
-    return <Fab renderInPortal={false}
-        style={{
-            backgroundColor: '#7356bf', width: '80',
-            height: '80', position: 'absolute',
-            bottom: '65px',
-            right: '5px'
-        }}
-        shadow={2} size="2xl"
-        icon={<Icon color="white" as={AntDesign}
-            name="plus" size="2xl" />}
-        onPress={() => navigation.navigate('Crear una receta', uid)} />
+    const handelPress = () => {
+        onAuthStateChanged(Firebase.auth, (user) => {
+            if (user) {
+                // User is signed in, see docs for a list of available properties
+                // https://firebase.google.com/docs/reference/js/auth.user
+                const uid = user.uid;
+                navigation.navigate('Crear una receta', { uid });
+            }
+        })
+    }
+    return (
+        <Fab renderInPortal={false}
+            style={{
+                backgroundColor: '#7356bf', width: '80',
+                height: '80', position: 'absolute',
+                bottom: '65px',
+                right: '5px'
+            }}
+            shadow={2} size="2xl"
+            icon={<Icon color="white" as={AntDesign}
+                name="plus" size="2xl" />}
+            onPress={handelPress} />
+    )
 }
 
 const Tab = createBottomTabNavigator();
-
-export default function Footer(props) {
-    const route = useRoute();
-    const { uid } = route.params;
+export default function () {
+    const navigation = useNavigation();
+    onAuthStateChanged(Firebase.auth, (user) => {
+        if (user) {
+            // User is signed in, see docs for a list of available properties
+            // https://firebase.google.com/docs/reference/js/auth.user
+            const uid = user.uid;
+            // ...
+        } else {
+            // User is signed out
+            navigation.navigate("Login");
+            // ...
+        }
+    })
     return (
         <>
-            <ButtonA uid={uid} />
+            <ButtonA />
             <Tab.Navigator
                 initialRouteName="Home"
                 screenOptions={{
@@ -79,15 +106,15 @@ export default function Footer(props) {
                     ]
                 }}
             >
-                <Tab.Screen name="Account" component={ProfileScreen} initialParams={{ uid: uid }} options={{
+                <Tab.Screen name="Account" component={ProfileScreen} options={{
                     headerShown: false,
                     tabBarIcon: () => (<Icon as={<AntDesign name="user" size={24} />} color={'white'}></Icon>)
                 }} />
-                <Tab.Screen name="Home" component={HomeScreen} initialParams={{ uid: uid }} options={{
+                <Tab.Screen name="Home" component={HomeScreen} options={{
                     headerShown: false,
                     tabBarIcon: () => (<Icon as={<AntDesign name="home" size={24} />} color={"white"}></Icon>)
                 }} />
-                <Tab.Screen name="Favorites" component={FavScreen} initialParams={{ uid: uid }} options={{
+                <Tab.Screen name="Favorites" component={FavScreen} options={{
                     headerShown: false,
                     tabBarIcon: () => (<Icon as={<AntDesign name="heart" size={24} />} color={"white"} ></Icon>)
                 }} />

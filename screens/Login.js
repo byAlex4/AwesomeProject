@@ -67,9 +67,8 @@ const Login = () => {
         }
         signInWithEmailAndPassword(firebase.auth, formData.email, formData.password)
             .then((userCredential) => {
-                console.log('Sesión iniciada');
                 user = userCredential.user;
-                console.log(user.uid);
+                console.log('Sesión iniciada', user.uid);
                 navigation.navigate('Nav', { uid: user.uid });
                 return true;
             })
