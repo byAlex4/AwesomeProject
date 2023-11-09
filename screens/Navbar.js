@@ -12,7 +12,7 @@ import Main from "./Menu";
 import Profile from "./Account";
 import Favs from './Favs';
 import { onAuthStateChanged } from "firebase/auth";
-import Firebase from "../backend/Firebase";
+import firebase from "../backend/Firebase";
 
 function HomeScreen() {
     return (
@@ -25,8 +25,6 @@ function HomeScreen() {
 }
 
 function ProfileScreen() {
-    const route = useRoute();
-    const uid = route.params;
     return (
         <ScrollView >
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -49,14 +47,12 @@ function FavScreen() {
 const ButtonA = () => {
     const navigation = useNavigation();
     const handelPress = () => {
-        onAuthStateChanged(Firebase.auth, (user) => {
-            if (user) {
-                // User is signed in, see docs for a list of available properties
-                // https://firebase.google.com/docs/reference/js/auth.user
-                const uid = user.uid;
-                navigation.navigate('Crear una receta', { uid });
-            }
-        })
+        const user = firebase.auth.currentUser;
+        if (user) {
+            // User is signed in, see docs for a list of available properties
+            const uid = user.uid;
+            navigation.navigate('Crear una receta', { uid });
+        }
     }
     return (
         <Fab renderInPortal={false}
@@ -76,10 +72,9 @@ const ButtonA = () => {
 const Tab = createBottomTabNavigator();
 export default function () {
     const navigation = useNavigation();
-    onAuthStateChanged(Firebase.auth, (user) => {
+    onAuthStateChanged(firebase.auth, (user) => {
         if (user) {
             // User is signed in, see docs for a list of available properties
-            // https://firebase.google.com/docs/reference/js/auth.user
             const uid = user.uid;
             // ...
         } else {

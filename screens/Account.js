@@ -1,68 +1,62 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Box, Center, NativeBaseProvider, View, Avatar,
     Button, HStack, VStack, Text, AspectRatio, Stack, Heading, Image, ScrollView
 } from 'native-base';
 import firebase from "../backend/Firebase";
 import { collection, query, where, doc, getDoc, getDocs } from "firebase/firestore";
-import { useRoute } from '@react-navigation/native';
-import RouteContext from './Navbar';
-import { onAuthStateChanged } from 'firebase/auth';
-import Firebase from '../backend/Firebase';
 
 
 function Profile({ props }) {
     const [user, SetUser] = useState([]);
     const userData = [];
     const getUser = async () => {
-        onAuthStateChanged(Firebase.auth, async (user) => {
-            if (user) {
-                // User is signed in, see docs for a list of available properties
-                const uid = user.uid;
-                const docRef = doc(firebase.db, "users", uid);
-                try {
-                    // Pasa la referencia del documento a la función getDocs()
-                    const docSnapshot = await getDoc(docRef);
-                    // Verifica si el documento existe
-                    if (docSnapshot.exists()) {
-                        // Agrega los datos del documento al array firebaseData
-                        userData.push(docSnapshot.data());
-                        SetUser(userData);
-                        console.log(userData);
-                    } else {
-                        // Muestra un mensaje si el documento no existe
-                        console.log("No such document!");
-                    }
-                } catch (errors) {
-                    // Muestra los errores en la consola
-                    console.log("Error getting document:", errors);
+        const user = firebase.auth.currentUser;
+        if (user) {
+            // User is signed in, see docs for a list of available properties
+            const uid = user.uid;
+            const docRef = doc(firebase.db, "users", uid);
+            try {
+                // Pasa la referencia del documento a la función getDocs()
+                const docSnapshot = await getDoc(docRef);
+                // Verifica si el documento existe
+                if (docSnapshot.exists()) {
+                    // Agrega los datos del documento al array firebaseData
+                    userData.push(docSnapshot.data());
+                    SetUser(userData);
+                    console.log(userData);
+                } else {
+                    // Muestra un mensaje si el documento no existe
+                    console.log("No such document!");
                 }
+            } catch (errors) {
+                // Muestra los errores en la consola
+                console.log("Error getting document:", errors);
             }
-        });
+        }
     };
 
     const [recetas, setRecetas] = useState([]);
     const firebaseData = [];
     const getDatos = async () => {
-        onAuthStateChanged(Firebase.auth, async (user) => {
-            if (user) {
-                // User is signed in, see docs for a list of available properties
-                const uid = user.uid;
-                console.log('accont', uid);
-                const q = query(collection(firebase.db, "recipes"), where("userid", "==", uid));
-                try {
-                    const querySnapshot = await getDocs(q);
-                    querySnapshot.forEach((doc) => {
-                        // doc.data() is never undefined for query doc snapshots
-                        firebaseData.push(doc.data());
-                    });
-                    setRecetas(firebaseData);
-                    console.log(firebaseData);
-                } catch (errors) {
-                    console.log("No such document!", errors);
-                };
-            }
-        });
+        const user = firebase.auth.currentUser;
+        if (user) {
+            // User is signed in, see docs for a list of available properties
+            const uid = user.uid;
+            console.log('accont', uid);
+            const q = query(collection(firebase.db, "recipes"), where("userid", "==", uid));
+            try {
+                const querySnapshot = await getDocs(q);
+                querySnapshot.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    firebaseData.push(doc.data());
+                });
+                setRecetas(firebaseData);
+                console.log(firebaseData);
+            } catch (errors) {
+                console.log("No such document!", errors);
+            };
+        };
     };
 
     useEffect(() => {
