@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import {
     Box, Center, NativeBaseProvider, View, Avatar,
-    Button, HStack, VStack, Text, AspectRatio, Stack, Heading, Image, ScrollView
+    Button, HStack, VStack, Text, AspectRatio, Stack, Heading, Image, ScrollView, FormControl, Input, TextArea
 } from 'native-base';
 import firebase from "../backend/Firebase";
 import { collection, query, where, doc, getDoc, getDocs } from "firebase/firestore";
-import { useNavigation } from '@react-navigation/native';
 
 
 function Profile({ props }) {
     const [user, SetUser] = useState([]);
     const userData = [];
-    const navigation = useNavigation();
     const getUser = async () => {
         const user = firebase.auth.currentUser;
         if (user) {
@@ -60,16 +58,8 @@ function Profile({ props }) {
             };
         };
     };
-
-    const handelSummit = () => {
-        const user = firebase.auth.currentUser;
-        if (user) {
-            // User is signed in, see docs for a list of available properties
-            const uid = user.uid;
-            console.log('accont', uid);
-            navigation.navigate("Editar cuenta", uid);
-        };
-    }
+    const [formData, setData] = React.useState({});
+    const [errors, setErrors] = React.useState({});
 
     useEffect(() => {
         getDatos();
@@ -77,7 +67,7 @@ function Profile({ props }) {
     }, []); // Pasa un arreglo vacío como segundo argumento para que solo se ejecute una vez
     return (
         <View>
-            <Box bg={"black"} rounded={"0px 10px 10px 0px"} pl={48} pr={48} pt={20}>
+            <Box bg={"black"} rounded={"0px 10px 10px 0px"} pl={48} pr={48} pt={5}>
                 This is a Box with Linear Gradient
             </Box>
             <Box ml={"9%"} w={"84%"}>
@@ -90,10 +80,13 @@ function Profile({ props }) {
                                 }} size="2xl" mt={"-65%"}>
                                     <Avatar.Badge bg="green.500" />
                                 </Avatar>
-                                <Button size="sm" variant="outline" mt={4} onPress={handelSummit}>Editar perfil</Button>
+                                <Button size="sm" variant="outline" mt={4}>Guardar cambios</Button>
                             </VStack>
                             <VStack space={3}>
-                                <Text fontSize={"2xl"} fontStyle={'italic'} color={'white'} fontWeight={'bold'} mt={'-20%'}>{usuario.name}</Text>
+                                <Input placeholder={usuario.name} onChangeText={value => setData({
+                                    ...formData,
+                                    name: value
+                                })} bg={"white"} minW={"100%"} fontSize={"md"} fontStyle={'italic'} color={'white'} fontWeight={'bold'} mt={'-20%'} />
                                 <HStack ml={"auto"} right={0} space={4} display={'absolute'}>
                                     <VStack>
                                         <Text bold textAlign={"center"}>23</Text>
@@ -113,10 +106,21 @@ function Profile({ props }) {
 
                         <VStack mt={5}>
                             <Text bold>About</Text>
-                            <Text>{usuario.desc} </Text>
+                            <TextArea placeholder={usuario.desc} onChangeText={value => setData({
+                                ...formData,
+                                name: value
+                            })} bg={"white"} minW={"100%"} />
                             <Text bold>Contact</Text>
-                            <Text>{usuario.email} </Text>
-                            <Text>{usuario.tel} </Text>
+                            <Text>Correo electronico</Text>
+                            <Input placeholder={usuario.email} onChangeText={value => setData({
+                                ...formData,
+                                name: value
+                            })} bg={"white"} minW={"100%"} />
+                            <Text>Numero telefonico</Text>
+                            <Input placeholder={usuario.tel} onChangeText={value => setData({
+                                ...formData,
+                                name: value
+                            })} bg={"white"} minW={"100%"} />
                         </VStack>
                     </>
                 ))}

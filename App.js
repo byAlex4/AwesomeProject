@@ -11,6 +11,8 @@ import Navbar from './screens/Navbar';
 import Categorias from './screens/Categorias';
 import FormReceta from './screens/FormRecepta';
 import Receta from './screens/Recipe';
+import Account from './screens/Account';
+import Edit from './screens/AccountEdit';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,7 +22,7 @@ export default function () {
     <NativeBaseProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="Login" screenOptions={{ headerTintColor: 'white', statusBarColor: "white" }}>
+          <Stack.Navigator initialRouteName="Nav" screenOptions={{ headerTintColor: 'white', statusBarColor: "white" }}>
             <Stack.Screen
               name={"Login"}
               component={Login}
@@ -77,6 +79,29 @@ export default function () {
             <Stack.Screen
               name={"Receta"}
               component={Receta}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#4b2ba0",
+                  color: "#white",
+                  statusBarColor: "white"
+                }
+              }}
+            />
+            <Stack.Screen
+              name={"Cuenta"}
+              component={Account}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#4b2ba0",
+                  color: "#white",
+                  statusBarColor: "white"
+                }
+              }}
+            />
+
+            <Stack.Screen
+              name={"Editar cuenta"}
+              component={Edit}
               options={{
                 headerStyle: {
                   backgroundColor: "#4b2ba0",

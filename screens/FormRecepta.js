@@ -48,7 +48,7 @@ const CrearReceta = (props) => {
             const data = {
                 name: nombre,
                 description: descripcion,
-                ingredientes: ingredientes,
+                ingredient: ingredientes,
                 steps: pasos,
                 category: categoria,
                 time: tiempo,
