@@ -1,22 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import {
     Center,
-    Input,
-    CheckIcon,
     View,
     VStack,
     HStack,
     Box,
     Text,
     Image,
-    Select,
-    FormControl,
-    TextArea,
-    Button,
     Checkbox
 }
     from 'native-base';
-import { useNavigation } from '@react-navigation/native';
 import { useRoute } from "@react-navigation/native";
 import firebase from "../backend/Firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
@@ -48,7 +41,20 @@ const Receta = () => {
     const pasosArray = [];
     useEffect(() => {
         getDatos();// Llama a la función getDatos
-    }, []); // Pasa un
+    }, []);
+
+    const [checked, setChecked] = useState([]);
+    // definir la función handleChange que recibe el índice del checkbox
+    const handleChange = (index) => {
+        // copiar el arreglo de estado actual
+        let newChecked = [...checked];
+        // invertir el valor del elemento según el índice
+        newChecked[index] = !newChecked[index];
+        // actualizar el estado con el nuevo arreglo
+        setChecked(newChecked);
+    }
+
+
     return <Center w={"90%"} ml={"5%"}>
         <Box w={"95%"} bg={"white"} rounded={'xl'} p={"5%"}>
             <VStack space={2}>
@@ -76,11 +82,9 @@ const Receta = () => {
                 {receta.map(function (recipes) {
                     var ingredientes = recipes.ingredient; // Aquí asignas el valor de la categoría a una variable 
                     return ingredientes.split(',').map((ingrediente) => {
-                        var i = 0;
-                        i = i + 1;
                         return (
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <CheckBox colorScheme="purple" defaultChecked='false' />
+                                <CheckBox colorScheme="purple" />
                                 <Text fontSize={'md'}>{ingrediente}</Text>
                             </View>);
                     });
@@ -90,13 +94,15 @@ const Receta = () => {
                 <Checkbox.Group>
                     {receta.map(function (recipes) {
                         var pasos = recipes.steps; // Aquí asignas el valor de la categoría a una variable 
-                        return pasos.split(',').map((paso) => {
-                            var i = 0;
-                            i = i + 1;
+                        return pasos.split(',').map((paso, index) => {
                             return (
-                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                    <CheckBox colorScheme="purple" defaultChecked='false' />
-                                    <Text fontSize={'md'}>{paso}</Text>
+                                <View>
+                                    <Checkbox colorScheme="purple" value="test"
+                                        onChange={() => handleChange(index)} // llamar a una función que actualice el estado
+                                        isChecked={checked[index]} // usar el valor del arreglo según el índice
+                                    >
+                                        <Text fontSize={'md'}>{paso}</Text>
+                                    </Checkbox>
                                 </View>);
                         });
                     })}

@@ -6,6 +6,7 @@ import {
 import firebase from "../backend/Firebase";
 import { collection, query, where, doc, getDoc, getDocs } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
+import { Pressable } from 'react-native';
 
 
 function Profile({ props }) {
@@ -71,6 +72,12 @@ function Profile({ props }) {
         };
     }
 
+    const navRecipe = (recipeId) => {
+        // Navega a la pantalla donde quieres mostrar los productos
+        // y pasa el firebaseId como un parámetro
+        navigation.navigate("Receta", { recipeId });
+    };
+
     useEffect(() => {
         getDatos();
         getUser();
@@ -127,35 +134,37 @@ function Profile({ props }) {
                     <HStack space={4} flexWrap={'wrap'}>
                         {recetas.map((recipes) => (
                             <>
-                                <Box w="45%" h='45%' mb={3} rounded="lg" borderColor="coolGray.200" borderWidth="1">
-                                    <Box>
-                                        <AspectRatio minW="100%" ratio={16 / 9}>
-                                            <Image source={{
-                                                uri: recipes.img
-                                            }} alt="image" />
-                                        </AspectRatio>
-                                        <Center bg="violet.500" position="absolute" bottom="0" px="3" py="1.5">
-                                            Novedad
-                                        </Center>
-                                    </Box>
-                                    <Stack p="4" space={3}>
-                                        <Heading size="md" ml="-1">
-                                            {recipes.name}
-                                        </Heading>
-                                        <Text fontWeight="400">
-                                            {recipes.time}
-                                        </Text>
-                                        <HStack alignItems="center" space={4} justifyContent="space-between">
-                                            <HStack alignItems="center">
-                                                <Text color="coolGray.600" _dark={{
-                                                    color: "warmGray.200"
-                                                }} fontWeight="400">
-                                                    6 mins ago
-                                                </Text>
+                                <Pressable w="45%" mb={3} onPress={() => navRecipe(recipes.name)} >
+                                    <Box rounded="lg" borderColor="coolGray.200" borderWidth="1">
+                                        <Box>
+                                            <AspectRatio minW="100%" ratio={16 / 9}>
+                                                <Image source={{
+                                                    uri: recipes.img
+                                                }} alt="image" />
+                                            </AspectRatio>
+                                            <Center bg="violet.500" position="absolute" bottom="0" px="3" py="1.5">
+                                                Novedad
+                                            </Center>
+                                        </Box>
+                                        <Stack p="4" space={3}>
+                                            <Heading size="md" ml="-1">
+                                                {recipes.name}
+                                            </Heading>
+                                            <Text fontWeight="400">
+                                                {recipes.time}
+                                            </Text>
+                                            <HStack alignItems="center" space={4} justifyContent="space-between">
+                                                <HStack alignItems="center">
+                                                    <Text color="coolGray.600" _dark={{
+                                                        color: "warmGray.200"
+                                                    }} fontWeight="400">
+                                                        6 mins ago
+                                                    </Text>
+                                                </HStack>
                                             </HStack>
-                                        </HStack>
-                                    </Stack>
-                                </Box>
+                                        </Stack>
+                                    </Box>
+                                </Pressable>
                             </>
                         ))}
                     </HStack>

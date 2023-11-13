@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Box, Center, NativeBaseProvider, View, Avatar,
-    Button, HStack, VStack, Text, AspectRatio, Stack, Heading, Image, ScrollView
+    Box, NativeBaseProvider, View, HStack, VStack, Text,
+    Pressable, Image, ScrollView
 } from 'native-base';
 import firebase from "../backend/Firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import firebaseui from 'firebaseui';
+import { useNavigation } from '@react-navigation/native';
 
-function Profile({ props }) {
-    const [recetas, setRecetas] = useState([]);
+function Favorites({ props }) {
+    const [receta, setReceta] = useState([]);
     const [favorito, setFavorito] = useState([]);
 
     const firebaseData = [];
@@ -23,89 +23,65 @@ function Profile({ props }) {
             const q1 = query(collection(firebase.db, "favorites"), where("iduser", "==", uid));
             try {
                 const querySnapshot = await getDocs(q1);
-                querySnapshot.forEach((doc) => {
-                    // doc.data() is never undefined for query doc snapshots
-                    firebaseData.push(doc.data());
-                });
-                setRecetas(firebaseData);
-                console.log("favorites:", firebaseData);
-            } catch (errors) {
-                console.log("No such document!", errors);
-            };
-        };
-        if (user) {
-            recetas.forEach(async (receta) => {
-                const q2 = query(collection(firebase.db, "recipes"), where("name", "==", receta.idrecipe));
-                console.log("recetas");
-                console.log(receta.idrecipe);
-                try {
-                    const querySnapshot = await getDocs(q2);
-                    querySnapshot.forEach((doc) => {
-                        // doc.data() is never undefined for query doc snapshots
-                        firebaseFav.push(doc.data());
+                querySnapshot.forEach(async (doc) => {
+                    const idrecipe = doc.data().idrecipe;
+                    console.log("id de receta favorita:", idrecipe);
+                    const q2 = query(collection(firebase.db, "recipes"), where("name", "==", idrecipe));
+                    const querySnap = await getDocs(q2);
+                    querySnap.forEach((doc) => {
+                        const data2 = doc.data();
+                        firebaseFav.push(data2);
                     });
-                    setRecetas(firebaseFav);
-                    console.log("receta", firebaseFav);
-                } catch (errors) {
-                    console.log("No such document!", errors);
-                };
-            });
+                    console.log(firebaseFav);
+                    setReceta(firebaseFav)
+                });
+
+            } catch (errors) {
+                console.log("No such fav!", errors);
+            };
         };
     }
     useEffect(() => {
         getDatos();// Llama a la función getDatos
+        console.log(receta);
     }, []); // Pasa un arreglo vacío como segundo argumento para que solo se ejecute una vez
+
+    const navigation = useNavigation();
+    const navRecipe = (recipeId) => {
+        // Navega a la pantalla donde quieres mostrar los productos
+        // y pasa el firebaseId como un parámetro
+        navigation.navigate("Receta", { recipeId });
+    };
+
     return (
-        <View>
-            <Box ml={"9%"} w={"84%"}>
-                <VStack mt={5} space={4}>
-                    <Text bold>Ultimas recetas</Text>
-                    <HStack space={4} flexWrap={'wrap'}>
-                        {recetas.map((recipes) => (
-                            <>
-                                <Box w="45%" h='45%' mb={3} rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1">
-                                    <Box>
-                                        <AspectRatio minW="100%" ratio={16 / 9}>
-                                            <Image source={{
-                                                uri: recipes.img
-                                            }} alt="image" />
-                                        </AspectRatio>
-                                    </Box>
-                                    <Stack p="4" space={3}>
-                                        <Heading size="md" ml="-1">
-                                            {recipes.name}
-                                        </Heading>
-                                        <Text fontWeight="400">
-                                            {recipes.time}
-                                        </Text>
-                                        <HStack alignItems="center" space={4} justifyContent="space-between">
-                                            <HStack alignItems="center">
-                                                <Text color="coolGray.600" _dark={{
-                                                    color: "warmGray.200"
-                                                }} fontWeight="400">
-                                                    6 mins ago
-                                                </Text>
-                                            </HStack>
-                                        </HStack>
-                                    </Stack>
-                                </Box>
-                            </>
-                        ))}
-                    </HStack>
-                </VStack>
-            </Box>
-        </View >
+        <Box w={"90%"} bg={"white"} rounded={'xl'} m={"5%"} minH={'90%'}>
+            <VStack m={"5%"} w={"90%"} space={5}>
+                <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Favoritos</Text>
+                {receta.map((recipes, index) => (
+                    <Pressable onPress={() => navRecipe(recipes.name)}>
+                        <Box w={"100%"}>
+                            <HStack space={4}>
+                                <Image key={index} source={{
+                                    uri: recipes.img
+                                }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                                <VStack flexWrap={'wrap'} maxW={'148px'}>
+                                    <Text>{recipes.name}</Text>
+                                    <Text>Categoria: {recipes.category}</Text>
+                                    <Text>Tiempo: {recipes.time}</Text>
+                                </VStack>
+                            </HStack>
+                        </Box>
+                    </Pressable>
+                ))}
+            </VStack>
+        </Box>
     )
 };
 
-export default ({ props }) => {
+export default () => {
     return (
-        <NativeBaseProvider>
-            <View minW={"100%"} maxH={"100%"}>
-                <ScrollView>
-                    <Profile />
-                </ScrollView>
-            </View>
-        </NativeBaseProvider>
+        <ScrollView flex={1} minH={'100%'} minW={"100%"} pt={"5%"} bg={"gray.200"}>
+            <Favorites />
+        </ScrollView>
     );
 };
