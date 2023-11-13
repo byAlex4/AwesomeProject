@@ -5,23 +5,52 @@ import {
 } from 'native-base';
 import firebase from "../backend/Firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
+import firebaseui from 'firebaseui';
 
 function Profile({ props }) {
     const [recetas, setRecetas] = useState([]);
+    const [favorito, setFavorito] = useState([]);
 
     const firebaseData = [];
+    const firebaseFav = [];
+
     const getDatos = async () => {
-        const q = query(collection(firebase.db, "recipes"));//, where("category", "==", 'Desayunos'));
-        try {
-            const querySnapshot = await getDocs(q);
-            querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                firebaseData.push(doc.data());
+        const user = firebase.auth.currentUser;
+        if (user) {
+            // User is signed in, see docs for a list of available properties
+            const uid = user.uid;
+            console.log('accont', uid);
+            const q1 = query(collection(firebase.db, "favorites"), where("iduser", "==", uid));
+            try {
+                const querySnapshot = await getDocs(q1);
+                querySnapshot.forEach((doc) => {
+                    // doc.data() is never undefined for query doc snapshots
+                    firebaseData.push(doc.data());
+                });
+                setRecetas(firebaseData);
+                console.log("favorites:", firebaseData);
+            } catch (errors) {
+                console.log("No such document!", errors);
+            };
+        };
+        if (user) {
+            recetas.forEach(async (receta) => {
+                const q2 = query(collection(firebase.db, "recipes"), where("name", "==", receta.idrecipe));
+                console.log("recetas");
+                console.log(receta.idrecipe);
+                try {
+                    const querySnapshot = await getDocs(q2);
+                    querySnapshot.forEach((doc) => {
+                        // doc.data() is never undefined for query doc snapshots
+                        firebaseFav.push(doc.data());
+                    });
+                    setRecetas(firebaseFav);
+                    console.log("receta", firebaseFav);
+                } catch (errors) {
+                    console.log("No such document!", errors);
+                };
             });
-            setRecetas(firebaseData);
-        } catch (errors) {
-            console.log("No such document!", errors);
-        }
+        };
     }
     useEffect(() => {
         getDatos();// Llama a la función getDatos

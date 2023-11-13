@@ -4,27 +4,42 @@ import {
     Button, HStack, VStack, Text, AspectRatio, Stack, Heading, Image, ScrollView, FormControl, Input, TextArea
 } from 'native-base';
 import firebase from "../backend/Firebase";
-import { collection, query, where, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, query, where, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { useNavigation } from '@react-navigation/native';
 
 
 function Profile({ props }) {
-    const [user, SetUser] = useState([]);
-    const userData = [];
+    const navigation = useNavigation();
+    const [name, setName] = useState();
+    const [email, setEmail] = useState();
+    const [tel, setTel] = useState();
+    const [img, setImg] = useState();
+    const [des, setDes] = useState();
+
+    const [user, setUser] = useState([]);
     const getUser = async () => {
-        const user = firebase.auth.currentUser;
-        if (user) {
+        const usuario = firebase.auth.currentUser;
+        if (usuario) {
             // User is signed in, see docs for a list of available properties
-            const uid = user.uid;
+            const uid = usuario.uid;
             const docRef = doc(firebase.db, "users", uid);
+            const userData = [];
             try {
                 // Pasa la referencia del documento a la función getDocs()
                 const docSnapshot = await getDoc(docRef);
                 // Verifica si el documento existe
                 if (docSnapshot.exists()) {
                     // Agrega los datos del documento al array firebaseData
-                    userData.push(docSnapshot.data());
-                    SetUser(userData);
+                    const data = docSnapshot.data()
+                    userData.push(data);
+                    setUser(userData);
                     console.log(userData);
+                    setName(data.name);
+                    setEmail(data.email);
+                    setTel(data.tel);
+                    setImg(data.img);
+                    setDes(data.desc);
+                    console.log(data.name);
                 } else {
                     // Muestra un mensaje si el documento no existe
                     console.log("No such document!");
@@ -35,44 +50,52 @@ function Profile({ props }) {
             }
         }
     };
-
-    const [recetas, setRecetas] = useState([]);
-    const firebaseData = [];
-    const getDatos = async () => {
-        const user = firebase.auth.currentUser;
-        if (user) {
-            // User is signed in, see docs for a list of available properties
-            const uid = user.uid;
-            console.log('accont', uid);
-            const q = query(collection(firebase.db, "recipes"), where("userid", "==", uid));
-            try {
-                const querySnapshot = await getDocs(q);
-                querySnapshot.forEach((doc) => {
-                    // doc.data() is never undefined for query doc snapshots
-                    firebaseData.push(doc.data());
-                });
-                setRecetas(firebaseData);
-                console.log(firebaseData);
-            } catch (errors) {
-                console.log("No such document!", errors);
-            };
-        };
-    };
-    const [formData, setData] = React.useState({});
-    const [errors, setErrors] = React.useState({});
-
     useEffect(() => {
-        getDatos();
         getUser();
-    }, []); // Pasa un arreglo vacío como segundo argumento para que solo se ejecute una vez
+    }, []);
+
+    const saveUser = async (nombre, correo, celular, imagen, descripcion) => {
+        try {
+            const user = firebase.auth.currentUser;
+            if (user) {
+                const uid = user.uid;
+                var userRef = doc(firebase.db, 'users', uid);
+                await updateDoc(userRef, {
+                    name: nombre,
+                    email: correo,
+                    tel: celular,
+                    img: imagen,
+                    desc: descripcion
+                })
+                    .then(() => {
+                        console.log('Documento actualizado correctamente');
+                    })
+                    .catch((error) => {
+                        console.error('Error al actualizar el documento:', error);
+                    });
+            }
+            return true;
+        } catch (errors) {
+            console.error("Error adding document: ", errors);
+            return false;
+        }
+    }
+
+    const onSubmit = () => {
+        saveUser(name, email, tel, img, des) ? navigation.navigate('Nav')
+            : console.log("Validation Failed", errors, name, email, tel, img, des);
+    };
+
     return (
         <View>
             <Box bg={"black"} rounded={"0px 10px 10px 0px"} pl={48} pr={48} pt={5}>
                 This is a Box with Linear Gradient
             </Box>
             <Box ml={"9%"} w={"84%"}>
+
                 {user.map((usuario) => (
                     <>
+
                         <HStack space={4}>
                             <VStack>
                                 <Avatar bg="amber.500" source={{
@@ -80,13 +103,9 @@ function Profile({ props }) {
                                 }} size="2xl" mt={"-65%"}>
                                     <Avatar.Badge bg="green.500" />
                                 </Avatar>
-                                <Button size="sm" variant="outline" mt={4}>Guardar cambios</Button>
                             </VStack>
                             <VStack space={3}>
-                                <Input placeholder={usuario.name} onChangeText={value => setData({
-                                    ...formData,
-                                    name: value
-                                })} bg={"white"} minW={"100%"} fontSize={"md"} fontStyle={'italic'} color={'white'} fontWeight={'bold'} mt={'-20%'} />
+                                <Input defaultValue={name} onChange={(e) => setName(e.target.value)} bg={"white"} fontSize={"md"} fontStyle={'italic'} fontWeight={'bold'} mt={'-20%'} />
                                 <HStack ml={"auto"} right={0} space={4} display={'absolute'}>
                                     <VStack>
                                         <Text bold textAlign={"center"}>23</Text>
@@ -105,65 +124,18 @@ function Profile({ props }) {
                         </HStack>
 
                         <VStack mt={5}>
+                            <Input value={img} onChangeText={(value) => setImg(value)} minW={"100%"} />
                             <Text bold>About</Text>
-                            <TextArea placeholder={usuario.desc} onChangeText={value => setData({
-                                ...formData,
-                                name: value
-                            })} bg={"white"} minW={"100%"} />
+                            <TextArea defaultValue={des} onChangeText={(value) => setDes(value)} bg={"white"} minW={"100%"} />
                             <Text bold>Contact</Text>
                             <Text>Correo electronico</Text>
-                            <Input placeholder={usuario.email} onChangeText={value => setData({
-                                ...formData,
-                                name: value
-                            })} bg={"white"} minW={"100%"} />
+                            <Input defaultValue={email} onChangeText={(value) => setEmail(value)} bg={"white"} minW={"100%"} />
                             <Text>Numero telefonico</Text>
-                            <Input placeholder={usuario.tel} onChangeText={value => setData({
-                                ...formData,
-                                name: value
-                            })} bg={"white"} minW={"100%"} />
+                            <Input defaultValue={tel} onChangeText={(value) => setTel(value)} bg={"white"} minW={"100%"} />
+                            <Button size="sm" mt={4} onPress={onSubmit}>Guardar cambios</Button>
                         </VStack>
                     </>
                 ))}
-
-
-                <VStack mt={5} space={4}>
-                    <Text bold>Ultimas recetas</Text>
-                    <HStack space={4} flexWrap={'wrap'}>
-                        {recetas.map((recipes) => (
-                            <>
-                                <Box w="45%" h='45%' mb={3} rounded="lg" borderColor="coolGray.200" borderWidth="1">
-                                    <Box>
-                                        <AspectRatio minW="100%" ratio={16 / 9}>
-                                            <Image source={{
-                                                uri: recipes.img
-                                            }} alt="image" />
-                                        </AspectRatio>
-                                        <Center bg="violet.500" position="absolute" bottom="0" px="3" py="1.5">
-                                            Novedad
-                                        </Center>
-                                    </Box>
-                                    <Stack p="4" space={3}>
-                                        <Heading size="md" ml="-1">
-                                            {recipes.name}
-                                        </Heading>
-                                        <Text fontWeight="400">
-                                            {recipes.time}
-                                        </Text>
-                                        <HStack alignItems="center" space={4} justifyContent="space-between">
-                                            <HStack alignItems="center">
-                                                <Text color="coolGray.600" _dark={{
-                                                    color: "warmGray.200"
-                                                }} fontWeight="400">
-                                                    6 mins ago
-                                                </Text>
-                                            </HStack>
-                                        </HStack>
-                                    </Stack>
-                                </Box>
-                            </>
-                        ))}
-                    </HStack>
-                </VStack>
             </Box>
         </View >
     )

@@ -94,7 +94,7 @@ function Profile({ props }) {
                             </VStack>
                             <VStack space={3}>
                                 <Text fontSize={"2xl"} fontStyle={'italic'} color={'white'} fontWeight={'bold'} mt={'-20%'}>{usuario.name}</Text>
-                                <HStack ml={"auto"} right={0} space={4} display={'absolute'}>
+                                <HStack space={4}>
                                     <VStack>
                                         <Text bold textAlign={"center"}>23</Text>
                                         <Text>Recetas</Text>
