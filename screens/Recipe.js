@@ -7,12 +7,15 @@ import {
     Box,
     Text,
     Image,
-    Checkbox
+    Checkbox,
+    Button,
+    IconButton
 }
     from 'native-base';
+import { AntDesign } from '@expo/vector-icons';
 import { useRoute } from "@react-navigation/native";
 import firebase from "../backend/Firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, setDoc, doc } from "firebase/firestore";
 import { CheckBox } from 'react-native-web';
 
 // Exportar el componente CrearReceta
@@ -54,13 +57,33 @@ const Receta = () => {
         setChecked(newChecked);
     }
 
-
+    const addFavs = async (recipe) => {
+        const user = firebase.auth.currentUser;
+        try {
+            const uid = user.uid;
+            const data = {
+                idrecipe: recipe,
+                iduser: uid,
+            }
+            const nombre = uid + '-' + recipe;
+            console.log(data);
+            await setDoc(doc(firebase.db, 'favorites', nombre), data);
+        } catch (errors) {
+            console.error("Error adding document: ", errors);
+        }
+    }
     return <Center w={"90%"} ml={"5%"}>
         <Box w={"95%"} bg={"white"} rounded={'xl'} p={"5%"}>
             <VStack space={2}>
                 {receta.map((recipe) => (
                     <>
-                        <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>{recipe.name}</Text>
+                        <HStack>
+                            <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>{recipe.name}</Text>
+                            <IconButton colorScheme="indigo" variant={'outline'} _icon={{
+                                as: AntDesign,
+                                name: "heart"
+                            }} onPress={() => addFavs(recipe.name)} />
+                        </HStack>
                         <HStack w={"95%"} space={2}>
                             <Image source={{
                                 uri: recipe.img
