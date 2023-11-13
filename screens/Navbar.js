@@ -57,10 +57,10 @@ const ButtonA = () => {
     return (
         <Fab renderInPortal={false}
             style={{
-                backgroundColor: '#7356bf', width: '5%',
-                height: '5%', position: 'absolute',
-                bottom: '0%',
-                right: '0%'
+                backgroundColor: '#7356bf', width: '16%',
+                height: '8%', position: 'absolute',
+                bottom: '8%',
+                right: '2%'
             }}
             shadow={2} size="2xl"
             icon={<Icon color="white" as={AntDesign}

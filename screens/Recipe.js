@@ -7,11 +7,9 @@ import {
     Box,
     Text,
     Image,
-    Checkbox,
-    Button,
-    IconButton
-}
-    from 'native-base';
+    IconButton,
+    Checkbox
+} from 'native-base';
 import { AntDesign } from '@expo/vector-icons';
 import { useRoute } from "@react-navigation/native";
 import firebase from "../backend/Firebase";
@@ -113,7 +111,7 @@ const Receta = () => {
                     });
                 })}
 
-                <Text style={{ fontSize: '20px', color: 'rgb(115, 115, 115)' }}>Pasos:</Text>
+                <Text style={{ fontSize: 'sm', color: 'rgb(115, 115, 115)' }}>Pasos:</Text>
                 <Checkbox.Group>
                     {receta.map(function (recipes) {
                         var pasos = recipes.steps; // Aquí asignas el valor de la categoría a una variable 
@@ -125,7 +123,7 @@ const Receta = () => {
                                         isChecked={checked[index]} // usar el valor del arreglo según el índice
                                     >
                                         <Text fontSize={'md'}>{paso}</Text>
-                                    </Checkbox>
+                                    </Checkbox >
                                 </View>);
                         });
                     })}
