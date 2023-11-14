@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Box, NativeBaseProvider, View, HStack, VStack, Text,
-    Pressable, Image, ScrollView
+    Box,
+    HStack,
+    VStack,
+    Text,
+    Pressable,
+    Image,
+    ScrollView
 } from 'native-base';
 import firebase from "../backend/Firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
 
 function Favorites({ props }) {
     const [receta, setReceta] = useState([]);
-    const [favorito, setFavorito] = useState([]);
-
-    const firebaseData = [];
     const firebaseFav = [];
 
     const getDatos = async () => {
@@ -19,22 +21,21 @@ function Favorites({ props }) {
         if (user) {
             // User is signed in, see docs for a list of available properties
             const uid = user.uid;
-            console.log('accont', uid);
             const q1 = query(collection(firebase.db, "favorites"), where("iduser", "==", uid));
             try {
-                const querySnapshot = await getDocs(q1);
-                querySnapshot.forEach(async (doc) => {
-                    const idrecipe = doc.data().idrecipe;
-                    console.log("id de receta favorita:", idrecipe);
-                    const q2 = query(collection(firebase.db, "recipes"), where("name", "==", idrecipe));
-                    const querySnap = await getDocs(q2);
-                    querySnap.forEach((doc) => {
-                        const data2 = doc.data();
-                        firebaseFav.push(data2);
-                    });
-                    console.log(firebaseFav);
-                    setReceta(firebaseFav)
-                });
+                const unsub1 = onSnapshot(q1, (querySnapshot) => {
+                    querySnapshot.forEach(async (doc) => {
+                        const idrecipe = doc.data().idrecipe;
+                        const q2 = query(collection(firebase.db, "recipes"), where("name", "==", idrecipe));
+                        const unsub2 = onSnapshot(q2, (querySnap) => {
+                            querySnap.forEach((doc) => {
+                                const data2 = doc.data();
+                                firebaseFav.push(data2);
+                            });
+                            setReceta(firebaseFav)
+                        });
+                    })
+                })
             } catch (errors) {
                 console.log("No such fav!", errors);
             };
@@ -42,7 +43,6 @@ function Favorites({ props }) {
     }
     useEffect(() => {
         getDatos();// Llama a la función getDatos
-        console.log(receta);
     }, []); // Pasa un arreglo vacío como segundo argumento para que solo se ejecute una vez
 
     const navigation = useNavigation();

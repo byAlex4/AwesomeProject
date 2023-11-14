@@ -5,7 +5,7 @@ import {
     ScrollView,
     Fab
 } from 'native-base';
-import { useNavigation, useRoute, NavigationContainer } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Main from "./Menu";

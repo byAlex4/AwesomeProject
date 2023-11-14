@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Box, Center, NativeBaseProvider, View, Avatar,
-    Button, HStack, VStack, Text, AspectRatio, Stack, Heading, Image, ScrollView, FormControl, Input, TextArea
+    Box,
+    NativeBaseProvider,
+    View,
+    Avatar,
+    Button,
+    HStack,
+    VStack,
+    Text,
+    ScrollView,
+    Input,
+    TextArea
 } from 'native-base';
 import firebase from "../backend/Firebase";
-import { collection, query, where, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
 
 

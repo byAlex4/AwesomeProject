@@ -1,22 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import {
-    FormControl,
     Center,
-    Input,
-    Icon,
     View,
     VStack,
     Box,
     HStack,
     Text,
-    Image,
-    ScrollView,
-    Button
+    Image
 }
     from 'native-base';
 import { Pressable, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRoute } from "@react-navigation/native";
 import firebase from "../backend/Firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
