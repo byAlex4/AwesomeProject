@@ -4,37 +4,42 @@ import {
     Button, HStack, VStack, Text, AspectRatio, Stack, Heading, Image, ScrollView
 } from 'native-base';
 import firebase from "../backend/Firebase";
-import { collection, query, where, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, query, where, doc, getDocs, onSnapshot } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
 import { Pressable } from 'react-native';
 
 
 function Profile({ props }) {
-    const [user, SetUser] = useState([]);
-    const userData = [];
     const navigation = useNavigation();
+    const [name, setName] = useState();
+    const [email, setEmail] = useState();
+    const [tel, setTel] = useState();
+    const [img, setImg] = useState();
+    const [des, setDes] = useState();
+
     const getUser = async () => {
         const user = firebase.auth.currentUser;
         if (user) {
-            // User is signed in, see docs for a list of available properties
             const uid = user.uid;
             const docRef = doc(firebase.db, "users", uid);
             try {
-                // Pasa la referencia del documento a la función getDocs()
-                const docSnapshot = await getDoc(docRef);
-                // Verifica si el documento existe
-                if (docSnapshot.exists()) {
-                    // Agrega los datos del documento al array firebaseData
-                    userData.push(docSnapshot.data());
-                    SetUser(userData);
-                    console.log(userData);
-                } else {
-                    // Muestra un mensaje si el documento no existe
-                    console.log("No such document!");
-                }
+                const unsub = onSnapshot(docRef, (docSnapshot) => {
+                    // Verifica si el documento existe
+                    if (docSnapshot.exists()) {
+                        const data = docSnapshot.data()
+                        setName(data.name);
+                        setEmail(data.email);
+                        setTel(data.tel);
+                        setImg(data.img);
+                        setDes(data.desc);
+                        console.log(data.name);
+                    } else {
+                        // Muestra un mensaje si el documento no existe
+                        console.log("No such document!");
+                    }
+                });
             } catch (errors) {
-                // Muestra los errores en la consola
-                console.log("Error getting document:", errors);
+                console.log('Error getting document:', errors);
             }
         }
     };
@@ -46,7 +51,6 @@ function Profile({ props }) {
         if (user) {
             // User is signed in, see docs for a list of available properties
             const uid = user.uid;
-            console.log('accont', uid);
             const q = query(collection(firebase.db, "recipes"), where("userid", "==", uid));
             try {
                 const querySnapshot = await getDocs(q);
@@ -55,7 +59,6 @@ function Profile({ props }) {
                     firebaseData.push(doc.data());
                 });
                 setRecetas(firebaseData);
-                console.log(firebaseData);
             } catch (errors) {
                 console.log("No such document!", errors);
             };
@@ -67,7 +70,6 @@ function Profile({ props }) {
         if (user) {
             // User is signed in, see docs for a list of available properties
             const uid = user.uid;
-            console.log('accont', uid);
             navigation.navigate("Editar cuenta", uid);
         };
     }
@@ -88,47 +90,42 @@ function Profile({ props }) {
                 This is a Box with Linear Gradient
             </Box>
             <Box ml={"9%"} w={"84%"}>
-                {user.map((usuario) => (
-                    <>
+                <HStack space={4}>
+                    <VStack>
+                        <Avatar bg="amber.500" source={{
+                            uri: img
+                        }} size="2xl" mt={"-65%"}>
+                            <Avatar.Badge bg="green.500" />
+                        </Avatar>
+                        <Button size="sm" variant="outline" mt={4} onPress={handelSummit}>Editar perfil</Button>
+                    </VStack>
+                    <VStack space={3}>
+                        <Text fontSize={"2xl"} fontStyle={'italic'}
+                            color={'white'} fontWeight={'bold'} mt={'-20%'}>{name}</Text>
                         <HStack space={4}>
                             <VStack>
-                                <Avatar bg="amber.500" source={{
-                                    uri: usuario.img
-                                }} size="2xl" mt={"-65%"}>
-                                    <Avatar.Badge bg="green.500" />
-                                </Avatar>
-                                <Button size="sm" variant="outline" mt={4} onPress={handelSummit}>Editar perfil</Button>
+                                <Text bold textAlign={"center"}>23</Text>
+                                <Text>Recetas</Text>
                             </VStack>
-                            <VStack space={3}>
-                                <Text fontSize={"2xl"} fontStyle={'italic'} color={'white'} fontWeight={'bold'} mt={'-20%'}>{usuario.name}</Text>
-                                <HStack space={4}>
-                                    <VStack>
-                                        <Text bold textAlign={"center"}>23</Text>
-                                        <Text>Recetas</Text>
-                                    </VStack>
-                                    <VStack>
-                                        <Text bold textAlign={"center"}>1456</Text>
-                                        <Text>Seguidores</Text>
-                                    </VStack>
-                                    <VStack>
-                                        <Text bold textAlign={"center"}>68</Text>
-                                        <Text>Seguidos</Text>
-                                    </VStack>
-                                </HStack>
+                            <VStack>
+                                <Text bold textAlign={"center"}>1456</Text>
+                                <Text>Seguidores</Text>
+                            </VStack>
+                            <VStack>
+                                <Text bold textAlign={"center"}>68</Text>
+                                <Text>Seguidos</Text>
                             </VStack>
                         </HStack>
+                    </VStack>
+                </HStack>
 
-                        <VStack mt={5}>
-                            <Text bold>About</Text>
-                            <Text>{usuario.desc} </Text>
-                            <Text bold>Contact</Text>
-                            <Text>{usuario.email} </Text>
-                            <Text>{usuario.tel} </Text>
-                        </VStack>
-                    </>
-                ))}
-
-
+                <VStack mt={5}>
+                    <Text bold>About</Text>
+                    <Text>{des} </Text>
+                    <Text bold>Contact</Text>
+                    <Text>{email} </Text>
+                    <Text>{tel} </Text>
+                </VStack>
                 <VStack mt={5} space={4}>
                     <Text bold>Ultimas recetas</Text>
                     <HStack space={4} flexWrap={'wrap'}>

@@ -15,29 +15,53 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import firebase from "../backend/Firebase";
-import { collection, query, getDocs } from "firebase/firestore";
+import { collection, query, getDocs, onSnapshot, where } from "firebase/firestore";
 import { Pressable } from 'react-native';
 
 const Main = () => {
     const [recetas, setRecetas] = useState([]);
-    const [categorias, setCategorias] = useState([]);
-
-    const fireCategory = [];
-    const fireRecipe = [];
     const getDatos = async () => {
-        const q = query(collection(firebase.db, "recipes")); //, where("capital", "==", true));
-        try {
-            const querySnapshot = await getDocs(q);
-            querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
-                fireRecipe.push(doc.data());
-            });
-            setRecetas(fireRecipe);
-        } catch (errors) {
-            console.log("No such document!", errors);
+        if (busqueda === "") {
+            try {
+                const colRef = collection(firebase.db, "recipes");
+                const unsub = onSnapshot(colRef, (querySnapshot) => {
+                    // Crea un array vacío para almacenar los datos de los documentos
+                    const fireRecipe = [];
+                    querySnapshot.forEach((doc) => {
+                        fireRecipe.push(doc.data());
+                    });
+                    setRecetas(fireRecipe);
+                });
+            } catch (errors) {
+                console.log("No such document!", errors);
+            }
+        } else {
+            try {
+                const q = query(collection(firebase.db, 'recipes'), where('name', '==', busqueda || ''));
+                const unsub = onSnapshot(q, (querySnapshot) => {
+                    // Crea un array vacío para almacenar los datos de los documentos
+                    const fireRecipe = [];
+                    querySnapshot.docChanges().forEach((change) => {
+                        if (change.type === 'added') {
+                            // Agrega los datos del documento nuevo al array 
+                            fireRecipe.push(change.doc.data());
+                        } if (change.type === 'modified') {
+                            // Actualiza los datos del documento modificado en el array 
+                            fireRecipe[change.oldIndex] = change.doc.data();
+                        } if (change.type === 'removed') { // Elimina los datos del documento eliminado del array 
+                            fireRecipe.splice(change.oldIndex, 1);
+                        }
+                    });
+                    setRecetas(fireRecipe);
+                });
+            } catch (errors) {
+                console.log("No such document!", errors);
+            }
         }
     }
 
+    const [categorias, setCategorias] = useState([]);
+    const fireCategory = [];
     const getCategory = async () => {
         const q = query(collection(firebase.db, "category")); //, where("capital", "==", true));
         try {
@@ -52,32 +76,33 @@ const Main = () => {
         }
     }
 
+    const navigation = useNavigation();
+    const navRecipe = (recipeId) => {
+        navigation.navigate("Receta", { recipeId });
+    };
+
+    const navCategory = (categoryId) => {
+        navigation.navigate("Categoria", { categoryId });
+    };
+
+    const [busqueda, setBusqueda] = useState("");
+    const handleChange = (e) => {
+        setBusqueda(e.target.value);
+        getDatos();
+    }
+
     useEffect(() => {
         getDatos();
         getCategory();
     }, []);
 
-    const navigation = useNavigation();
-    const navRecipe = (recipeId) => {
-        // Navega a la pantalla donde quieres mostrar los productos
-        // y pasa el firebaseId como un parámetro
-        navigation.navigate("Receta", { recipeId });
-    };
-
-    const navCategory = (categoryId) => {
-        // Navega a la pantalla donde quieres mostrar los productos
-        // y pasa el firebaseId como un parámetro
-        navigation.navigate("Categoria", { categoryId });
-    };
-
     return <Center w={"80%"} ml={"10%"}>
         <Box w={"100%"} bg={"white"} rounded={'xl'}>
             <VStack m={"5%"} w={"90%"}>
                 <FormControl>
-                    <Input variant="rounded" bg={"#e4e4e7"} minW={"100%"} fontSize={"lg"}
+                    <Input variant="rounded" bg={"#e4e4e7"} minW={"100%"} fontSize={"lg"} onChange={handleChange}
                         InputLeftElement={<Icon as={<AntDesign name="search1" size={24} />} ml="5"></Icon>}
-                        placeholder="Buscar una receta"
-                        InputRightElement={<Icon as={<AntDesign name="filter" size={24} />} mr="5"></Icon>} />
+                        placeholder="Buscar una receta" />
                 </FormControl>
                 <HStack mt={2}>
                     <ScrollView
@@ -102,7 +127,8 @@ const Main = () => {
 
         <Box w={"100%"} bg={"white"} rounded={'xl'} m={"5%"}>
             <VStack m={"5%"} w={"90%"} space={5}>
-                <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Recomendaciones</Text>
+
+                <Text Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Recomendaciones</Text>
                 {recetas.map((recipes, index) => (
                     <Pressable onPress={() => navRecipe(recipes.name)}>
                         <Box w={"100%"}>
@@ -121,7 +147,7 @@ const Main = () => {
                 ))}
             </VStack>
         </Box>
-    </Center>;
+    </Center >;
 }
 
 export default function ({ props }) {

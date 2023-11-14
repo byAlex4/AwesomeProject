@@ -15,15 +15,12 @@ function Profile({ props }) {
     const [tel, setTel] = useState();
     const [img, setImg] = useState();
     const [des, setDes] = useState();
-
-    const [user, setUser] = useState([]);
     const getUser = async () => {
         const usuario = firebase.auth.currentUser;
         if (usuario) {
             // User is signed in, see docs for a list of available properties
             const uid = usuario.uid;
             const docRef = doc(firebase.db, "users", uid);
-            const userData = [];
             try {
                 // Pasa la referencia del documento a la función getDocs()
                 const docSnapshot = await getDoc(docRef);
@@ -31,9 +28,6 @@ function Profile({ props }) {
                 if (docSnapshot.exists()) {
                     // Agrega los datos del documento al array firebaseData
                     const data = docSnapshot.data()
-                    userData.push(data);
-                    setUser(userData);
-                    console.log(userData);
                     setName(data.name);
                     setEmail(data.email);
                     setTel(data.tel);
@@ -93,49 +87,44 @@ function Profile({ props }) {
             </Box>
             <Box ml={"9%"} w={"84%"}>
 
-                {user.map((usuario) => (
-                    <>
-
-                        <HStack space={4}>
+                <HStack space={4}>
+                    <VStack>
+                        <Avatar bg="amber.500" source={{
+                            uri: img
+                        }} size="2xl" mt={"-65%"}>
+                            <Avatar.Badge bg="green.500" />
+                        </Avatar>
+                    </VStack>
+                    <VStack space={3}>
+                        <Input defaultValue={name} onChangeText={(e) => setName(e.target.value)} bg={"white"} fontSize={"md"} fontStyle={'italic'} fontWeight={'bold'} mt={'-20%'} />
+                        <HStack ml={"auto"} right={0} space={4} display={'absolute'}>
                             <VStack>
-                                <Avatar bg="amber.500" source={{
-                                    uri: usuario.img
-                                }} size="2xl" mt={"-65%"}>
-                                    <Avatar.Badge bg="green.500" />
-                                </Avatar>
+                                <Text bold textAlign={"center"}>23</Text>
+                                <Text>Recetas</Text>
                             </VStack>
-                            <VStack space={3}>
-                                <Input defaultValue={name} onChange={(e) => setName(e.target.value)} bg={"white"} fontSize={"md"} fontStyle={'italic'} fontWeight={'bold'} mt={'-20%'} />
-                                <HStack ml={"auto"} right={0} space={4} display={'absolute'}>
-                                    <VStack>
-                                        <Text bold textAlign={"center"}>23</Text>
-                                        <Text>Recetas</Text>
-                                    </VStack>
-                                    <VStack>
-                                        <Text bold textAlign={"center"}>1456</Text>
-                                        <Text>Seguidores</Text>
-                                    </VStack>
-                                    <VStack>
-                                        <Text bold textAlign={"center"}>68</Text>
-                                        <Text>Seguidos</Text>
-                                    </VStack>
-                                </HStack>
+                            <VStack>
+                                <Text bold textAlign={"center"}>1456</Text>
+                                <Text>Seguidores</Text>
+                            </VStack>
+                            <VStack>
+                                <Text bold textAlign={"center"}>68</Text>
+                                <Text>Seguidos</Text>
                             </VStack>
                         </HStack>
+                    </VStack>
+                </HStack>
 
-                        <VStack mt={5}>
-                            <Input value={img} onChangeText={(value) => setImg(value)} minW={"100%"} />
-                            <Text bold>About</Text>
-                            <TextArea defaultValue={des} onChangeText={(value) => setDes(value)} bg={"white"} minW={"100%"} />
-                            <Text bold>Contact</Text>
-                            <Text>Correo electronico</Text>
-                            <Input defaultValue={email} onChangeText={(value) => setEmail(value)} bg={"white"} minW={"100%"} />
-                            <Text>Numero telefonico</Text>
-                            <Input defaultValue={tel} onChangeText={(value) => setTel(value)} bg={"white"} minW={"100%"} />
-                            <Button size="sm" mt={4} onPress={onSubmit}>Guardar cambios</Button>
-                        </VStack>
-                    </>
-                ))}
+                <VStack mt={5}>
+                    <Input value={img} onChangeText={(value) => setImg(value)} minW={"100%"} />
+                    <Text bold>About</Text>
+                    <TextArea defaultValue={des} onChangeText={(value) => setDes(value)} bg={"white"} minW={"100%"} />
+                    <Text bold>Contact</Text>
+                    <Text>Correo electronico</Text>
+                    <Input defaultValue={email} onChangeText={(value) => setEmail(value)} bg={"white"} minW={"100%"} />
+                    <Text>Numero telefonico</Text>
+                    <Input defaultValue={tel} onChangeText={(value) => setTel(value)} bg={"white"} minW={"100%"} />
+                    <Button size="sm" mt={4} onPress={onSubmit}>Guardar cambios</Button>
+                </VStack>
             </Box>
         </View >
     )

@@ -35,7 +35,6 @@ function Favorites({ props }) {
                     console.log(firebaseFav);
                     setReceta(firebaseFav)
                 });
-
             } catch (errors) {
                 console.log("No such fav!", errors);
             };
