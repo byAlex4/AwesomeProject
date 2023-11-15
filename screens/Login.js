@@ -18,8 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import firebase from "./../backend/Firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { FacebookAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
 
 
 const Login = () => {
@@ -71,7 +70,7 @@ const Login = () => {
         signInWithEmailAndPassword(firebase.auth, formData.email, formData.password)
             .then((userCredential) => {
                 user = userCredential.user;
-                console.log('Sesión iniciada', user.uid);
+                console.log('Sesión iniciada', user);
                 navigation.navigate('Nav', { uid: user.uid });
                 return true;
             })
@@ -97,7 +96,7 @@ const Login = () => {
                 const credential = GoogleAuthProvider.credentialFromResult(result);
                 const token = credential.accessToken;
                 const user = result.user;
-                navigation.navigate('Nav', { user })
+                navigation.navigate('Nav', { uid: user.uid });
             }).catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;

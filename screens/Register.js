@@ -18,6 +18,7 @@ import { AntDesign } from '@expo/vector-icons';
 import firebase from "../backend/Firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
 
 const Registro = () => {
   const navigation = useNavigation();
@@ -60,7 +61,7 @@ const Registro = () => {
     createUserWithEmailAndPassword(firebase.auth, correo, contra)
       .then((userCredential) => {
         setIsOpen(true)
-        console.log('Cuenta creada')
+        console.log('Cuenta creada');
         var user = userCredential.user;
         console.log(user)
         saveUser(user.uid)
@@ -70,6 +71,67 @@ const Registro = () => {
         console.log("Error:" + errors);
         alert("Error:" + errors);
       });
+  }
+
+  const signInGoogle = () => {
+    const provider = new GoogleAuthProvider();
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+      .then(async (result) => {
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        console.log('Cuenta creada');
+        const token = credential.accessToken;
+        const user = result.user;
+        console.log(token);
+        try {
+          const data = {
+            img: user.photoURL,
+            name: user.displayName,
+            email: user.email,
+            password: token,
+            tel: "",
+            desc: ""
+          }
+          await setDoc(doc(firebase.db, 'users', user.uid), data);
+        } catch (errors) {
+          console.error("Error adding document: ", errors);
+        }
+        navigation.navigate('Nav', { uid: user.uid });
+      }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  }
+
+  const signInFacebook = () => {
+    const provider = new FacebookAuthProvider();
+    const auth = getAuth();
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // The signed-in user info.
+        const user = result.user;
+        // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+        const credential = FacebookAuthProvider.credentialFromResult(result);
+        const accessToken = credential.accessToken;
+        navigation.navigate('Nav', { user })
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = FacebookAuthProvider.credentialFromError(error);
+
+        // ...
+      });
+
   }
 
   const validate = () => {
@@ -196,7 +258,7 @@ const Registro = () => {
                 </Text>
               </HStack>
               <HStack justifyContent="center" space={4}>
-                <Link variant={"link"} href="https://accounts.google.com/"><Icon as={<AntDesign name="google" />} size={30}></Icon></Link>
+                <Link variant={"link"} onPress={signInGoogle}><Icon as={<AntDesign name="google" />} size={30}></Icon></Link>
                 <Link variant={"link"} href="https://www.facebook.com/"><Icon as={<AntDesign name="facebook-square" />} size={30}></Icon></Link>
                 <Link variant={"link"} href="https://github.com/login"><Icon as={<AntDesign name="github" />} size={30}></Icon></Link>
                 <Link variant={"link"} href="https://appleid.apple.com/sign-in"><Icon as={<AntDesign name="apple1" />} size={30}></Icon></Link>
