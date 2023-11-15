@@ -18,6 +18,9 @@ import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import firebase from "./../backend/Firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { FacebookAuthProvider } from "firebase/auth";
+
 
 const Login = () => {
     const navigation = useNavigation();
@@ -86,6 +89,52 @@ const Login = () => {
         validate() ? navigation.navigate('Nav', { user }) : console.log("Validation Failed", errors, formData.email, formData.password);
     };
 
+    const signInGoogle = () => {
+        const provider = new GoogleAuthProvider();
+        const auth = getAuth();
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                const credential = GoogleAuthProvider.credentialFromResult(result);
+                const token = credential.accessToken;
+                const user = result.user;
+                navigation.navigate('Nav', { user })
+            }).catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.customData.email;
+                // The AuthCredential type that was used.
+                const credential = GoogleAuthProvider.credentialFromError(error);
+                // ...
+            });
+    }
+
+    const signInFacebook = () => {
+        const provider = new FacebookAuthProvider();
+        const auth = getAuth();
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                // The signed-in user info.
+                const user = result.user;
+                // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+                const credential = FacebookAuthProvider.credentialFromResult(result);
+                const accessToken = credential.accessToken;
+                navigation.navigate('Nav', { user })
+            })
+            .catch((error) => {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.customData.email;
+                // The AuthCredential type that was used.
+                const credential = FacebookAuthProvider.credentialFromError(error);
+
+                // ...
+            });
+
+    }
+
     return (
         <Center>
             <Image source={{
@@ -139,8 +188,8 @@ const Login = () => {
                                 </Text>
                             </HStack>
                             <HStack justifyContent="center" space={4} maxH={"40px"}>
-                                <Link variant={"link"} href="https://accounts.google.com/"><Icon as={<AntDesign name="google" />} size={30}></Icon></Link>
-                                <Link variant={"link"} href="https://www.facebook.com/"><Icon as={<AntDesign name="facebook-square" />} size={30}></Icon></Link>
+                                <Link variant={"link"} onPress={signInGoogle}><Icon as={<AntDesign name="google" />} size={30}></Icon></Link>
+                                <Link variant={"link"} onPress={signInFacebook}><Icon as={<AntDesign name="facebook-square" />} size={30}></Icon></Link>
                                 <Link variant={"link"} href="https://github.com/login"><Icon as={<AntDesign name="github" />} size={30}></Icon></Link>
                                 <Link variant={"link"} href="https://appleid.apple.com/sign-in"><Icon as={<AntDesign name="apple1" />} size={30}></Icon></Link>
                             </HStack>
