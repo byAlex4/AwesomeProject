@@ -13,10 +13,9 @@ import FormReceta from './screens/FormRecepta';
 import Receta from './screens/Recipe';
 import Account from './screens/Account';
 import Edit from './screens/AccountEdit';
+import editReceta from './screens/RecipeEdit';
 
 const Stack = createNativeStackNavigator();
-
-
 export default function () {
   return (
     <NativeBaseProvider>
@@ -102,6 +101,17 @@ export default function () {
             <Stack.Screen
               name={"Editar cuenta"}
               component={Edit}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#4b2ba0",
+                  color: "#white",
+                  statusBarColor: "white"
+                }
+              }}
+            />
+            <Stack.Screen
+              name={"Editar receta"}
+              component={editReceta}
               options={{
                 headerStyle: {
                   backgroundColor: "#4b2ba0",

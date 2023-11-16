@@ -77,7 +77,7 @@ const Receta = () => {
                     <>
                         <HStack>
                             <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>{recipe.name}</Text>
-                            <IconButton colorScheme="indigo" variant={'outline'} _icon={{
+                            <IconButton colorScheme="indigo" variant={'outline'} ml={'auto'} mr={0} _icon={{
                                 as: AntDesign,
                                 name: "heart"
                             }} onPress={() => addFavs(recipe.name)} />

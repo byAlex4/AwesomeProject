@@ -20,7 +20,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import firebase from "../backend/Firebase";
 import { collection, getDocs, doc, query, setDoc } from "firebase/firestore";
 import { Pressable } from 'react-native';
-import uuid from "uuid";
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
 

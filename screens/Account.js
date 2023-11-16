@@ -77,7 +77,7 @@ function Profile({ props }) {
     const navRecipe = (recipeId) => {
         // Navega a la pantalla donde quieres mostrar los productos
         // y pasa el firebaseId como un parámetro
-        navigation.navigate("Receta", { recipeId });
+        navigation.navigate("Editar receta", { recipeId });
     };
 
     useEffect(() => {
