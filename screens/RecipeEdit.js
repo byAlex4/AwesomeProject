@@ -8,17 +8,19 @@ import {
     Text,
     Image,
     Select,
-    FormControl,
     TextArea,
     Button,
     Input,
     CheckIcon,
+    IconButton,
+    AlertDialog
 } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { AntDesign } from '@expo/vector-icons';
 import { useNavigation, useRoute } from "@react-navigation/native";
 import firebase from "../backend/Firebase";
-import { collection, query, where, getDocs, doc, updateDoc } from "firebase/firestore";
-import { Pressable } from 'react-native';
+import { collection, query, where, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { Pressable, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
 
@@ -155,9 +157,53 @@ const Receta = () => {
             ? navigation.navigate('Nav') : console.log("Validation Failed", errors, name, description, category);
     };
 
+    const [isOpen, setIsOpen] = React.useState(false);
+    const onClose = () => setIsOpen(false);
+    const cancelRef = React.useRef(null);
+
+    const deleteRecipe = async (name) => {
+        // Crear una referencia al documento que quieres borrar
+        const recipeRef = doc(firebase.db, 'recipes', name);
+        // Intentar borrar el documento y manejar los posibles errores
+        try {
+            await deleteDoc(recipeRef);
+            console.log('Documento borrado correctamente');
+        } catch (error) {
+            console.error('Error al borrar el documento:', error);
+        }
+    };
+
     return <Center w={"90%"} ml={"5%"}>
         <Box w={"95%"} bg={"white"} rounded={'xl'} p={"5%"}>
-            <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Editar receta</Text>
+            <HStack>
+                <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Editar receta</Text>
+                <IconButton colorScheme="indigo" variant={'outline'} ml={'auto'} mr={0} _icon={{
+                    as: AntDesign,
+                    name: "delete"
+                }} onPress={() => setIsOpen(!isOpen)} />
+            </HStack>
+            <AlertDialog leastDestructiveRef={cancelRef} isOpen={isOpen} onClose={onClose}>
+                <AlertDialog.Content>
+                    <AlertDialog.CloseButton />
+                    <AlertDialog.Header>Eliminar {name}</AlertDialog.Header>
+                    <AlertDialog.Body>
+                        Esto podria eliminar la receta permanentemente.
+                        Esta accion no se podra revertir.
+                        Los datos eliminados no se podran recuperar.
+                        Estas seguro de querer eliminarla?
+                    </AlertDialog.Body>
+                    <AlertDialog.Footer>
+                        <Button.Group space={2}>
+                            <Button variant="unstyled" colorScheme="coolGray" onPress={onClose} ref={cancelRef}>
+                                Cancelar
+                            </Button>
+                            <Button colorScheme="danger" onPress={() => deleteRecipe(name)}>
+                                Eliminar
+                            </Button>
+                        </Button.Group>
+                    </AlertDialog.Footer>
+                </AlertDialog.Content>
+            </AlertDialog>
             <HStack w={"95%"} space={2}>
                 <TouchableOpacity>
                     <Pressable onPress={pickImageAsync}>
