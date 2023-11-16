@@ -17,9 +17,13 @@ import {
     from 'native-base';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import * as ImagePicker from "expo-image-picker";
 import firebase from "../backend/Firebase";
 import { collection, getDocs, doc, query, setDoc } from "firebase/firestore";
+import { Pressable } from 'react-native';
+import uuid from "uuid";
+import * as ImagePicker from 'expo-image-picker';
+import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
+
 
 // Exportar el componente CrearReceta
 const CrearReceta = (props) => {
@@ -63,48 +67,67 @@ const CrearReceta = (props) => {
         }
     }
 
-    // Añadir async a la función pickImage
-    const pickImage = async () => {
-        // Pedir permiso al usuario para acceder a sus fotos
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-            alert('Lo siento, necesitamos permiso para acceder a tus fotos.');
-            return;
-        }
-
-        // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
-        }
-    };
-
     const navigation = useNavigation();
     const [formData, setData] = React.useState({});
     const [errors, setErrors] = React.useState({});
 
+    const [img, setImg] = React.useState("https://i.postimg.cc/VLQdNJPY/default-user-icon-4.jpg");
+
     const route = useRoute();
     const { uid } = route.params;
     const onSubmit = () => {
-        saveRecipe(formData.name, formData.description, formData.ingredient, formData.img, formData.category, formData.time, formData.steps, uid)
+        saveRecipe(formData.name, formData.description, formData.ingredient, img, formData.category, formData.time, formData.steps, uid)
             ? navigation.navigate('Nav') : console.log("Validation Failed", errors, uid, formData.name, formData.description, formData.category);
     };
+
+    const pickImageAsync = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            aspect: [1],
+        });
+
+        if (!result.canceled) {
+            const { uid } = route.params;
+            const assets = result.assets[0];
+            const storage = getStorage();
+            const name = "img" + uid + Date.now();
+            console.log(name);
+            const imagesRef = ref(storage, name);
+            try {
+                uploadString(imagesRef, assets.uri, 'data_url').then((snapshots) => {
+                    console.log('Uploaded a data_url string!');
+                });
+                // Aquí usamos setTimeout para retrasar la llamada a getURL por 2000 milisegundos (2 segundos)
+                setTimeout(getURL, 3000, imagesRef);
+            } catch (e) {
+                console.log(e);
+                alert("Upload failed, sorry :(");
+            }
+        } else {
+            alert('You did not select any image.');
+        }
+    };
+
+    const getURL = (imagesRef) => {
+        getDownloadURL(imagesRef)
+            .then(function (url) {
+                console.log(url);
+                setImg(url);
+                console.log(img);
+            }).catch(function (error) {
+                // Maneja cualquier error
+                console.error(error);
+            });
+    }
 
     return <Center w={"90%"} ml={"5%"}>
         <Box w={"95%"} bg={"white"} rounded={'xl'} p={"5%"}>
             <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Nueva receta</Text>
             <HStack w={"95%"} space={2}>
                 <TouchableOpacity>
-                    <Image source={{
-                        uri: "https://i.postimg.cc/VLQdNJPY/default-user-icon-4.jpg"
-                    }} alt="Txt" size="lg" style={{ width: '120px', marginTop: '15px' }} resizeMode="contain"
-                        onPress={() => pickImage} />
+                    <Pressable onPress={pickImageAsync}>
+                        <Image source={{ uri: img }} alt="Txt" size="lg" style={{ width: '120px', marginTop: '15px' }} resizeMode="contain" />
+                    </Pressable>
                 </TouchableOpacity>
                 <VStack space={1} w={'60%'}>
                     <FormControl isRequired isInvalid={'name' in errors}>
@@ -141,16 +164,6 @@ const CrearReceta = (props) => {
                             time: value
                         })} bg={"white"} minW={"100%"} fontSize={"lg"} />
                         {'time' in errors ?
-                            <FormControl.ErrorMessage>{errors.time}</FormControl.ErrorMessage> : " "
-                        }
-                    </FormControl>
-                    <FormControl isRequired isInvalid={'img' in errors}>
-                        <FormControl.Label >imagen:</FormControl.Label>
-                        <Input size="xs" placeholder="30 min aprox" onChangeText={value => setData({
-                            ...formData,
-                            img: value
-                        })} bg={"white"} minW={"100%"} fontSize={"lg"} />
-                        {'img' in errors ?
                             <FormControl.ErrorMessage>{errors.time}</FormControl.ErrorMessage> : " "
                         }
                     </FormControl>
@@ -205,3 +218,4 @@ export default function () {
         </View>
     );
 };
+

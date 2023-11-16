@@ -15,6 +15,9 @@ import {
 import firebase from "../backend/Firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
+import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
+import { Pressable } from 'react-native';
 
 
 function Profile({ props }) {
@@ -22,7 +25,7 @@ function Profile({ props }) {
     const [name, setName] = useState();
     const [email, setEmail] = useState();
     const [tel, setTel] = useState();
-    const [img, setImg] = useState();
+    const [img, setImg] = useState("https://i.postimg.cc/VLQdNJPY/default-user-icon-4.jpg");
     const [des, setDes] = useState();
     const getUser = async () => {
         const usuario = firebase.auth.currentUser;
@@ -89,6 +92,47 @@ function Profile({ props }) {
             : console.log("Validation Failed", errors, name, email, tel, img, des);
     };
 
+    const pickImageAsync = async () => {
+        const user = firebase.auth.currentUser;
+        let result = await ImagePicker.launchImageLibraryAsync({
+            allowsEditing: true,
+            aspect: [1],
+        });
+
+        if (!result.canceled) {
+            const uid = user.email;
+            const assets = result.assets[0];
+            const storage = getStorage();
+            const name = "img" + uid + Date.now();
+            console.log(name);
+            const imagesRef = ref(storage, name);
+            try {
+                uploadString(imagesRef, assets.uri, 'data_url').then((snapshots) => {
+                    console.log('Uploaded a data_url string!');
+                });
+                // Aquí usamos setTimeout para retrasar la llamada a getURL por 2000 milisegundos (2 segundos)
+                setTimeout(getURL, 3000, imagesRef);
+            } catch (e) {
+                console.log(e);
+                alert("Upload failed, sorry :(");
+            }
+        } else {
+            alert('You did not select any image.');
+        }
+    };
+
+    const getURL = (imagesRef) => {
+        getDownloadURL(imagesRef)
+            .then(function (url) {
+                console.log(url);
+                setImg(url);
+                console.log(img);
+            }).catch(function (error) {
+                // Maneja cualquier error
+                console.error(error);
+            });
+    }
+
     return (
         <View>
             <Box bg={"black"} rounded={"0px 10px 10px 0px"} pl={48} pr={48} pt={5}>
@@ -98,11 +142,13 @@ function Profile({ props }) {
 
                 <HStack space={4}>
                     <VStack>
-                        <Avatar bg="amber.500" source={{
-                            uri: img
-                        }} size="2xl" mt={"-65%"}>
-                            <Avatar.Badge bg="green.500" />
-                        </Avatar>
+                        <Pressable onPress={pickImageAsync}>
+                            <Avatar bg="amber.500" source={{
+                                uri: img
+                            }} size="2xl" mt={"-65%"}>
+                                <Avatar.Badge bg="green.500" />
+                            </Avatar>
+                        </Pressable>
                     </VStack>
                     <VStack space={3}>
                         <Input defaultValue={name} onChangeText={(e) => setName(e.target.value)} bg={"white"} fontSize={"md"} fontStyle={'italic'} fontWeight={'bold'} mt={'-20%'} />
@@ -124,7 +170,6 @@ function Profile({ props }) {
                 </HStack>
 
                 <VStack mt={5}>
-                    <Input value={img} onChangeText={(value) => setImg(value)} minW={"100%"} />
                     <Text bold>About</Text>
                     <TextArea defaultValue={des} onChangeText={(value) => setDes(value)} bg={"white"} minW={"100%"} />
                     <Text bold>Contact</Text>
