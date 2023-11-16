@@ -45,7 +45,6 @@ function Profile({ props }) {
     };
 
     const [recetas, setRecetas] = useState([]);
-    const firebaseData = [];
     const getDatos = async () => {
         const user = firebase.auth.currentUser;
         if (user) {
@@ -53,12 +52,22 @@ function Profile({ props }) {
             const uid = user.uid;
             const q = query(collection(firebase.db, "recipes"), where("userid", "==", uid));
             try {
-                const querySnapshot = await getDocs(q);
-                querySnapshot.forEach((doc) => {
-                    // doc.data() is never undefined for query doc snapshots
-                    firebaseData.push(doc.data());
+                const unsub = onSnapshot(q, (querySnapshot) => {
+                    // Crea un array vacío para almacenar los datos de los documentos
+                    const fireRecipe = [];
+                    querySnapshot.docChanges().forEach((change) => {
+                        if (change.type === 'added') {
+                            // Agrega los datos del documento nuevo al array 
+                            fireRecipe.push(change.doc.data());
+                        } if (change.type === 'modified') {
+                            // Actualiza los datos del documento modificado en el array 
+                            fireRecipe[change.oldIndex] = change.doc.data();
+                        } if (change.type === 'removed') { // Elimina los datos del documento eliminado del array 
+                            fireRecipe.splice(change.oldIndex, 1);
+                        }
+                    });
+                    setRecetas(fireRecipe);
                 });
-                setRecetas(firebaseData);
             } catch (errors) {
                 console.log("No such document!", errors);
             };
