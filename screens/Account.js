@@ -94,7 +94,7 @@ function Profile({ props }) {
     }, []); // Pasa un arreglo vacío como segundo argumento para que solo se ejecute una vez
     return (
         <View>
-            <Box bg={"black"} rounded={"0px 10px 10px 0px"} pl={48} pr={48} pt={20}>
+            <Box bg={"black"} rounded={"0px 10px 10px 0px"} pl={'40%'} pr={'40%'} pt={'20%'}>
                 This is a Box with Linear Gradient
             </Box>
             <Box ml={"9%"} w={"84%"}>

@@ -170,7 +170,7 @@ function Profile({ props }) {
 
     return (
         <View>
-            <Box bg={"black"} rounded={"0px 10px 10px 0px"} pl={48} pr={48} pt={5}>
+            <Box bg={"black"} rounded={"0px 10px 10px 0px"} pl={'40%'} pr={'40%'} pt={'20%'}>
                 This is a Box with Linear Gradient
             </Box>
             <Box ml={"9%"} w={"84%"}>
@@ -187,7 +187,7 @@ function Profile({ props }) {
                     </VStack>
                     <FormControl isRequired isInvalid={'name' in errors}>
                         <Input value={name} onChangeText={value => setName(value)} bg={"white"}
-                            fontSize={"lg"} fontWeight={'bold'} maxH={'40px'} mt={2} />
+                            fontSize={"lg"} fontWeight={'bold'} maxH={'40px'} mt={1} />
                         {'name' in errors ?
                             <FormControl.ErrorMessage>{errors.name}</FormControl.ErrorMessage> : ""
                         }
@@ -197,7 +197,7 @@ function Profile({ props }) {
                     <FormControl isRequired isInvalid={'desc' in errors}>
                         <FormControl.Label bold>About</FormControl.Label>
                         <TextArea value={des} onChangeText={value => setDes(value)} bg={"white"}
-                            minW={"100%"} />
+                            minW={"100%"} fontSize={"md"} />
                         {'desc' in errors ?
                             <FormControl.ErrorMessage>{errors.desc}</FormControl.ErrorMessage> : ""
                         }
@@ -205,14 +205,14 @@ function Profile({ props }) {
                     <Text bold>Contact</Text>
                     <FormControl isRequired isInvalid={'email' in errors}>
                         <FormControl.Label bold>Correo electronico</FormControl.Label>
-                        <Input value={email} onChangeText={value => setEmail(value)} bg={"white"} minW={"100%"} />
+                        <Input value={email} onChangeText={value => setEmail(value)} bg={"white"} minW={"100%"} fontSize={"md"} />
                         {'email' in errors ?
                             <FormControl.ErrorMessage>{errors.email}</FormControl.ErrorMessage> : ""
                         }
                     </FormControl>
                     <FormControl isRequired isInvalid={'tel' in errors}>
                         <FormControl.Label bold>Numero telefonico</FormControl.Label>
-                        <Input value={tel} onChangeText={value => setTel(value)} bg={"white"} minW={"100%"} />
+                        <Input value={tel} onChangeText={value => setTel(value)} bg={"white"} minW={"100%"} fontSize={"md"} />
                         {'tel' in errors ?
                             <FormControl.ErrorMessage>{errors.tel}</FormControl.ErrorMessage> : ""
                         }

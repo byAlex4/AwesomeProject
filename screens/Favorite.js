@@ -55,21 +55,24 @@ const Receta = () => {
         setChecked(newChecked);
     }
 
-    const addFavs = async (recipe) => {
+    const delFavs = async (name) => {
         const user = firebase.auth.currentUser;
-        try {
-            const uid = user.uid;
-            const data = {
-                idrecipe: recipe,
-                iduser: uid,
-            }
-            const nombre = uid + '-' + recipe;
-            console.log(data);
-            await setDoc(doc(firebase.db, 'favorites', nombre), data);
-        } catch (errors) {
-            console.error("Error adding document: ", errors);
-        }
+        const uid = user.uid;
+        // Crear una referencia a la colección de recetas 
+        const recipesRef = collection(firebase.db, 'favorites')
+        // Crear una consulta para filtrar los documentos donde recipeID = name y userID = uid 
+        const query = query(recipesRef, where('idrecipe', '==', name), where('iduser', '==', uid));
+        // Obtener los documentos que coinciden con la consulta 
+        const querySnapshot = await getDocs(query);
+        // Iterar sobre los documentos y borrarlos 
+        querySnapshot.forEach(async (doc) => {
+            // Borrar el documento 
+            await deleteDoc(doc.ref);
+            console.log('Documento borrado correctamente');
+        });
     }
+
+
     return <Center w={"90%"} ml={"5%"}>
         <Box w={"95%"} bg={"white"} rounded={'xl'} p={"5%"}>
             <VStack space={2}>
@@ -79,8 +82,8 @@ const Receta = () => {
                             <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>{recipe.name}</Text>
                             <IconButton colorScheme="indigo" variant={'outline'} ml={'auto'} mr={0} _icon={{
                                 as: AntDesign,
-                                name: "hearto"
-                            }} onPress={() => addFavs(recipe.name)} />
+                                name: "heart"
+                            }} onPress={() => delFavs(recipe.name)} />
                         </HStack>
                         <HStack w={"95%"} space={2}>
                             <Image source={{

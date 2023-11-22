@@ -6,7 +6,7 @@ import {
     Fab
 } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Entypo } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Main from "./Menu";
 import Profile from "./Account";
@@ -103,15 +103,18 @@ export default function () {
             >
                 <Tab.Screen name="Account" component={ProfileScreen} options={{
                     headerShown: false,
-                    tabBarIcon: () => (<Icon as={<AntDesign name="user" size={24} />} color={'white'}></Icon>)
+                    tabBarIcon: ({ focused }) => (focused ? <Icon as={<Entypo name='user' size={24} />} color={'white'} fill={'white'}></Icon>
+                        : <Icon as={<AntDesign name='user' size={24} />} color={'white'}></Icon >)
                 }} />
                 <Tab.Screen name="Home" component={HomeScreen} options={{
                     headerShown: false,
-                    tabBarIcon: () => (<Icon as={<AntDesign name="home" size={24} />} color={"white"}></Icon>)
+                    tabBarIcon: ({ focused }) => (focused ? <Icon as={<Entypo name='home' size={24} />} color={'white'}></Icon>
+                        : <Icon as={<AntDesign name='home' size={24} />} color={'white'}></Icon >)
                 }} />
                 <Tab.Screen name="Favorites" component={FavScreen} options={{
                     headerShown: false,
-                    tabBarIcon: () => (<Icon as={<AntDesign name="heart" size={24} />} color={"white"} ></Icon>)
+                    tabBarIcon: ({ focused }) => (focused ? <Icon as={<AntDesign name='heart' size={24} />} color={'white'}></Icon>
+                        : <Icon as={<AntDesign name='hearto' size={24} />} color={'white'}></Icon >)
                 }} />
             </Tab.Navigator>
         </>

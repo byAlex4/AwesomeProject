@@ -14,6 +14,7 @@ import Receta from './screens/Recipe';
 import Account from './screens/Account';
 import Edit from './screens/AccountEdit';
 import editReceta from './screens/RecipeEdit';
+import Favorite from './screens/Favorite';
 
 const Stack = createNativeStackNavigator();
 export default function () {
@@ -78,6 +79,17 @@ export default function () {
             <Stack.Screen
               name={"Receta"}
               component={Receta}
+              options={{
+                headerStyle: {
+                  backgroundColor: "#4b2ba0",
+                  color: "#white",
+                  statusBarColor: "white"
+                }
+              }}
+            />
+            <Stack.Screen
+              name={"Favorito"}
+              component={Favorite}
               options={{
                 headerStyle: {
                   backgroundColor: "#4b2ba0",
