@@ -61,7 +61,6 @@ function Categorias({ props }) {
                                         }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
                                         <VStack flexWrap={'wrap'} maxW={'148px'}>
                                             <Text>{recipes.name}</Text>
-                                            <Text>{recipes.description}</Text>
                                             <Text>{recipes.time}</Text>
                                         </VStack>
                                     </HStack>

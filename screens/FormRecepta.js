@@ -120,6 +120,13 @@ const CrearReceta = (props) => {
             });
             return false;
         }
+        if (!/^[0-9]/.test(tiempo)) {
+            setErrors({
+                ...errors,
+                time: "Tiempo invalido"
+            });
+            return false;
+        }
         if (pasos == undefined) {
             setErrors({
                 ...errors,
