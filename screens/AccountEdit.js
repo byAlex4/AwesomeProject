@@ -10,7 +10,8 @@ import {
     Text,
     ScrollView,
     Input,
-    TextArea
+    TextArea,
+    FormControl
 } from 'native-base';
 import firebase from "../backend/Firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
@@ -27,6 +28,7 @@ function Profile({ props }) {
     const [tel, setTel] = useState();
     const [img, setImg] = useState("https://i.postimg.cc/VLQdNJPY/default-user-icon-4.jpg");
     const [des, setDes] = useState();
+    const [errors, setErrors] = useState({});
     const getUser = async () => {
         const usuario = firebase.auth.currentUser;
         if (usuario) {
@@ -45,7 +47,6 @@ function Profile({ props }) {
                     setTel(data.tel);
                     setImg(data.img);
                     setDes(data.desc);
-                    console.log(data.name);
                 } else {
                     // Muestra un mensaje si el documento no existe
                     console.log("No such document!");
@@ -60,36 +61,70 @@ function Profile({ props }) {
         getUser();
     }, []);
 
-    const saveUser = async (nombre, correo, celular, imagen, descripcion) => {
-        try {
-            const user = firebase.auth.currentUser;
-            if (user) {
-                const uid = user.uid;
-                var userRef = doc(firebase.db, 'users', uid);
-                await updateDoc(userRef, {
-                    name: nombre,
-                    email: correo,
-                    tel: celular,
-                    img: imagen,
-                    desc: descripcion
+    const saveUser = async () => {
+        const user = firebase.auth.currentUser;
+        if (user) {
+            const uid = user.uid;
+            var userRef = doc(firebase.db, 'users', uid);
+            await updateDoc(userRef, {
+                name: name,
+                email: email,
+                tel: tel,
+                img: img,
+                desc: des
+            })
+                .then(() => {
+                    console.log('Documento actualizado correctamente');
+                    return true;
                 })
-                    .then(() => {
-                        console.log('Documento actualizado correctamente');
-                    })
-                    .catch((error) => {
-                        console.error('Error al actualizar el documento:', error);
-                    });
-            }
-            return true;
-        } catch (errors) {
-            console.error("Error adding document: ", errors);
-            return false;
+                .catch((errors) => {
+                    console.error('Error al actualizar el documento:', errors);
+                    return false;
+                });
         }
     }
 
+    const onValidate = () => {
+        if (name == "") {
+            setErrors({
+                ...errors,
+                name: "Ingrese un nombre"
+            });
+            return false;
+        }
+        if (email == "") {
+            setErrors({
+                ...errors,
+                email: "Ingrese un correo"
+            });
+            return false;
+        }
+        if (tel == "") {
+            setErrors({
+                ...errors,
+                tel: "Ingrese un telefono"
+            });
+            return false;
+        } if (img == "") {
+            setErrors({
+                ...errors,
+                img: "Ingrese una imagen"
+            });
+            return false;
+        }
+        if (des == "") {
+            setErrors({
+                ...errors,
+                desc: "Ingrese una descripcion"
+            });
+            return false;
+        }
+        saveUser();
+        return true;
+    }
+
     const onSubmit = () => {
-        saveUser(name, email, tel, img, des) ? navigation.navigate('Nav')
-            : console.log("Validation Failed", errors, name, email, tel, img, des);
+        onValidate() ? navigation.navigate('Nav') : console.log("Error adding document", errors);
     };
 
     const pickImageAsync = async () => {
@@ -140,44 +175,49 @@ function Profile({ props }) {
             </Box>
             <Box ml={"9%"} w={"84%"}>
 
-                <HStack space={4}>
+                <HStack space={3}>
                     <VStack>
                         <Pressable onPress={pickImageAsync}>
                             <Avatar bg="amber.500" source={{
                                 uri: img
-                            }} size="2xl" mt={"-65%"}>
+                            }} size="2xl" mt={"-45%"}>
                                 <Avatar.Badge bg="green.500" />
                             </Avatar>
                         </Pressable>
                     </VStack>
-                    <VStack space={3}>
-                        <Input defaultValue={name} onChangeText={(e) => setName(e.target.value)} bg={"white"} fontSize={"md"} fontStyle={'italic'} fontWeight={'bold'} mt={'-20%'} />
-                        <HStack ml={"auto"} right={0} space={4} display={'absolute'}>
-                            <VStack>
-                                <Text bold textAlign={"center"}>23</Text>
-                                <Text>Recetas</Text>
-                            </VStack>
-                            <VStack>
-                                <Text bold textAlign={"center"}>1456</Text>
-                                <Text>Seguidores</Text>
-                            </VStack>
-                            <VStack>
-                                <Text bold textAlign={"center"}>68</Text>
-                                <Text>Seguidos</Text>
-                            </VStack>
-                        </HStack>
-                    </VStack>
+                    <FormControl isRequired isInvalid={'name' in errors}>
+                        <Input value={name} onChangeText={value => setName(value)} bg={"white"}
+                            fontSize={"lg"} fontWeight={'bold'} maxH={'40px'} mt={2} />
+                        {'name' in errors ?
+                            <FormControl.ErrorMessage>{errors.name}</FormControl.ErrorMessage> : ""
+                        }
+                    </FormControl>
                 </HStack>
-
                 <VStack mt={5}>
-                    <Text bold>About</Text>
-                    <TextArea defaultValue={des} onChangeText={(value) => setDes(value)} bg={"white"} minW={"100%"} />
+                    <FormControl isRequired isInvalid={'desc' in errors}>
+                        <FormControl.Label bold>About</FormControl.Label>
+                        <TextArea value={des} onChangeText={value => setDes(value)} bg={"white"}
+                            minW={"100%"} />
+                        {'desc' in errors ?
+                            <FormControl.ErrorMessage>{errors.desc}</FormControl.ErrorMessage> : ""
+                        }
+                    </FormControl>
                     <Text bold>Contact</Text>
-                    <Text>Correo electronico</Text>
-                    <Input defaultValue={email} onChangeText={(value) => setEmail(value)} bg={"white"} minW={"100%"} />
-                    <Text>Numero telefonico</Text>
-                    <Input defaultValue={tel} onChangeText={(value) => setTel(value)} bg={"white"} minW={"100%"} />
-                    <Button size="sm" mt={4} onPress={onSubmit}>Guardar cambios</Button>
+                    <FormControl isRequired isInvalid={'email' in errors}>
+                        <FormControl.Label bold>Correo electronico</FormControl.Label>
+                        <Input value={email} onChangeText={value => setEmail(value)} bg={"white"} minW={"100%"} />
+                        {'email' in errors ?
+                            <FormControl.ErrorMessage>{errors.email}</FormControl.ErrorMessage> : ""
+                        }
+                    </FormControl>
+                    <FormControl isRequired isInvalid={'tel' in errors}>
+                        <FormControl.Label bold>Numero telefonico</FormControl.Label>
+                        <Input value={tel} onChangeText={value => setTel(value)} bg={"white"} minW={"100%"} />
+                        {'tel' in errors ?
+                            <FormControl.ErrorMessage>{errors.tel}</FormControl.ErrorMessage> : ""
+                        }
+                    </FormControl>
+                    <Button size="sm" mt={4} onPress={onSubmit} colorScheme={'indigo'}>Guardar cambios</Button>
                 </VStack>
             </Box>
         </View >

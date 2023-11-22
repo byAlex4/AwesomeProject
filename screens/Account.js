@@ -32,7 +32,6 @@ function Profile({ props }) {
                         setTel(data.tel);
                         setImg(data.img);
                         setDes(data.desc);
-                        console.log(data.name);
                     } else {
                         // Muestra un mensaje si el documento no existe
                         console.log("No such document!");
@@ -103,31 +102,13 @@ function Profile({ props }) {
                     <VStack>
                         <Avatar bg="amber.500" source={{
                             uri: img
-                        }} size="2xl" mt={"-65%"}>
+                        }} size="2xl" mt={"-35%"}>
                             <Avatar.Badge bg="green.500" />
                         </Avatar>
-                        <Button size="sm" variant="outline" mt={4} onPress={handelSummit}>Editar perfil</Button>
+                        <Button size="sm" colorScheme={'indigo'} variant="outline" mt={4} onPress={handelSummit}>Editar perfil</Button>
                     </VStack>
-                    <VStack space={3}>
-                        <Text fontSize={"2xl"} fontStyle={'italic'}
-                            color={'white'} fontWeight={'bold'} mt={'-20%'}>{name}</Text>
-                        <HStack space={4}>
-                            <VStack>
-                                <Text bold textAlign={"center"}>23</Text>
-                                <Text>Recetas</Text>
-                            </VStack>
-                            <VStack>
-                                <Text bold textAlign={"center"}>1456</Text>
-                                <Text>Seguidores</Text>
-                            </VStack>
-                            <VStack>
-                                <Text bold textAlign={"center"}>68</Text>
-                                <Text>Seguidos</Text>
-                            </VStack>
-                        </HStack>
-                    </VStack>
+                    <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>{name}</Text>
                 </HStack>
-
                 <VStack mt={5}>
                     <Text bold>About</Text>
                     <Text>{des} </Text>
@@ -140,13 +121,15 @@ function Profile({ props }) {
                     <HStack space={4} flexWrap={'wrap'}>
                         {recetas.map((recipes) => (
                             <>
-                                <Pressable w="45%" mb={3} onPress={() => navRecipe(recipes.name)} >
-                                    <Box rounded="lg" borderColor="coolGray.200" borderWidth="1">
+
+                                <Box w="45%" rounded="lg" mb={3} borderColor="coolGray.200"
+                                    backgroundColor={'coolGray.50'} borderWidth="1">
+                                    <Pressable onPress={() => navRecipe(recipes.name)} >
                                         <Box>
-                                            <AspectRatio minW="100%" ratio={16 / 9}>
+                                            <AspectRatio ratio={16 / 9}>
                                                 <Image source={{
                                                     uri: recipes.img
-                                                }} alt="image" />
+                                                }} alt="image" w={'170px'} />
                                             </AspectRatio>
                                             <Center bg="violet.500" position="absolute" bottom="0" px="3" py="1.5">
                                                 Novedad
@@ -169,8 +152,8 @@ function Profile({ props }) {
                                                 </HStack>
                                             </HStack>
                                         </Stack>
-                                    </Box>
-                                </Pressable>
+                                    </Pressable>
+                                </Box>
                             </>
                         ))}
                     </HStack>

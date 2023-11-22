@@ -22,7 +22,10 @@ import { collection, getDocs, doc, query, setDoc } from "firebase/firestore";
 import { Pressable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
-
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimeField } from '@mui/x-date-pickers/TimeField';
 
 // Exportar el componente CrearReceta
 const CrearReceta = (props) => {
@@ -61,7 +64,7 @@ const CrearReceta = (props) => {
             await setDoc(doc(firebase.db, 'recipes', nombre), data);
             return true;
         } catch (errors) {
-            console.error("Error adding document: ", errors);
+            console.error("Error adding document: ", errors, tiempo);
             return false;
         }
     }
@@ -70,12 +73,72 @@ const CrearReceta = (props) => {
     const [formData, setData] = React.useState({});
     const [errors, setErrors] = React.useState({});
 
-    const [img, setImg] = React.useState("https://i.postimg.cc/VLQdNJPY/default-user-icon-4.jpg");
+    const [img, setImg] = React.useState("https://i.postimg.cc/Kv8whn9r/dish.png");
 
     const route = useRoute();
     const { uid } = route.params;
+
+    const onValidate = (nombre, descripcion, ingredientes, imagen, categoria, tiempo, pasos, user) => {
+        if (nombre == undefined) {
+            setErrors({
+                ...errors,
+                name: "Ingrese un nombre"
+            });
+            return false;
+        }
+        if (descripcion == undefined) {
+            setErrors({
+                ...errors,
+                description: "Ingrese una descripcion"
+            });
+            return false;
+        }
+        if (ingredientes == undefined) {
+            setErrors({
+                ...errors,
+                ingredient: "Ingrese un ingrediente"
+            });
+            return false;
+        } if (imagen == undefined) {
+            setErrors({
+                ...errors,
+                img: "Ingrese una imagen"
+            });
+            return false;
+        }
+        if (categoria == undefined) {
+            setErrors({
+                ...errors,
+                category: "Ingrese una categoria"
+            });
+            return false;
+        }
+        if (tiempo == undefined) {
+            setErrors({
+                ...errors,
+                time: "Ingrese el tiempo"
+            });
+            return false;
+        }
+        if (pasos == undefined) {
+            setErrors({
+                ...errors,
+                steps: "Ingrese un paso"
+            });
+            return false;
+        }
+        if (user == undefined) {
+            setErrors({
+                ...errors,
+                uid: "No ha iniciado sesion"
+            });
+            return false;
+        }
+        saveRecipe(nombre, descripcion, ingredientes, imagen, categoria, tiempo, pasos, user);
+        return true;
+    }
     const onSubmit = () => {
-        saveRecipe(formData.name, formData.description, formData.ingredient, img, formData.category, formData.time, formData.steps, uid)
+        onValidate(formData.name, formData.description, formData.ingredient, img, formData.category, formData.time, formData.steps, uid)
             ? navigation.navigate('Nav') : console.log("Validation Failed", errors, uid, formData.name, formData.description, formData.category);
     };
 
@@ -139,12 +202,11 @@ const CrearReceta = (props) => {
                             <FormControl.ErrorMessage>{errors.name}</FormControl.ErrorMessage> : " "
                         }
                     </FormControl>
-                    <FormControl>
-                        <FormControl.Label fontSize={'xs'} isRequired isInvalid={'category' in errors}>Categoria:</FormControl.Label>
-                        <Select selectedValue={formData} accessibilityLabel="Choose Service" placeholder="Elige una categoria" _selectedItem={{
-                            bg: "teal.600",
-                            endIcon: <CheckIcon size="5" />
-                        }} mt={1} ml={1} onValueChange={value => setData({
+                    <FormControl isRequired isInvalid={'category' in errors}>
+                        <FormControl.Label fontSize={'xs'} >Categoria:</FormControl.Label>
+                        <Select selectedValue={formData.category} placeholder="Elige una categoria" fontSize={'md'} _selectedItem={{
+                            bg: "teal.600"
+                        }} onValueChange={value => setData({
                             ...formData,
                             category: value
                         })}>
@@ -158,12 +220,12 @@ const CrearReceta = (props) => {
                     </FormControl>
                     <FormControl isRequired isInvalid={'time' in errors}>
                         <FormControl.Label >Tiempo estimado:</FormControl.Label>
-                        <Input size="xs" placeholder="30 min aprox" onChangeText={value => setData({
+                        <Input size="xs" placeholder="min aprox" onChangeText={value => setData({
                             ...formData,
                             time: value
                         })} bg={"white"} minW={"100%"} fontSize={"lg"} />
                         {'time' in errors ?
-                            <FormControl.ErrorMessage>{errors.time}</FormControl.ErrorMessage> : " "
+                            <FormControl.ErrorMessage>{errors.name}</FormControl.ErrorMessage> : " "
                         }
                     </FormControl>
                 </VStack>
@@ -174,10 +236,10 @@ const CrearReceta = (props) => {
                     ...formData,
                     description: value
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} >
-                    {'time' in errors ?
-                        <FormControl.ErrorMessage>{errors.description}</FormControl.ErrorMessage> : " "
-                    }
                 </TextArea>
+                {'description' in errors ?
+                    <FormControl.ErrorMessage>{errors.description}</FormControl.ErrorMessage> : " "
+                }
             </FormControl>
             <FormControl isRequired isInvalid={'ingredient' in errors}>
                 <FormControl.Label >Ingredientes:</FormControl.Label>
@@ -185,10 +247,10 @@ const CrearReceta = (props) => {
                     ...formData,
                     ingredient: value
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} >
-                    {'time' in errors ?
-                        <FormControl.ErrorMessage>{errors.ingredient}</FormControl.ErrorMessage> : " "
-                    }
                 </TextArea>
+                {'ingredient' in errors ?
+                    <FormControl.ErrorMessage>{errors.ingredient}</FormControl.ErrorMessage> : " "
+                }
             </FormControl>
             <FormControl isRequired isInvalid={'steps' in errors}>
                 <FormControl.Label >Pasos:</FormControl.Label>
@@ -196,9 +258,10 @@ const CrearReceta = (props) => {
                     ...formData,
                     steps: value
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} >
-                    {'time' in errors ?
-                        <FormControl.ErrorMessage>{errors.steps}</FormControl.ErrorMessage> : " "
-                    }</TextArea>
+                </TextArea>
+                {'steps' in errors ?
+                    <FormControl.ErrorMessage>{errors.steps}</FormControl.ErrorMessage> : " "
+                }
             </FormControl>
 
             <HStack mt={8} space={1}>
@@ -209,12 +272,15 @@ const CrearReceta = (props) => {
         </Box>
     </Center>;
 }
-
 export default function () {
     return (
-        <View minH={"100%"} minW={"100%"} pt={"5%"} bg={"gray.200"}>
-            <CrearReceta />
-        </View>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DemoContainer components={['TimeField']}>
+                <View minH={"100%"} minW={"100%"} pt={"5%"} bg={"gray.200"}>
+                    <CrearReceta />
+                </View>
+            </DemoContainer>
+        </LocalizationProvider>
     );
 };
 

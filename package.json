@@ -9,8 +9,12 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@expo/vector-icons": "^13.0.0",
     "@expo/webpack-config": "^19.0.0",
+    "@mui/material": "^5.14.18",
+    "@mui/x-date-pickers": "^6.18.1",
     "@react-native-community/checkbox": "^0.5.16",
     "@react-navigation/bottom-tabs": "^6.5.9",
     "@react-navigation/drawer": "^6.6.4",
@@ -44,6 +48,7 @@
     "react-native-tab-view": "^3.5.2",
     "react-native-vector-icons": "^10.0.0",
     "react-native-web": "~0.19.6",
+    "react-time-picker": "^6.5.2",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

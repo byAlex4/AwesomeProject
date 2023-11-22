@@ -21,7 +21,7 @@ export default function () {
     <NativeBaseProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="Login" screenOptions={{ headerTintColor: 'white', statusBarColor: "white" }}>
+          <Stack.Navigator initialRouteName="Nav" screenOptions={{ headerTintColor: 'white', statusBarColor: "white" }}>
             <Stack.Screen
               name={"Login"}
               component={Login}
