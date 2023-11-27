@@ -95,7 +95,7 @@ const Recipe = () => {
                     var ingredient = recipe.ingredient;
                     return ingredient.split(',').map((ingrediente) => {
                         return (
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{ flexDirection: 'row' }}>
                                 <Checkbox colorScheme="purple" />
                                 <Text fontSize={'md'}>{ingrediente}</Text>
                             </View>);
@@ -106,7 +106,7 @@ const Recipe = () => {
                     var step = recipe.steps;
                     return step.split(',').map((steps) => {
                         return (
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <View style={{ flexDirection: 'row' }}>
                                 <Checkbox colorScheme="purple" />
                                 <Text fontSize={'md'}>{steps}</Text>
                             </View>);

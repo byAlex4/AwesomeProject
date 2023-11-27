@@ -115,10 +115,12 @@ const EditRecipe = () => {
 
     const saveRecipe = async (name, description, ingredient, image, category, time, step) => {
         const user = firebase.auth.currentUser;
+        const recipeID = route.params.recipeId;
+        console.log(recipeID);
         if (user) {
             const uid = user.uid;
             try {
-                var recipeRef = doc(firebase.db, 'recipes', name);
+                var recipeRef = doc(firebase.db, 'recipes', recipeID);
                 await updateDoc(recipeRef, {
                     name: name,
                     description: description,

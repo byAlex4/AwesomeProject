@@ -55,7 +55,7 @@ function Favorites({ props }) {
     };
 
     return (
-        <Box w={"90%"} bg={"white"} rounded={'xl'} m={"5%"} minH={'90%'}>
+        <Box w={"90%"} bg={"white"} rounded={'xl'} m={"5%"} minH={'100%'}>
             <VStack m={"5%"} w={"90%"} space={5}>
                 <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Favoritos</Text>
                 {recipe.map((recipes, index) => (

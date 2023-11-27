@@ -79,7 +79,7 @@ export default function () {
         }
     })
     return (
-        <>
+        <View minW={'100%'} minH={'100%'}>
             <ButtonA />
             <Tab.Navigator
                 initialRouteName="Home"
@@ -112,6 +112,6 @@ export default function () {
                         : <Icon as={<AntDesign name='hearto' size={24} />} color={'white'}></Icon >)
                 }} />
             </Tab.Navigator>
-        </>
+        </View>
     );
 }

@@ -111,7 +111,6 @@ const Login = () => {
             .then((result) => {
                 const user = result.user;
                 const credential = FacebookAuthProvider.credentialFromResult(result);
-                const accessToken = credential.accessToken;
                 navigation.navigate('Nav', { user })
             })
             .catch((error) => {
@@ -177,8 +176,6 @@ const Login = () => {
                             <HStack justifyContent="center" space={4} maxH={"40px"}>
                                 <Link variant={"link"} onPress={signInGoogle}><Icon as={<AntDesign name="google" />} size={30}></Icon></Link>
                                 <Link variant={"link"} onPress={signInFacebook}><Icon as={<AntDesign name="facebook-square" />} size={30}></Icon></Link>
-                                <Link variant={"link"} href="https://github.com/login"><Icon as={<AntDesign name="github" />} size={30}></Icon></Link>
-                                <Link variant={"link"} href="https://appleid.apple.com/sign-in"><Icon as={<AntDesign name="apple1" />} size={30}></Icon></Link>
                             </HStack>
                             <HStack mt="6" justifyContent="center">
                                 <Text fontSize="sm" color="warmGray.500" _dark={{

@@ -53,13 +53,14 @@ function Account({ props }) {
 
     const [recipes, setRecipes] = useState([]);
     const getData = async () => {
+        const fireRecipe = [];
         const user = firebase.auth.currentUser;
         if (user) {
             const uid = user.uid;
             const q = query(collection(firebase.db, "recipes"), where("userid", "==", uid));
             try {
                 const unsub = onSnapshot(q, (querySnapshot) => {
-                    const fireRecipe = [];
+                    setRecipes([]);
                     querySnapshot.docChanges().forEach((change) => {
                         if (change.type === 'added') {
                             console.log('account recipe added', change.doc.data());
@@ -89,7 +90,7 @@ function Account({ props }) {
     }
 
     const navRecipe = (recipeId) => {
-        navigation.navigate("Editar receta", { recipeId });
+        navigation.navigate("Editar receta", { recipeId: recipeId });
     };
 
     useEffect(() => {
@@ -126,7 +127,6 @@ function Account({ props }) {
                     <HStack space={4} flexWrap={'wrap'}>
                         {recipes.map((recipe) => (
                             <>
-
                                 <Box w="45%" rounded="lg" mb={3} borderColor="coolGray.200"
                                     backgroundColor={'coolGray.50'} borderWidth="1">
                                     <Pressable onPress={() => navRecipe(recipe.name)} >
@@ -155,12 +155,10 @@ function Account({ props }) {
 
 export default ({ props }) => {
     return (
-        <NativeBaseProvider>
-            <View minW={"100%"} maxH={"100%"}>
-                <ScrollView>
-                    <Account />
-                </ScrollView>
-            </View>
-        </NativeBaseProvider>
+        <View minW={"100%"} minH={"100%"}>
+            <ScrollView>
+                <Account />
+            </ScrollView>
+        </View>
     );
 };
