@@ -91,7 +91,7 @@ const Receta = () => {
                                 <Text style={{ fontSize: '20px', color: 'rgb(115, 115, 115)' }}>Categoria:</Text>
                                 <Text fontSize={'md'}>{recipe.category}</Text>
                                 <Text style={{ fontSize: '20px', color: 'rgb(115, 115, 115)' }}>Tiempo:</Text>
-                                <Text fontSize={'md'}>{recipe.time}</Text>
+                                <Text fontSize={'md'}>{recipe.time} min</Text>
                             </VStack>
                         </HStack>
                         <Text style={{ fontSize: '20px', color: 'rgb(115, 115, 115)' }}>Descripcion:</Text>

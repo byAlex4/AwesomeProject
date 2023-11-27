@@ -133,7 +133,7 @@ function Profile({ props }) {
                                                 {recipes.name}
                                             </Heading>
                                             <Text fontWeight="400">
-                                                {recipes.time}
+                                                {recipes.time} min
                                             </Text>
                                             <HStack alignItems="center" space={4} justifyContent="space-between">
                                                 <HStack alignItems="center">

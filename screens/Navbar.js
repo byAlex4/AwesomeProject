@@ -8,7 +8,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign, Entypo } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Main from "./Menu";
+import Main from "./Main";
 import Profile from "./Account";
 import Favs from './Favs';
 import { onAuthStateChanged } from "firebase/auth";

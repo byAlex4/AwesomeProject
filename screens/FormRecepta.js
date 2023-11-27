@@ -142,7 +142,7 @@ const CrearReceta = (props) => {
     }
     const onSubmit = () => {
         onValidate(formData.name, formData.description, formData.ingredient, img, formData.category, formData.time, formData.steps, uid)
-            ? navigation.navigate('Nav') : console.log("Validation Failed", errors, uid, formData.name, formData.description, formData.category);
+            ? navigation.navigate('Nav') : console.log("Validation Failed", errors);
     };
 
     const pickImageAsync = async () => {
@@ -228,7 +228,7 @@ const CrearReceta = (props) => {
                             time: value
                         })} bg={"white"} minW={"100%"} fontSize={"lg"} />
                         {'time' in errors ?
-                            <FormControl.ErrorMessage>{errors.name}</FormControl.ErrorMessage> : " "
+                            <FormControl.ErrorMessage>{errors.time}</FormControl.ErrorMessage> : " "
                         }
                     </FormControl>
                 </VStack>

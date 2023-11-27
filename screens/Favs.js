@@ -77,7 +77,7 @@ function Favorites({ props }) {
                                 <VStack flexWrap={'wrap'} maxW={'148px'}>
                                     <Text>{recipes.name}</Text>
                                     <Text>Categoria: {recipes.category}</Text>
-                                    <Text>Tiempo: {recipes.time}</Text>
+                                    <Text>Tiempo: {recipes.time} min</Text>
                                 </VStack>
                             </HStack>
                         </Box>
