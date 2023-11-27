@@ -13,10 +13,10 @@ import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
 
 function Favorites({ props }) {
-    const [receta, setReceta] = useState([]);
+    const [recipe, setRecipe] = useState([]);
     const firebaseFav = [];
 
-    const getDatos = async () => {
+    const getData = async () => {
         const user = firebase.auth.currentUser;
         if (user) {
             // User is signed in, see docs for a list of available properties
@@ -24,16 +24,12 @@ function Favorites({ props }) {
             const q1 = query(collection(firebase.db, "favorites"), where("iduser", "==", uid));
             try {
                 const unsub1 = onSnapshot(q1, async (querySnapshot) => {
-                    // Usar for…of en lugar de forEach() 
                     for (const change of querySnapshot.docChanges()) {
                         if (change.type === 'added') {
-                            // Agrega los datos del documento nuevo al array 
                             console.log('favs has been added')
                         } if (change.type === 'modified') {
-                            // Actualiza los datos del documento modificado en el array 
                             console.log('favs has been modifed')
                         } if (change.type === 'removed') {
-                            // Elimina los datos del documento eliminado del array 
                             console.log('favs has been remoded')
                         }
                         const idrecipe = change.doc.data().idrecipe;
@@ -42,8 +38,7 @@ function Favorites({ props }) {
                             querySnap.forEach((doc) => {
                                 firebaseFav.push(doc.data());
                             });
-                            setReceta(firebaseFav)
-                            console.log(firebaseFav)
+                            setRecipe(firebaseFav)
                         });
                     }
                 })
@@ -53,13 +48,11 @@ function Favorites({ props }) {
         };
     }
     useEffect(() => {
-        getDatos();// Llama a la función getDatos
-    }, []); // Pasa un arreglo vacío como segundo argumento para que solo se ejecute una vez
+        getData();
+    }, []);
 
     const navigation = useNavigation();
     const navRecipe = (recipeId) => {
-        // Navega a la pantalla donde quieres mostrar los productos
-        // y pasa el firebaseId como un parámetro
         navigation.navigate("Favorito", { recipeId });
     };
 
@@ -67,7 +60,7 @@ function Favorites({ props }) {
         <Box w={"90%"} bg={"white"} rounded={'xl'} m={"5%"} minH={'90%'}>
             <VStack m={"5%"} w={"90%"} space={5}>
                 <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Favoritos</Text>
-                {receta.map((recipes, index) => (
+                {recipe.map((recipes, index) => (
                     <Pressable onPress={() => navRecipe(recipes.name)}>
                         <Box w={"100%"}>
                             <HStack space={4}>

@@ -19,40 +19,36 @@ import { collection, query, getDocs, onSnapshot, where } from "firebase/firestor
 import { Pressable } from 'react-native';
 
 const Main = () => {
-    const [recetas, setRecetas] = useState([]);
-    const getDatos = async () => {
-        if (busqueda === "") {
+    const [recipe, setRecipe] = useState([]);
+    const getData = async () => {
+        if (search === "") {
             try {
                 const colRef = collection(firebase.db, "recipes");
                 const unsub = onSnapshot(colRef, (querySnapshot) => {
-                    // Crea un array vacío para almacenar los datos de los documentos
                     const fireRecipe = [];
                     querySnapshot.forEach((doc) => {
                         fireRecipe.push(doc.data());
                     });
-                    setRecetas(fireRecipe);
+                    setRecipe(fireRecipe);
                 });
             } catch (errors) {
                 console.log("No such document!", errors);
             }
         } else {
             try {
-                const q = query(collection(firebase.db, 'recipes'), where('name', '==', busqueda || ''));
+                const q = query(collection(firebase.db, 'recipes'), where('name', '==', search || ''));
                 const unsub = onSnapshot(q, (querySnapshot) => {
-                    // Crea un array vacío para almacenar los datos de los documentos
                     const fireRecipe = [];
                     querySnapshot.docChanges().forEach((change) => {
                         if (change.type === 'added') {
-                            // Agrega los datos del documento nuevo al array 
                             fireRecipe.push(change.doc.data());
                         } if (change.type === 'modified') {
-                            // Actualiza los datos del documento modificado en el array 
                             fireRecipe[change.oldIndex] = change.doc.data();
-                        } if (change.type === 'removed') { // Elimina los datos del documento eliminado del array 
+                        } if (change.type === 'removed') {
                             fireRecipe.splice(change.oldIndex, 1);
                         }
                     });
-                    setRecetas(fireRecipe);
+                    setRecipe(fireRecipe);
                 });
             } catch (errors) {
                 console.log("No such document!", errors);
@@ -60,17 +56,16 @@ const Main = () => {
         }
     }
 
-    const [categorias, setCategorias] = useState([]);
+    const [category, setCategory] = useState([]);
     const fireCategory = [];
     const getCategory = async () => {
-        const q = query(collection(firebase.db, "category")); //, where("capital", "==", true));
+        const q = query(collection(firebase.db, "category"));
         try {
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
                 fireCategory.push(doc.data());
             });
-            setCategorias(fireCategory);
+            setCategory(fireCategory);
         } catch (errors) {
             console.log("No such document!", errors);
         }
@@ -85,14 +80,14 @@ const Main = () => {
         navigation.navigate("Categoria", { categoryId });
     };
 
-    const [busqueda, setBusqueda] = useState("");
+    const [search, setSearch] = useState("");
     const handleChange = (e) => {
-        setBusqueda(e.target.value);
-        getDatos();
+        setSearch(e.target.value);
+        getData();
     }
 
     useEffect(() => {
-        getDatos();
+        getData();
         getCategory();
     }, []);
 
@@ -108,14 +103,14 @@ const Main = () => {
                     <ScrollView
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}>
-                        {categorias.map((category) => (
+                        {category.map((categorys) => (
                             <VStack m={1} w={"75px"} h={"105px"}>
-                                <Pressable onPress={() => navCategory(category.name)} key={category.name}>
+                                <Pressable onPress={() => navCategory(categorys.name)} key={categorys.name}>
                                     <Box bg={"#5249EB"} rounded={"xl"} w={"75px"} h={"75px"}>
-                                        <Icon as={<MaterialCommunityIcons name={category.icon} />} color='white' size={60} m={"10%"} />
+                                        <Icon as={<MaterialCommunityIcons name={categorys.icon} />} color='white' size={60} m={"10%"} />
                                     </Box>
                                     <Text fontSize={"sm"} textAlign={"center"} color={"black"} >
-                                        {category.name}
+                                        {categorys.name}
                                     </Text>
                                 </Pressable>
                             </VStack>
@@ -129,7 +124,7 @@ const Main = () => {
             <VStack m={"5%"} w={"90%"} space={5}>
 
                 <Text Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Recomendaciones</Text>
-                {recetas.map((recipes, index) => (
+                {recipe.map((recipes, index) => (
                     <Pressable onPress={() => navRecipe(recipes.name)}>
                         <Box w={"100%"}>
                             <HStack space={4}>

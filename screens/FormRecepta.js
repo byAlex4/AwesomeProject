@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
     Center,
     Input,
-    CheckIcon,
     View,
     VStack,
     HStack,
@@ -23,47 +22,25 @@ import { Pressable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
 
-// Exportar el componente CrearReceta
-const CrearReceta = (props) => {
-    const [categorias, setCategorias] = useState([]);
+const FormReceta = (props) => {
+    const [category, setCategory] = useState([]);
+
     const fireCategory = [];
     const getCategory = async () => {
         const q = query(collection(firebase.db, "category")); //, where("capital", "==", true));
         try {
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
                 fireCategory.push(doc.data());
             });
-            setCategorias(fireCategory);
+            setCategory(fireCategory);
         } catch (errors) {
             console.log("No such document!", errors);
         }
     }
-
     useEffect(() => {
         getCategory();
     }, []);
-
-    const saveRecipe = async (nombre, descripcion, ingredientes, imagen, categoria, tiempo, pasos, userid) => {
-        try {
-            const data = {
-                name: nombre,
-                description: descripcion,
-                ingredient: ingredientes,
-                steps: pasos,
-                category: categoria,
-                time: tiempo,
-                img: imagen,
-                userid: userid
-            }
-            await setDoc(doc(firebase.db, 'recipes', nombre), data);
-            return true;
-        } catch (errors) {
-            console.error("Error adding document: ", errors, tiempo);
-            return false;
-        }
-    }
 
     const navigation = useNavigation();
     const [formData, setData] = React.useState({});
@@ -74,56 +51,56 @@ const CrearReceta = (props) => {
     const route = useRoute();
     const { uid } = route.params;
 
-    const onValidate = (nombre, descripcion, ingredientes, imagen, categoria, tiempo, pasos, user) => {
-        if (nombre == undefined) {
+    const onValidate = (name, description, ingredient, image, category, time, step, user) => {
+        if (name == undefined) {
             setErrors({
                 ...errors,
                 name: "Ingrese un nombre"
             });
             return false;
         }
-        if (descripcion == undefined) {
+        if (description == undefined) {
             setErrors({
                 ...errors,
                 description: "Ingrese una descripcion"
             });
             return false;
         }
-        if (ingredientes == undefined) {
+        if (ingredient == undefined) {
             setErrors({
                 ...errors,
                 ingredient: "Ingrese un ingrediente"
             });
             return false;
-        } if (imagen == undefined) {
+        } if (image == undefined) {
             setErrors({
                 ...errors,
                 img: "Ingrese una imagen"
             });
             return false;
         }
-        if (categoria == undefined) {
+        if (category == undefined) {
             setErrors({
                 ...errors,
                 category: "Ingrese una categoria"
             });
             return false;
         }
-        if (tiempo == undefined) {
+        if (time == undefined) {
             setErrors({
                 ...errors,
                 time: "Ingrese el tiempo"
             });
             return false;
         }
-        if (!/^[0-9]/.test(tiempo)) {
+        if (!/^[0-9]/.test(time)) {
             setErrors({
                 ...errors,
                 time: "Tiempo invalido"
             });
             return false;
         }
-        if (pasos == undefined) {
+        if (step == undefined) {
             setErrors({
                 ...errors,
                 steps: "Ingrese un paso"
@@ -137,9 +114,30 @@ const CrearReceta = (props) => {
             });
             return false;
         }
-        saveRecipe(nombre, descripcion, ingredientes, imagen, categoria, tiempo, pasos, user);
+        saveRecipe(name, description, ingredient, image, category, time, step, user);
         return true;
     }
+
+    const saveRecipe = async (name, desc, ingredient, image, category, time, step, userid) => {
+        try {
+            const data = {
+                name: name,
+                description: desc,
+                ingredient: ingredient,
+                steps: step,
+                category: category,
+                time: time,
+                img: image,
+                userid: userid
+            }
+            await setDoc(doc(firebase.db, 'recipes', name), data);
+            return true;
+        } catch (errors) {
+            console.error("Error adding document: ", errors, tiempo);
+            return false;
+        }
+    }
+
     const onSubmit = () => {
         onValidate(formData.name, formData.description, formData.ingredient, img, formData.category, formData.time, formData.steps, uid)
             ? navigation.navigate('Nav') : console.log("Validation Failed", errors);
@@ -162,7 +160,6 @@ const CrearReceta = (props) => {
                 uploadString(imagesRef, assets.uri, 'data_url').then((snapshots) => {
                     console.log('Uploaded a data_url string!');
                 });
-                // Aquí usamos setTimeout para retrasar la llamada a getURL por 2000 milisegundos (2 segundos)
                 setTimeout(getURL, 3000, imagesRef);
             } catch (e) {
                 console.log(e);
@@ -176,11 +173,8 @@ const CrearReceta = (props) => {
     const getURL = (imagesRef) => {
         getDownloadURL(imagesRef)
             .then(function (url) {
-                console.log(url);
                 setImg(url);
-                console.log(img);
             }).catch(function (error) {
-                // Maneja cualquier error
                 console.error(error);
             });
     }
@@ -213,7 +207,7 @@ const CrearReceta = (props) => {
                             ...formData,
                             category: value
                         })}>
-                            {categorias.map((category) => (
+                            {category.map((category) => (
                                 <Select.Item key={category.name} label={category.name} value={category.name} />
                             ))}
                         </Select>
@@ -268,7 +262,7 @@ const CrearReceta = (props) => {
             </FormControl>
 
             <HStack mt={8} space={1}>
-                <Button style={{ backgroundColor: "#483285", width: '50%' }} onPress={onSubmit} >Gurdar</Button>
+                <Button style={{ backgroundColor: "#483285", width: '50%' }} onPress={onSubmit} >Guardar</Button>
                 <Button style={{ backgroundColor: "#cacaca", width: '50%' }}
                     onPress={() => navigation.goBack()}>Cancelar</Button>
             </HStack>
@@ -278,7 +272,7 @@ const CrearReceta = (props) => {
 export default function () {
     return (
         <View minH={"100%"} minW={"100%"} pt={"5%"} bg={"gray.200"}>
-            <CrearReceta />
+            <FormReceta />
         </View>
     );
 };

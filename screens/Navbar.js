@@ -49,7 +49,6 @@ const ButtonA = () => {
     const handelPress = () => {
         const user = firebase.auth.currentUser;
         if (user) {
-            // User is signed in, see docs for a list of available properties
             const uid = user.uid;
             navigation.navigate('Crear una receta', { uid });
         }
@@ -74,13 +73,9 @@ export default function () {
     const navigation = useNavigation();
     onAuthStateChanged(firebase.auth, (user) => {
         if (user) {
-            // User is signed in, see docs for a list of available properties
             const uid = user.uid;
-            // ...
         } else {
-            // User is signed out
             navigation.navigate("Login");
-            // ...
         }
     })
     return (

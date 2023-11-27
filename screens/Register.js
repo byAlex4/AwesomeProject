@@ -20,7 +20,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
 
-const Registro = () => {
+const Register = () => {
   const navigation = useNavigation();
   const [formData, setData] = React.useState({});
   const [errors, setErrors] = React.useState({});
@@ -61,15 +61,13 @@ const Registro = () => {
     createUserWithEmailAndPassword(firebase.auth, correo, contra)
       .then((userCredential) => {
         setIsOpen(true)
-        console.log('Cuenta creada');
+        console.log('Account added');
         var user = userCredential.user;
-        console.log(user)
         saveUser(user.uid)
 
       })
       .catch((error) => {
         console.log("Error:" + errors);
-        alert("Error:" + errors);
       });
   }
 
@@ -79,10 +77,9 @@ const Registro = () => {
     signInWithPopup(auth, provider)
       .then(async (result) => {
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        console.log('Cuenta creada');
+        console.log('Account added');
         const token = credential.accessToken;
         const user = result.user;
-        console.log(token);
         try {
           const data = {
             img: user.photoURL,
@@ -100,11 +97,8 @@ const Registro = () => {
       }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        // The email of the user's account used.
         const email = error.customData.email;
-        // The AuthCredential type that was used.
         const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
       });
   }
 
@@ -113,25 +107,15 @@ const Registro = () => {
     const auth = getAuth();
     signInWithPopup(auth, provider)
       .then((result) => {
-        // The signed-in user info.
         const user = result.user;
-        // This gives you a Facebook Access Token. You can use it to access the Facebook API.
         const credential = FacebookAuthProvider.credentialFromResult(result);
         const accessToken = credential.accessToken;
-        navigation.navigate('Nav', { user })
+        navigation.navigate('Nav', { uid: user.uid })
       })
       .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
         const email = error.customData.email;
-        // The AuthCredential type that was used.
         const credential = FacebookAuthProvider.credentialFromError(error);
-
-        // ...
       });
-
   }
 
   const validate = () => {
@@ -187,7 +171,7 @@ const Registro = () => {
   };
 
   const onSubmit = () => {
-    validate() ? navigation.navigate('Nav', { uid: user.uid }) : console.log("Validation Failed", errors, formData.email, formData.password);
+    validate() ? navigation.navigate('Nav', { uid: user.uid }) : console.log("Validation Failed", errors);
   };
 
 
@@ -275,7 +259,7 @@ const Registro = () => {
 export default function ({ porps }) {
   return (
     <View minH={"100%"} minW={"100%"} bg={"#4b2ba0"} pt={"5%"} >
-      <Registro />
+      <Register />
     </View>
   )
 };

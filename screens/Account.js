@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Box, Center, NativeBaseProvider, View, Avatar,
-    Button, HStack, VStack, Text, AspectRatio, Stack, Heading, Image, ScrollView
+    Box,
+    NativeBaseProvider,
+    View,
+    Avatar,
+    Button,
+    HStack,
+    VStack,
+    Text,
+    Stack,
+    Heading,
+    Image,
+    ScrollView
 } from 'native-base';
 import firebase from "../backend/Firebase";
-import { collection, query, where, doc, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, query, where, doc, onSnapshot } from "firebase/firestore";
 import { useNavigation } from '@react-navigation/native';
 import { Pressable } from 'react-native';
 
-
-function Profile({ props }) {
+function Account({ props }) {
     const navigation = useNavigation();
     const [name, setName] = useState();
     const [email, setEmail] = useState();
-    const [tel, setTel] = useState();
+    const [phone, setPhone] = useState();
     const [img, setImg] = useState();
     const [des, setDes] = useState();
 
@@ -24,12 +33,11 @@ function Profile({ props }) {
             const docRef = doc(firebase.db, "users", uid);
             try {
                 const unsub = onSnapshot(docRef, (docSnapshot) => {
-                    // Verifica si el documento existe
                     if (docSnapshot.exists()) {
                         const data = docSnapshot.data()
                         setName(data.name);
                         setEmail(data.email);
-                        setTel(data.tel);
+                        setPhone(data.phone);
                         setImg(data.img);
                         setDes(data.desc);
                     } else {
@@ -43,8 +51,8 @@ function Profile({ props }) {
         }
     };
 
-    const [recetas, setRecetas] = useState([]);
-    const getDatos = async () => {
+    const [recipes, setRecipes] = useState([]);
+    const getData = async () => {
         const user = firebase.auth.currentUser;
         if (user) {
             const uid = user.uid;
@@ -54,17 +62,17 @@ function Profile({ props }) {
                     const fireRecipe = [];
                     querySnapshot.docChanges().forEach((change) => {
                         if (change.type === 'added') {
-                            console.log('added last recipes');
+                            console.log('account recipe added');
                             fireRecipe.push(change.doc.data());
                         } if (change.type === 'modified') {
-                            console.log('modified last recipes');
+                            console.log('account recipe modified');
                             fireRecipe[change.oldIndex] = change.doc.data();
                         } if (change.type === 'removed') {
-                            console.log('removed last recipes');
+                            console.log('account recipe removed');
                             fireRecipe.splice(change.oldIndex, 1);
                         }
                     });
-                    setRecetas(fireRecipe);
+                    setRecipes(fireRecipe);
                 });
             } catch (errors) {
                 console.log("No such document!", errors);
@@ -75,22 +83,20 @@ function Profile({ props }) {
     const handelSummit = () => {
         const user = firebase.auth.currentUser;
         if (user) {
-            // User is signed in, see docs for a list of available properties
             const uid = user.uid;
             navigation.navigate("Editar cuenta", uid);
         };
     }
 
     const navRecipe = (recipeId) => {
-        // Navega a la pantalla donde quieres mostrar los productos
-        // y pasa el firebaseId como un parámetro
         navigation.navigate("Editar receta", { recipeId });
     };
 
     useEffect(() => {
-        getDatos();
+        getData();
         getUser();
-    }, []); // Pasa un arreglo vacío como segundo argumento para que solo se ejecute una vez
+    }, []);
+
     return (
         <View>
             <Box bg={"black"} rounded={"0px 10px 10px 0px"} pl={'40%'} pr={'40%'} pt={'20%'}>
@@ -109,31 +115,31 @@ function Profile({ props }) {
                     <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>{name}</Text>
                 </HStack>
                 <VStack mt={5}>
-                    <Text bold>About</Text>
+                    <Text bold>Descripción</Text>
                     <Text>{des} </Text>
-                    <Text bold>Contact</Text>
+                    <Text bold>Contacto</Text>
                     <Text>{email} </Text>
-                    <Text>{tel} </Text>
+                    <Text>{phone} </Text>
                 </VStack>
                 <VStack mt={5} space={4}>
                     <Text bold>Ultimas recetas</Text>
                     <HStack space={4} flexWrap={'wrap'}>
-                        {recetas.map((recipes) => (
+                        {recipes.map((recipe) => (
                             <>
 
                                 <Box w="45%" rounded="lg" mb={3} borderColor="coolGray.200"
                                     backgroundColor={'coolGray.50'} borderWidth="1">
-                                    <Pressable onPress={() => navRecipe(recipes.name)} >
+                                    <Pressable onPress={() => navRecipe(recipe.name)} >
                                         <Image source={{
-                                            uri: recipes.img
+                                            uri: recipe.img
                                         }} alt="image" style={{ width: '100%', height: 100 }} />
                                         <Stack p="4" space={3}>
 
                                             <Heading size="md" ml="-1">
-                                                {recipes.name}
+                                                {recipe.name}
                                             </Heading>
                                             <Text fontWeight="400">
-                                                {recipes.time} min
+                                                {recipe.time} min
                                             </Text>
                                             <HStack alignItems="center" space={4} justifyContent="space-between">
                                                 <HStack alignItems="center">
@@ -161,7 +167,7 @@ export default ({ props }) => {
         <NativeBaseProvider>
             <View minW={"100%"} maxH={"100%"}>
                 <ScrollView>
-                    <Profile />
+                    <Account />
                 </ScrollView>
             </View>
         </NativeBaseProvider>

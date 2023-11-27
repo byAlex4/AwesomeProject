@@ -20,31 +20,26 @@ import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
 import { Pressable } from 'react-native';
 
-
-function Profile({ props }) {
+function EditProfile({ props }) {
     const navigation = useNavigation();
     const [name, setName] = useState();
     const [email, setEmail] = useState();
-    const [tel, setTel] = useState();
+    const [phone, setPhone] = useState();
     const [img, setImg] = useState("https://i.postimg.cc/VLQdNJPY/default-user-icon-4.jpg");
     const [des, setDes] = useState();
     const [errors, setErrors] = useState({});
     const getUser = async () => {
-        const usuario = firebase.auth.currentUser;
-        if (usuario) {
-            // User is signed in, see docs for a list of available properties
-            const uid = usuario.uid;
+        const user = firebase.auth.currentUser;
+        if (user) {
+            const uid = user.uid;
             const docRef = doc(firebase.db, "users", uid);
             try {
-                // Pasa la referencia del documento a la función getDocs()
                 const docSnapshot = await getDoc(docRef);
-                // Verifica si el documento existe
                 if (docSnapshot.exists()) {
-                    // Agrega los datos del documento al array firebaseData
                     const data = docSnapshot.data()
                     setName(data.name);
                     setEmail(data.email);
-                    setTel(data.tel);
+                    setPhone(data.phone);
                     setImg(data.img);
                     setDes(data.desc);
                 } else {
@@ -69,16 +64,16 @@ function Profile({ props }) {
             await updateDoc(userRef, {
                 name: name,
                 email: email,
-                tel: tel,
+                phone: phone,
                 img: img,
                 desc: des
             })
                 .then(() => {
-                    console.log('Documento actualizado correctamente');
+                    console.log('Document has been updated');
                     return true;
                 })
                 .catch((errors) => {
-                    console.error('Error al actualizar el documento:', errors);
+                    console.error('Error updating the document:', errors);
                     return false;
                 });
         }
@@ -99,10 +94,10 @@ function Profile({ props }) {
             });
             return false;
         }
-        if (tel == "") {
+        if (phone == "") {
             setErrors({
                 ...errors,
-                tel: "Ingrese un telefono"
+                phone: "Ingrese un telefono"
             });
             return false;
         } if (img == "") {
@@ -145,11 +140,10 @@ function Profile({ props }) {
                 uploadString(imagesRef, assets.uri, 'data_url').then((snapshots) => {
                     console.log('Uploaded a data_url string!');
                 });
-                // Aquí usamos setTimeout para retrasar la llamada a getURL por 2000 milisegundos (2 segundos)
                 setTimeout(getURL, 3000, imagesRef);
             } catch (e) {
                 console.log(e);
-                alert("Upload failed, sorry :(");
+                alert("Upload failed, try again later");
             }
         } else {
             alert('You did not select any image.');
@@ -159,11 +153,8 @@ function Profile({ props }) {
     const getURL = (imagesRef) => {
         getDownloadURL(imagesRef)
             .then(function (url) {
-                console.log(url);
                 setImg(url);
-                console.log(img);
             }).catch(function (error) {
-                // Maneja cualquier error
                 console.error(error);
             });
     }
@@ -195,14 +186,14 @@ function Profile({ props }) {
                 </HStack>
                 <VStack mt={5}>
                     <FormControl isRequired isInvalid={'desc' in errors}>
-                        <FormControl.Label bold>About</FormControl.Label>
+                        <FormControl.Label bold>Descripción</FormControl.Label>
                         <TextArea value={des} onChangeText={value => setDes(value)} bg={"white"}
                             minW={"100%"} fontSize={"md"} />
                         {'desc' in errors ?
                             <FormControl.ErrorMessage>{errors.desc}</FormControl.ErrorMessage> : ""
                         }
                     </FormControl>
-                    <Text bold>Contact</Text>
+                    <Text bold>Contacto</Text>
                     <FormControl isRequired isInvalid={'email' in errors}>
                         <FormControl.Label bold>Correo electronico</FormControl.Label>
                         <Input value={email} onChangeText={value => setEmail(value)} bg={"white"} minW={"100%"} fontSize={"md"} />
@@ -210,11 +201,11 @@ function Profile({ props }) {
                             <FormControl.ErrorMessage>{errors.email}</FormControl.ErrorMessage> : ""
                         }
                     </FormControl>
-                    <FormControl isRequired isInvalid={'tel' in errors}>
+                    <FormControl isRequired isInvalid={'phone' in errors}>
                         <FormControl.Label bold>Numero telefonico</FormControl.Label>
-                        <Input value={tel} onChangeText={value => setTel(value)} bg={"white"} minW={"100%"} fontSize={"md"} />
-                        {'tel' in errors ?
-                            <FormControl.ErrorMessage>{errors.tel}</FormControl.ErrorMessage> : ""
+                        <Input value={phone} onChangeText={value => setPhone(value)} bg={"white"} minW={"100%"} fontSize={"md"} />
+                        {'phone' in errors ?
+                            <FormControl.ErrorMessage>{errors.phone}</FormControl.ErrorMessage> : ""
                         }
                     </FormControl>
                     <Button size="sm" mt={4} onPress={onSubmit} colorScheme={'indigo'}>Guardar cambios</Button>
@@ -229,7 +220,7 @@ export default ({ props }) => {
         <NativeBaseProvider>
             <View minW={"100%"} maxH={"100%"}>
                 <ScrollView>
-                    <Profile />
+                    <EditProfile />
                 </ScrollView>
             </View>
         </NativeBaseProvider>

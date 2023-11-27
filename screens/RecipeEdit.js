@@ -24,9 +24,7 @@ import { Pressable, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
 
-
-// Exportar el componente CrearReceta
-const Receta = () => {
+const EditRecipe = () => {
     const route = useRoute();
     const [name, setName] = useState();
     const [img, setImg] = useState();
@@ -37,25 +35,24 @@ const Receta = () => {
     const [time, setTime] = useState();
     const [errors, setErrors] = React.useState({});
 
-    // Obtiene el firebaseId del parámetro de navegación
     const { recipeId } = route.params;
-    const [categorias, setCategorias] = useState([]);
+    const [categorys, setCategorys] = useState([]);
+
     const fireCategory = [];
     const getCategory = async () => {
-        const q = query(collection(firebase.db, "category")); //, where("capital", "==", true));
+        const q = query(collection(firebase.db, "category"));
         try {
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
                 fireCategory.push(doc.data());
             });
-            setCategorias(fireCategory);
+            setCategorys(fireCategory);
         } catch (errors) {
             console.log("No such document!", errors);
         }
     }
 
-    const getDatos = async () => {
+    const getData = async () => {
         const q = query(collection(firebase.db, "recipes"), where("name", "==", recipeId));
         try {
             const querySnapshot = await getDocs(q);
@@ -76,7 +73,7 @@ const Receta = () => {
     }
 
     useEffect(() => {
-        getDatos();// Llama a la función getDatos
+        getData();
         getCategory();
     }, []);
 
@@ -97,11 +94,10 @@ const Receta = () => {
                 uploadString(imagesRef, assets.uri, 'data_url').then((snapshots) => {
                     console.log('Uploaded a data_url string!');
                 });
-                // Aquí usamos setTimeout para retrasar la llamada a getURL por 2000 milisegundos (2 segundos)
                 setTimeout(getURL, 3000, imagesRef);
             } catch (e) {
                 console.log(e);
-                alert("Upload failed, sorry :(");
+                alert("Upload failed, try again later");
             }
         } else {
             alert('You did not select any image.');
@@ -111,37 +107,34 @@ const Receta = () => {
     const getURL = (imagesRef) => {
         getDownloadURL(imagesRef)
             .then(function (url) {
-                console.log(url);
                 setImg(url);
-                console.log(img);
             }).catch(function (error) {
-                // Maneja cualquier error
                 console.error(error);
             });
     }
 
-    const saveRecipe = async (nombre, descripcion, ingredientes, imagen, categoria, tiempo, pasos) => {
-        const usuario = firebase.auth.currentUser;
-        if (usuario) {
-            const uid = usuario.uid;
+    const saveRecipe = async (name, description, ingredient, image, category, time, step) => {
+        const user = firebase.auth.currentUser;
+        if (user) {
+            const uid = user.uid;
             try {
-                var recipeRef = doc(firebase.db, 'recipes', nombre);
+                var recipeRef = doc(firebase.db, 'recipes', name);
                 await updateDoc(recipeRef, {
-                    name: nombre,
-                    description: descripcion,
-                    img: imagen,
-                    category: categoria,
-                    time: tiempo,
-                    ingredient: ingredientes,
-                    steps: pasos,
+                    name: name,
+                    description: description,
+                    img: image,
+                    category: category,
+                    time: time,
+                    ingredient: ingredient,
+                    steps: step,
                     userid: uid
                 })
                     .then(() => {
-                        console.log('Documento actualizado correctamente');
+                        console.log('Document has been updated');
                         return true;
                     })
                     .catch((error) => {
-                        console.error('Error al actualizar el documento:', error);
+                        console.error('Error updating the document:', error);
                         return false;
                     });
             } catch (errors) {
@@ -154,7 +147,7 @@ const Receta = () => {
     const navigation = useNavigation();
     const onSubmit = () => {
         saveRecipe(name, desc, ingredient, img, category, time, steps)
-            ? navigation.navigate('Nav') : console.log("Validation Failed", errors, name, description, category);
+            ? navigation.navigate('Nav') : console.log("Validation Failed", errors);
     };
 
     const [isOpen, setIsOpen] = React.useState(false);
@@ -162,9 +155,7 @@ const Receta = () => {
     const cancelRef = React.useRef(null);
 
     const deleteRecipe = async (name) => {
-        // Crear una referencia al documento que quieres borrar
         const recipeRef = doc(firebase.db, 'recipes', name);
-        // Intentar borrar el documento y manejar los posibles errores
         try {
             await deleteDoc(recipeRef);
             console.log('Documento borrado correctamente');
@@ -221,7 +212,7 @@ const Receta = () => {
                             bg: "teal.600",
                             endIcon: <CheckIcon size="5" />
                         }} mt={1} ml={1} onValueChange={(value) => setCategory(value)}>
-                        {categorias.map((category) => (
+                        {categorys.map((category) => (
                             <Select.Item key={category.name} label={category.name} value={category.name} />
                         ))}
                     </Select>
@@ -247,13 +238,13 @@ const Receta = () => {
                     onPress={() => navigation.goBack()}>Cancelar</Button>
             </HStack>
         </Box>
-    </Center >; ''
+    </Center >;
 }
 
 export default function () {
     return (
         <View minH={"100%"} minW={"100%"} pt={"5%"} bg={"gray.200"}>
-            <Receta />
+            <EditRecipe />
         </View>
     );
 };

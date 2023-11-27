@@ -5,15 +5,15 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import 'react-native-gesture-handler';
 import Login from "./screens/Login";
-import Registro from "./screens/Register";
+import Register from "./screens/Register";
 import Main from "./screens/Main";
 import Navbar from './screens/Navbar';
-import Categorias from './screens/Category';
+import Category from './screens/Category';
 import FormReceta from './screens/FormRecepta';
-import Receta from './screens/Recipe';
-import Account from './screens/Account';
-import Edit from './screens/AccountEdit';
-import editReceta from './screens/RecipeEdit';
+import Recipe from './screens/Recipe';
+import Profile from './screens/Account';
+import EditProfile from './screens/AccountEdit';
+import EditRecipe from './screens/RecipeEdit';
 import Favorite from './screens/Favorite';
 
 const Stack = createNativeStackNavigator();
@@ -22,7 +22,7 @@ export default function () {
     <NativeBaseProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="Nav" screenOptions={{ headerTintColor: 'white', statusBarColor: "white" }}>
+          <Stack.Navigator initialRouteName="Login" screenOptions={{ headerTintColor: 'white', statusBarColor: "white" }}>
             <Stack.Screen
               name={"Login"}
               component={Login}
@@ -34,7 +34,7 @@ export default function () {
 
             <Stack.Screen
               name={"Registro"}
-              component={Registro}
+              component={Register}
               options={{
                 headerStyle: {
                   backgroundColor: "#4b2ba0",
@@ -57,7 +57,7 @@ export default function () {
             />
             <Stack.Screen
               name={"Categoria"}
-              component={Categorias}
+              component={Category}
               options={{
                 headerStyle: {
                   backgroundColor: "#4b2ba0",
@@ -78,7 +78,7 @@ export default function () {
             />
             <Stack.Screen
               name={"Receta"}
-              component={Receta}
+              component={Recipe}
               options={{
                 headerStyle: {
                   backgroundColor: "#4b2ba0",
@@ -100,7 +100,7 @@ export default function () {
             />
             <Stack.Screen
               name={"Cuenta"}
-              component={Account}
+              component={Profile}
               options={{
                 headerStyle: {
                   backgroundColor: "#4b2ba0",
@@ -112,7 +112,7 @@ export default function () {
 
             <Stack.Screen
               name={"Editar cuenta"}
-              component={Edit}
+              component={EditProfile}
               options={{
                 headerStyle: {
                   backgroundColor: "#4b2ba0",
@@ -123,7 +123,7 @@ export default function () {
             />
             <Stack.Screen
               name={"Editar receta"}
-              component={editReceta}
+              component={EditRecipe}
               options={{
                 headerStyle: {
                   backgroundColor: "#4b2ba0",

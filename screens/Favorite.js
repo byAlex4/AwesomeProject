@@ -16,24 +16,20 @@ import firebase from "../backend/Firebase";
 import { collection, query, where, getDocs, setDoc, doc, deleteDoc } from "firebase/firestore";
 import { CheckBox } from 'react-native-web';
 
-// Exportar el componente CrearReceta
-const Receta = () => {
+const Favorite = () => {
     const route = useRoute();
-    const [receta, setReceta] = useState([]);
-
-    // Obtiene el firebaseId del parámetro de navegación
+    const [recipes, setRecipes] = useState([]);
     const { recipeId } = route.params;
 
     const firebaseData = [];
-    const getDatos = async () => {
+    const getData = async () => {
         const q = query(collection(firebase.db, "recipes"), where("name", "==", recipeId));
         try {
             const querySnapshot = await getDocs(q);
             querySnapshot.forEach((doc) => {
-                // doc.data() is never undefined for query doc snapshots
                 firebaseData.push(doc.data());
             });
-            setReceta(firebaseData);
+            setRecipes(firebaseData);
         } catch (errors) {
             console.log("No such document!", errors);
         }
@@ -41,33 +37,26 @@ const Receta = () => {
 
     const pasosArray = [];
     useEffect(() => {
-        getDatos();// Llama a la función getDatos
+        getData();
     }, []);
 
     const [checked, setChecked] = useState([]);
-    // definir la función handleChange que recibe el índice del checkbox
     const handleChange = (index) => {
-        // copiar el arreglo de estado actual
         let newChecked = [...checked];
-        // invertir el valor del elemento según el índice
         newChecked[index] = !newChecked[index];
-        // actualizar el estado con el nuevo arreglo
         setChecked(newChecked);
     }
 
     const delFavs = async (recipe) => {
         const user = firebase.auth.currentUser;
-        const uid = user.uid;
         const name = user.uid + '-' + recipe
         console.log(name);
         try {
-            // Crear una referencia a la colección de recetas 
             const recipesRef = doc(firebase.db, 'favorites', name)
-            // Borrar el documento 
             await deleteDoc(recipesRef);
-            console.log('Documento borrado correctamente');
+            console.log('Document has been deleted');
         } catch (error) {
-            console.log('Error al borrar el documento', error);
+            console.log('Error deleting the document', error);
         }
     }
 
@@ -75,7 +64,7 @@ const Receta = () => {
     return <Center w={"90%"} ml={"5%"}>
         <Box w={"95%"} bg={"white"} rounded={'xl'} p={"5%"}>
             <VStack space={2}>
-                {receta.map((recipe) => (
+                {recipes.map((recipe) => (
                     <>
                         <HStack>
                             <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>{recipe.name}</Text>
@@ -102,29 +91,29 @@ const Receta = () => {
                 ))}
                 <Text style={{ fontSize: '20px', color: 'rgb(115, 115, 115)' }}>Ingredientes:</Text>
 
-                {receta.map(function (recipes) {
-                    var ingredientes = recipes.ingredient; // Aquí asignas el valor de la categoría a una variable 
-                    return ingredientes.split(',').map((ingrediente) => {
+                {recipes.map(function (recipe) {
+                    var ingredient = recipe.ingredient;
+                    return ingredient.split(',').map((ingredients) => {
                         return (
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                 <CheckBox colorScheme="purple" />
-                                <Text fontSize={'md'}>{ingrediente}</Text>
+                                <Text fontSize={'md'}>{ingredients}</Text>
                             </View>);
                     });
                 })}
 
                 <Text style={{ fontSize: 'sm', color: 'rgb(115, 115, 115)' }}>Pasos:</Text>
                 <Checkbox.Group>
-                    {receta.map(function (recipes) {
-                        var pasos = recipes.steps; // Aquí asignas el valor de la categoría a una variable 
-                        return pasos.split(',').map((paso, index) => {
+                    {recipes.map(function (recipe) {
+                        var step = recipe.steps;
+                        return step.split(',').map((steps, index) => {
                             return (
                                 <View>
                                     <Checkbox colorScheme="purple" value="test"
                                         onChange={() => handleChange(index)} // llamar a una función que actualice el estado
                                         isChecked={checked[index]} // usar el valor del arreglo según el índice
                                     >
-                                        <Text fontSize={'md'}>{paso}</Text>
+                                        <Text fontSize={'md'}>{steps}</Text>
                                     </Checkbox >
                                 </View>);
                         });
@@ -132,13 +121,13 @@ const Receta = () => {
                 </Checkbox.Group>
             </VStack>
         </Box>
-    </Center >; ''
+    </Center >;
 }
 
 export default function () {
     return (
         <View minH={"100%"} minW={"100%"} pt={"5%"} bg={"gray.200"}>
-            <Receta />
+            <Favorite />
         </View>
     );
 };
