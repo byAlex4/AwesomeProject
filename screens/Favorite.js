@@ -13,8 +13,7 @@ import {
 import { AntDesign } from '@expo/vector-icons';
 import { useRoute } from "@react-navigation/native";
 import firebase from "../backend/Firebase";
-import { collection, query, where, getDocs, setDoc, doc, deleteDoc } from "firebase/firestore";
-import { CheckBox } from 'react-native-web';
+import { collection, query, where, getDocs, doc, deleteDoc } from "firebase/firestore";
 
 const Favorite = () => {
     const route = useRoute();
@@ -34,18 +33,9 @@ const Favorite = () => {
             console.log("No such document!", errors);
         }
     }
-
-    const pasosArray = [];
     useEffect(() => {
         getData();
     }, []);
-
-    const [checked, setChecked] = useState([]);
-    const handleChange = (index) => {
-        let newChecked = [...checked];
-        newChecked[index] = !newChecked[index];
-        setChecked(newChecked);
-    }
 
     const delFavs = async (recipe) => {
         const user = firebase.auth.currentUser;
@@ -55,11 +45,11 @@ const Favorite = () => {
             const recipesRef = doc(firebase.db, 'favorites', name)
             await deleteDoc(recipesRef);
             console.log('Document has been deleted');
+            alert("Esta receta se a eliminado de tus favoritos");
         } catch (error) {
             console.log('Error deleting the document', error);
         }
     }
-
 
     return <Center w={"90%"} ml={"5%"}>
         <Box w={"95%"} bg={"white"} rounded={'xl'} p={"5%"}>
@@ -96,29 +86,22 @@ const Favorite = () => {
                     return ingredient.split(',').map((ingredients) => {
                         return (
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <CheckBox colorScheme="purple" />
+                                <Checkbox colorScheme="purple" />
                                 <Text fontSize={'md'}>{ingredients}</Text>
                             </View>);
                     });
                 })}
-
                 <Text style={{ fontSize: 'sm', color: 'rgb(115, 115, 115)' }}>Pasos:</Text>
-                <Checkbox.Group>
-                    {recipes.map(function (recipe) {
-                        var step = recipe.steps;
-                        return step.split(',').map((steps, index) => {
-                            return (
-                                <View>
-                                    <Checkbox colorScheme="purple" value="test"
-                                        onChange={() => handleChange(index)} // llamar a una función que actualice el estado
-                                        isChecked={checked[index]} // usar el valor del arreglo según el índice
-                                    >
-                                        <Text fontSize={'md'}>{steps}</Text>
-                                    </Checkbox >
-                                </View>);
-                        });
-                    })}
-                </Checkbox.Group>
+                {recipes.map(function (recipe) {
+                    var step = recipe.steps;
+                    return step.split(',').map((steps, index) => {
+                        return (
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Checkbox colorScheme="purple" />
+                                <Text fontSize={'md'}>{steps}</Text>
+                            </View>);
+                    });
+                })}
             </VStack>
         </Box>
     </Center >;

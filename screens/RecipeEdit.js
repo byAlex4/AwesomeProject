@@ -159,6 +159,8 @@ const EditRecipe = () => {
         try {
             await deleteDoc(recipeRef);
             console.log('Documento borrado correctamente');
+            alert("Esta receta se a eliminado");
+            navigation.navigate("Nav");
         } catch (error) {
             console.error('Error al borrar el documento:', error);
         }

@@ -15,11 +15,9 @@ import { useNavigation } from '@react-navigation/native';
 function Favorites({ props }) {
     const [recipe, setRecipe] = useState([]);
     const firebaseFav = [];
-
     const getData = async () => {
         const user = firebase.auth.currentUser;
         if (user) {
-            // User is signed in, see docs for a list of available properties
             const uid = user.uid;
             const q1 = query(collection(firebase.db, "favorites"), where("iduser", "==", uid));
             try {

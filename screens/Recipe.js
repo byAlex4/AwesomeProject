@@ -8,13 +8,14 @@ import {
     Text,
     Image,
     IconButton,
-    Checkbox
+    Checkbox,
+    Alert,
+    CloseIcon
 } from 'native-base';
 import { AntDesign } from '@expo/vector-icons';
 import { useRoute } from "@react-navigation/native";
 import firebase from "../backend/Firebase";
 import { collection, query, where, getDocs, setDoc, doc } from "firebase/firestore";
-import { CheckBox } from 'react-native-web';
 
 const Recipe = () => {
     const route = useRoute();
@@ -56,6 +57,7 @@ const Recipe = () => {
             }
             const name = uid + '-' + recipe;
             await setDoc(doc(firebase.db, 'favorites', name), data);
+            alert("Esta receta se agrego a tus favoritos");
         } catch (errors) {
             console.error("Error adding document: ", errors);
         }
@@ -94,27 +96,22 @@ const Recipe = () => {
                     return ingredient.split(',').map((ingrediente) => {
                         return (
                             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <CheckBox colorScheme="purple" />
+                                <Checkbox colorScheme="purple" />
                                 <Text fontSize={'md'}>{ingrediente}</Text>
                             </View>);
                     });
                 })}
                 <Text style={{ fontSize: 'sm', color: 'rgb(115, 115, 115)' }}>Pasos:</Text>
-                <Checkbox.Group>
-                    {recipes.map(function (recipe) {
-                        var step = recipe.steps;
-                        return step.split(',').map((steps, index) => {
-                            return (
-                                <View>
-                                    <Checkbox colorScheme="purple" value="test"
-                                        onChange={() => handleChange(index)}
-                                        isChecked={checked[index]}>
-                                        <Text fontSize={'md'}>{steps}</Text>
-                                    </Checkbox >
-                                </View>);
-                        });
-                    })}
-                </Checkbox.Group>
+                {recipes.map(function (recipe) {
+                    var step = recipe.steps;
+                    return step.split(',').map((steps) => {
+                        return (
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Checkbox colorScheme="purple" />
+                                <Text fontSize={'md'}>{steps}</Text>
+                            </View>);
+                    });
+                })}
             </VStack>
         </Box>
     </Center >;

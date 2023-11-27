@@ -62,13 +62,13 @@ function Account({ props }) {
                     const fireRecipe = [];
                     querySnapshot.docChanges().forEach((change) => {
                         if (change.type === 'added') {
-                            console.log('account recipe added');
+                            console.log('account recipe added', change.doc.data());
                             fireRecipe.push(change.doc.data());
                         } if (change.type === 'modified') {
-                            console.log('account recipe modified');
+                            console.log('account recipe modified', change.doc.data(), change.oldIndex);
                             fireRecipe[change.oldIndex] = change.doc.data();
                         } if (change.type === 'removed') {
-                            console.log('account recipe removed');
+                            console.log('account recipe removed', change.oldIndex);
                             fireRecipe.splice(change.oldIndex, 1);
                         }
                     });
@@ -141,15 +141,6 @@ function Account({ props }) {
                                             <Text fontWeight="400">
                                                 {recipe.time} min
                                             </Text>
-                                            <HStack alignItems="center" space={4} justifyContent="space-between">
-                                                <HStack alignItems="center">
-                                                    <Text color="coolGray.600" _dark={{
-                                                        color: "warmGray.200"
-                                                    }} fontWeight="400">
-                                                        6 mins ago
-                                                    </Text>
-                                                </HStack>
-                                            </HStack>
                                         </Stack>
                                     </Pressable>
                                 </Box>

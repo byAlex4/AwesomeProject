@@ -131,6 +131,7 @@ const FormReceta = (props) => {
                 userid: userid
             }
             await setDoc(doc(firebase.db, 'recipes', name), data);
+            alert("La receta se a registrado");
             return true;
         } catch (errors) {
             console.error("Error adding document: ", errors, tiempo);
