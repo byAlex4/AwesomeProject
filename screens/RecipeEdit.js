@@ -133,6 +133,7 @@ const EditRecipe = () => {
                 })
                     .then(() => {
                         console.log('Document has been updated');
+                        alert('Recipe has been updated');
                         return true;
                     })
                     .catch((error) => {

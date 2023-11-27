@@ -23,20 +23,21 @@ function Favorites({ props }) {
             try {
                 const unsub1 = onSnapshot(q1, async (querySnapshot) => {
                     for (const change of querySnapshot.docChanges()) {
-                        if (change.type === 'added') {
-                            console.log('favs has been added')
-                        } if (change.type === 'modified') {
-                            console.log('favs has been modifed')
-                        } if (change.type === 'removed') {
-                            console.log('favs has been remoded')
-                        }
                         const idrecipe = change.doc.data().idrecipe;
                         const q2 = query(collection(firebase.db, 'recipes'), where('name', '==', idrecipe));
                         const unsub2 = onSnapshot(q2, (querySnap) => {
                             querySnap.forEach((doc) => {
-                                firebaseFav.push(doc.data());
+                                if (change.type === 'added') {
+                                    console.log('favs has been added');
+                                    setRecipe(prevRecipes => [...prevRecipes, doc.data()]);
+                                } else if (change.type === 'modified') {
+                                    console.log('favs has been modifed');
+                                    setRecipe(prevRecipes => prevRecipes.map(recipe => recipe.name === idrecipe ? doc.data() : recipe));
+                                } else if (change.type === 'removed') {
+                                    console.log('favs has been remoded');
+                                    setRecipe(prevRecipes => prevRecipes.filter(recipe => recipe.name !== idrecipe));
+                                }
                             });
-                            setRecipe(firebaseFav)
                         });
                     }
                 })
@@ -45,6 +46,7 @@ function Favorites({ props }) {
             };
         };
     }
+
     useEffect(() => {
         getData();
     }, []);

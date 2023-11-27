@@ -70,6 +70,7 @@ function EditProfile({ props }) {
             })
                 .then(() => {
                     console.log('Document has been updated');
+                    alert('User has been updated');
                     return true;
                 })
                 .catch((errors) => {
