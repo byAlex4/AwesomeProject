@@ -13,7 +13,7 @@ import {
 import { AntDesign } from '@expo/vector-icons';
 import { useRoute } from "@react-navigation/native";
 import firebase from "../backend/Firebase";
-import { collection, query, where, getDocs, setDoc, doc } from "firebase/firestore";
+import { collection, query, where, getDocs, setDoc, doc, deleteDoc } from "firebase/firestore";
 import { CheckBox } from 'react-native-web';
 
 // Exportar el componente CrearReceta
@@ -55,21 +55,20 @@ const Receta = () => {
         setChecked(newChecked);
     }
 
-    const delFavs = async (name) => {
+    const delFavs = async (recipe) => {
         const user = firebase.auth.currentUser;
         const uid = user.uid;
-        // Crear una referencia a la colección de recetas 
-        const recipesRef = collection(firebase.db, 'favorites')
-        // Crear una consulta para filtrar los documentos donde recipeID = name y userID = uid 
-        const query = query(recipesRef, where('idrecipe', '==', name), where('iduser', '==', uid));
-        // Obtener los documentos que coinciden con la consulta 
-        const querySnapshot = await getDocs(query);
-        // Iterar sobre los documentos y borrarlos 
-        querySnapshot.forEach(async (doc) => {
+        const name = user.uid + '-' + recipe
+        console.log(name);
+        try {
+            // Crear una referencia a la colección de recetas 
+            const recipesRef = doc(firebase.db, 'favorites', name)
             // Borrar el documento 
-            await deleteDoc(doc.ref);
+            await deleteDoc(recipesRef);
             console.log('Documento borrado correctamente');
-        });
+        } catch (error) {
+            console.log('Error al borrar el documento', error);
+        }
     }
 
 

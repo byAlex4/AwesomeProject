@@ -23,18 +23,29 @@ function Favorites({ props }) {
             const uid = user.uid;
             const q1 = query(collection(firebase.db, "favorites"), where("iduser", "==", uid));
             try {
-                const unsub1 = onSnapshot(q1, (querySnapshot) => {
-                    querySnapshot.forEach(async (doc) => {
-                        const idrecipe = doc.data().idrecipe;
-                        const q2 = query(collection(firebase.db, "recipes"), where("name", "==", idrecipe));
+                const unsub1 = onSnapshot(q1, async (querySnapshot) => {
+                    // Usar for…of en lugar de forEach() 
+                    for (const change of querySnapshot.docChanges()) {
+                        if (change.type === 'added') {
+                            // Agrega los datos del documento nuevo al array 
+                            console.log('favs has been added')
+                        } if (change.type === 'modified') {
+                            // Actualiza los datos del documento modificado en el array 
+                            console.log('favs has been modifed')
+                        } if (change.type === 'removed') {
+                            // Elimina los datos del documento eliminado del array 
+                            console.log('favs has been remoded')
+                        }
+                        const idrecipe = change.doc.data().idrecipe;
+                        const q2 = query(collection(firebase.db, 'recipes'), where('name', '==', idrecipe));
                         const unsub2 = onSnapshot(q2, (querySnap) => {
                             querySnap.forEach((doc) => {
-                                const data2 = doc.data();
-                                firebaseFav.push(data2);
+                                firebaseFav.push(doc.data());
                             });
                             setReceta(firebaseFav)
+                            console.log(firebaseFav)
                         });
-                    })
+                    }
                 })
             } catch (errors) {
                 console.log("No such fav!", errors);

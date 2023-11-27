@@ -47,21 +47,20 @@ function Profile({ props }) {
     const getDatos = async () => {
         const user = firebase.auth.currentUser;
         if (user) {
-            // User is signed in, see docs for a list of available properties
             const uid = user.uid;
             const q = query(collection(firebase.db, "recipes"), where("userid", "==", uid));
             try {
                 const unsub = onSnapshot(q, (querySnapshot) => {
-                    // Crea un array vacío para almacenar los datos de los documentos
                     const fireRecipe = [];
                     querySnapshot.docChanges().forEach((change) => {
                         if (change.type === 'added') {
-                            // Agrega los datos del documento nuevo al array 
+                            console.log('added last recipes');
                             fireRecipe.push(change.doc.data());
                         } if (change.type === 'modified') {
-                            // Actualiza los datos del documento modificado en el array 
+                            console.log('modified last recipes');
                             fireRecipe[change.oldIndex] = change.doc.data();
-                        } if (change.type === 'removed') { // Elimina los datos del documento eliminado del array 
+                        } if (change.type === 'removed') {
+                            console.log('removed last recipes');
                             fireRecipe.splice(change.oldIndex, 1);
                         }
                     });
@@ -125,17 +124,11 @@ function Profile({ props }) {
                                 <Box w="45%" rounded="lg" mb={3} borderColor="coolGray.200"
                                     backgroundColor={'coolGray.50'} borderWidth="1">
                                     <Pressable onPress={() => navRecipe(recipes.name)} >
-                                        <Box>
-                                            <AspectRatio ratio={16 / 9}>
-                                                <Image source={{
-                                                    uri: recipes.img
-                                                }} alt="image" w={'170px'} />
-                                            </AspectRatio>
-                                            <Center bg="violet.500" position="absolute" bottom="0" px="3" py="1.5">
-                                                Novedad
-                                            </Center>
-                                        </Box>
+                                        <Image source={{
+                                            uri: recipes.img
+                                        }} alt="image" style={{ width: '100%', height: 100 }} />
                                         <Stack p="4" space={3}>
+
                                             <Heading size="md" ml="-1">
                                                 {recipes.name}
                                             </Heading>

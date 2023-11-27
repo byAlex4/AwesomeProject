@@ -22,10 +22,6 @@ import { collection, getDocs, doc, query, setDoc } from "firebase/firestore";
 import { Pressable } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, getDownloadURL, uploadString } from "firebase/storage";
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { TimeField } from '@mui/x-date-pickers/TimeField';
 
 // Exportar el componente CrearReceta
 const CrearReceta = (props) => {
@@ -281,13 +277,9 @@ const CrearReceta = (props) => {
 }
 export default function () {
     return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DemoContainer components={['TimeField']}>
-                <View minH={"100%"} minW={"100%"} pt={"5%"} bg={"gray.200"}>
-                    <CrearReceta />
-                </View>
-            </DemoContainer>
-        </LocalizationProvider>
+        <View minH={"100%"} minW={"100%"} pt={"5%"} bg={"gray.200"}>
+            <CrearReceta />
+        </View>
     );
 };
 

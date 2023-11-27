@@ -135,7 +135,8 @@ const Main = () => {
                             <HStack space={4}>
                                 <Image key={index} source={{
                                     uri: recipes.img
-                                }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                                }} alt="Alternate Text" rounded={"lg"} size="2xl"
+                                    style={{ width: 125, height: 125 }}  ></Image>
                                 <VStack flexWrap={'wrap'} maxW={'148px'}>
                                     <Text>{recipes.name}</Text>
                                     <Text>Categoria: {recipes.category}</Text>
