@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
-    "@expo/webpack-config": "^18.1.3",
+    "@expo/webpack-config": "^19.0.0",
     "@react-navigation/bottom-tabs": "^6.5.9",
     "@react-navigation/drawer": "^6.6.4",
     "@react-navigation/native": "^6.1.8",
@@ -18,10 +18,10 @@
     "@react-navigation/stack": "^6.3.18",
     "@types/react-native": "^0.72.2",
     "deprecated-react-native-prop-types": "^5.0.0",
-    "expo": "^49.0.21",
+    "expo": "^49.0.9",
     "expo-image-picker": "~14.3.2",
     "expo-linear-gradient": "^12.3.0",
-    "expo-splash-screen": "^0.10.3",
+    "expo-splash-screen": "^0.20.5",
     "expo-status-bar": "~1.6.0",
     "firebase": "^10.5.0",
     "firebaseui": "^6.1.0",
@@ -42,7 +42,8 @@
     "react-native-tab-view": "^3.5.2",
     "react-native-vector-icons": "^10.0.0",
     "react-native-web": "~0.19.6",
-    "react-time-picker": "^6.5.2"
+    "react-time-picker": "^6.5.2",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.23.3",

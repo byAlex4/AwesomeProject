@@ -53,33 +53,31 @@ function Account({ props }) {
 
     const [recipes, setRecipes] = useState([]);
     const getData = async () => {
-        const fireRecipe = [];
         const user = firebase.auth.currentUser;
         if (user) {
             const uid = user.uid;
             const q = query(collection(firebase.db, "recipes"), where("userid", "==", uid));
             try {
                 const unsub = onSnapshot(q, (querySnapshot) => {
-                    setRecipes([]);
                     querySnapshot.docChanges().forEach((change) => {
                         if (change.type === 'added') {
                             console.log('account recipe added', change.doc.data());
-                            fireRecipe.push(change.doc.data());
+                            setRecipes(prevRecipes => [...prevRecipes, change.doc.data()]);
                         } if (change.type === 'modified') {
                             console.log('account recipe modified', change.doc.data(), change.oldIndex);
-                            fireRecipe[change.oldIndex] = change.doc.data();
+                            setRecipes(prevRecipes => prevRecipes.map((recipe, index) => index === change.oldIndex ? change.doc.data() : recipe));
                         } if (change.type === 'removed') {
                             console.log('account recipe removed', change.oldIndex);
-                            fireRecipe.splice(change.oldIndex, 1);
+                            setRecipes(prevRecipes => prevRecipes.filter((_, index) => index !== change.oldIndex));
                         }
                     });
-                    setRecipes(fireRecipe);
                 });
             } catch (errors) {
                 console.log("No such document!", errors);
             };
         };
     };
+
 
     const handelSummit = () => {
         const user = firebase.auth.currentUser;
