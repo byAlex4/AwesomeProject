@@ -10,8 +10,7 @@ import {
     Text,
     Image,
     ScrollView
-}
-    from 'native-base';
+} from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
 import firebase from "../backend/Firebase";
@@ -21,38 +20,17 @@ import { Pressable } from 'react-native';
 const Main = () => {
     const [recipe, setRecipe] = useState([]);
     const getData = async () => {
-        if (search === "") {
-            try {
-                const colRef = collection(firebase.db, "recipes");
-                const unsub = onSnapshot(colRef, (querySnapshot) => {
-                    const fireRecipe = [];
-                    querySnapshot.forEach((doc) => {
-                        fireRecipe.push(doc.data());
-                    });
-                    setRecipe(fireRecipe);
+        try {
+            const colRef = collection(firebase.db, "recipes");
+            const unsub = onSnapshot(colRef, (querySnapshot) => {
+                const fireRecipe = [];
+                querySnapshot.forEach((doc) => {
+                    fireRecipe.push(doc.data());
                 });
-            } catch (errors) {
-                console.log("No such document!", errors);
-            }
-        } else {
-            try {
-                const q = query(collection(firebase.db, 'recipes'), where('name', '==', search || ''));
-                const unsub = onSnapshot(q, (querySnapshot) => {
-                    const fireRecipe = [];
-                    querySnapshot.docChanges().forEach((change) => {
-                        if (change.type === 'added') {
-                            fireRecipe.push(change.doc.data());
-                        } if (change.type === 'modified') {
-                            fireRecipe[change.oldIndex] = change.doc.data();
-                        } if (change.type === 'removed') {
-                            fireRecipe.splice(change.oldIndex, 1);
-                        }
-                    });
-                    setRecipe(fireRecipe);
-                });
-            } catch (errors) {
-                console.log("No such document!", errors);
-            }
+                setRecipe(fireRecipe);
+            });
+        } catch (errors) {
+            console.log("No such document!", errors);
         }
     }
 
@@ -80,10 +58,14 @@ const Main = () => {
         navigation.navigate("Categoria", { categoryId });
     };
 
-    const [search, setSearch] = useState("");
-    const handleChange = (e) => {
-        setSearch(e.target.value);
-        getData();
+    const [search, setSearch] = useState('');
+    const handleChange = (event) => {
+        setSearch(event.target.value);
+        if (event.target.value !== '') {
+            setRecipe(recipe.filter(r => r.name.includes(event.target.value)));
+        } else {
+            getData(); // Esta función debería obtener todas las recetas de nuevo
+        }
     }
 
     useEffect(() => {
@@ -91,20 +73,26 @@ const Main = () => {
         getCategory();
     }, []);
 
-    return <Center w={"80%"} ml={"10%"}>
+    return <Center w={"85%"} ml={"7.5%"}>
         <Box w={"100%"} bg={"white"} rounded={'xl'}>
             <VStack m={"5%"} w={"90%"}>
                 <FormControl>
-                    <Input variant="rounded" bg={"#e4e4e7"} minW={"100%"} fontSize={"lg"} onChange={handleChange}
+                    <Input
+                        variant="rounded"
+                        bg={"#e4e4e7"}
+                        minW={"100%"}
+                        fontSize={"lg"}
+                        onChange={handleChange}
                         InputLeftElement={<Icon as={<AntDesign name="search1" size={24} />} ml="5"></Icon>}
-                        placeholder="Buscar una receta" />
+                        placeholder="Buscar una receta"
+                    />
                 </FormControl>
                 <HStack mt={2}>
                     <ScrollView
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}>
                         {category.map((categorys) => (
-                            <VStack m={1} w={"75px"} h={"105px"}>
+                            <VStack m={1} w={"75px"} >
                                 <Pressable onPress={() => navCategory(categorys.name)} key={categorys.name}>
                                     <Box bg={"#5249EB"} rounded={"xl"} w={"75px"} h={"75px"}>
                                         <Icon as={<MaterialCommunityIcons name={categorys.icon} />} color='white' size={60} m={"10%"} />
@@ -148,7 +136,7 @@ const Main = () => {
 
 export default function ({ props }) {
     return (
-        <ScrollView flex={1} h={'100%'} minW={"100%"} pt={"5%"} bg={"gray.200"}>
+        <ScrollView flex={1} h={'100%'} minW={"100%"} bg={"gray.200"}>
             <Main />
         </ScrollView>
     );

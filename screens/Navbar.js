@@ -79,7 +79,7 @@ export default function () {
         }
     })
     return (
-        <View minW={'100%'} minH={'100%'}>
+        <View minW={'100%'} minH={'100%'} bottom={0} mt={'auto'}>
             <ButtonA />
             <Tab.Navigator
                 initialRouteName="Home"

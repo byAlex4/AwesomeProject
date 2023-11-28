@@ -122,14 +122,14 @@ const Login = () => {
     }
 
     return (
-        <Center>
+        <Center minH={'100%'}>
             <Image source={{
                 uri: "https://i.postimg.cc/CK8Dwt3Y/sombrero.png"
-            }} alt="Chef" size="2xl" style={{ width: 450 }} resizeMode="center" />
+            }} alt="Chef" size="2xl" style={{ width: '80%' }} resizeMode="center" />
             <Image source={{
                 uri: "https://i.postimg.cc/MTgfg8Z1/Log-In.png"
-            }} alt="Txt" size="lg" mt={-15} style={{ width: 300 }} resizeMode="contain" />
-            <Box p="8" minW="100%" bottom={0} mt={'15%'} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
+            }} alt="Txt" size="lg" mt={-15} style={{ width: '80%' }} resizeMode="contain" />
+            <Box pb={'5%'} p="8" minW="100%" bottom={0} mt={'auto'} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
                 <Center w={"80%"} ml={"10%"}>
                     <VStack minW={"100%"} >
                         <FormControl isRequired isInvalid={'email' in errors}>
@@ -141,7 +141,7 @@ const Login = () => {
                                 })} bg={"white"} minW={"100%"} fontSize={"lg"}
                                 InputLeftElement={<Icon as={<AntDesign name="user" size={24} color="black" />} ml="5"></Icon>} placeholder="example@email.com" />
                             {'email' in errors ?
-                                <FormControl.ErrorMessage>{errors.email}</FormControl.ErrorMessage> : " "
+                                <FormControl.ErrorMessage>{errors.email}</FormControl.ErrorMessage> : ""
                             }
                         </FormControl>
                         <FormControl isRequired isInvalid={'password' in errors}>
@@ -162,10 +162,10 @@ const Login = () => {
                                 Olvidaste la contraseña?
                             </Link>
                         </FormControl>
-                        <Button title="Sign" onPress={onSubmit} size="lg" mt="10" colorScheme="indigo" borderRadius="full">
+                        <Button title="Sign" onPress={onSubmit} size="lg" mt="4" colorScheme="indigo" borderRadius="full">
                             Iniciar sesión
                         </Button>
-                        <VStack mt="6">
+                        <VStack mt="4">
                             <HStack justifyContent="center">
                                 <Text fontSize="md" color="warmGray.500" _dark={{
                                     color: "warmGray.500"
@@ -173,7 +173,7 @@ const Login = () => {
                                     o
                                 </Text>
                             </HStack>
-                            <HStack justifyContent="center" space={4} maxH={"40px"}>
+                            <HStack justifyContent="center" mt="4" space={4} maxH={"40px"}>
                                 <Link variant={"link"} onPress={signInGoogle}><Icon as={<AntDesign name="google" />} size={30}></Icon></Link>
                                 <Link variant={"link"} onPress={signInFacebook}><Icon as={<AntDesign name="facebook-square" />} size={30}></Icon></Link>
                             </HStack>
@@ -202,7 +202,7 @@ const Login = () => {
 
 export default function ({ porps }) {
     return (
-        <View minH={"100%"} minW={"100%"} bg={"#4b2ba0"} pt={"5%"} >
+        <View minH={"100%"} minW={"100%"} bg={"#4b2ba0"} p={"5%"} >
             <Login />
         </View>
     )

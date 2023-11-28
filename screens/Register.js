@@ -176,14 +176,14 @@ const Register = () => {
 
 
   return (
-    <Center>
+    <Center minH={'100%'}>
       <Image source={{
         uri: "https://i.postimg.cc/132whPYJ/pollo.png"
-      }} alt="Chef" size="2xl" style={{ width: 450 }} resizeMode="center" />
+      }} alt="Chef" size="2xl" style={{ width: '65%' }} resizeMode="center" />
       <Image source={{
         uri: "https://i.postimg.cc/7Yhm3xfr/Sing-up.png"
-      }} alt="Txt" size="lg" mt={-15} style={{ width: 300 }} resizeMode="contain" />
-      <Box p="8" minW="100%" minH={"60%"} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
+      }} alt="Txt" size="lg" mt={-15} style={{ width: '65%' }} resizeMode="contain" />
+      <Box p="8" minW="100%" bottom={0} mt={'auto'} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
         <Center w={"80%"} ml={"10%"}>
           <VStack minW={"100%"} >
             <FormControl isRequired isInvalid={'name' in errors}>
@@ -194,7 +194,7 @@ const Register = () => {
                   name: value
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} />
               {'name' in errors ?
-                <FormControl.ErrorMessage>{errors.name}</FormControl.ErrorMessage> : " "
+                <FormControl.ErrorMessage>{errors.name}</FormControl.ErrorMessage> : ""
               }
             </FormControl>
             <FormControl isRequired isInvalid={'email' in errors}>
@@ -205,7 +205,7 @@ const Register = () => {
                   email: value
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} />
               {'email' in errors ?
-                <FormControl.ErrorMessage>{errors.email}</FormControl.ErrorMessage> : " "
+                <FormControl.ErrorMessage>{errors.email}</FormControl.ErrorMessage> : ""
               }
             </FormControl>
             <FormControl isRequired isInvalid={'password' in errors}>
@@ -216,7 +216,7 @@ const Register = () => {
                   password: value
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} />
               {'password' in errors ?
-                <FormControl.ErrorMessage>{errors.password}</FormControl.ErrorMessage> : " "
+                <FormControl.ErrorMessage>{errors.password}</FormControl.ErrorMessage> : ""
               }
             </FormControl>
             <FormControl isRequired isInvalid={'repassword' in errors}>
@@ -227,13 +227,13 @@ const Register = () => {
                   repassword: value
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} />
               {'repassword' in errors ?
-                <FormControl.ErrorMessage>{errors.repassword}</FormControl.ErrorMessage> : " "
+                <FormControl.ErrorMessage>{errors.repassword}</FormControl.ErrorMessage> : ""
               }
             </FormControl>
             <Button title="Sign" onPress={onSubmit} size="lg" mt="4" colorScheme="indigo" borderRadius="full">
               Registrarse
             </Button>
-            <VStack mt="6">
+            <VStack mt="2">
               <HStack justifyContent="center">
                 <Text fontSize="md" color="warmGray.500" _dark={{
                   color: "warmGray.500"
@@ -241,7 +241,7 @@ const Register = () => {
                   o
                 </Text>
               </HStack>
-              <HStack justifyContent="center" space={4}>
+              <HStack justifyContent="center" mt="1" space={4}>
                 <Link variant={"link"} onPress={signInGoogle}><Icon as={<AntDesign name="google" />} size={30}></Icon></Link>
               </HStack>
             </VStack>
