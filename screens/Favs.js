@@ -40,7 +40,7 @@ function Favorites({ props }) {
                                 }
                             });
                         });
-                    }
+                    };
                 })
             } catch (errors) {
                 console.log("No such fav!", errors);

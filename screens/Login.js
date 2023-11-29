@@ -18,8 +18,7 @@ import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
 import firebase from "./../backend/Firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
-
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 
 const Login = () => {
     const navigation = useNavigation();
@@ -27,14 +26,11 @@ const Login = () => {
     const [errors, setErrors] = React.useState({});
     let regex_email = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
     let re = /^[A-Z][a-z0-9_-]{8,32}$/
-
     const digit = /[0-9]/
     const upperCase = /[A-Z]/
     const lowerCase = /[a-z]/
     const nonAlphanumeric = /[^0-9A-Za-z]/
-
     var user = '';
-
     const isStrongPassword = (password) =>
         [digit, upperCase, lowerCase, nonAlphanumeric].every((re) => re.test(password))
         && password.length >= 8
