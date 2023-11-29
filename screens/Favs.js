@@ -6,7 +6,9 @@ import {
     Text,
     Pressable,
     Image,
-    ScrollView
+    ScrollView,
+    Center,
+    View
 } from 'native-base';
 import firebase from "../backend/Firebase";
 import { collection, query, where, onSnapshot } from "firebase/firestore";
@@ -56,34 +58,46 @@ function Favorites({ props }) {
     };
 
     return (
-        <Box w={"90%"} bg={"white"} rounded={'xl'} m={"5%"} minH={'100%'}>
-            <VStack m={"5%"} w={"90%"} space={5}>
-                <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Favoritos</Text>
-                {recipe.map((recipes, index) => (
-                    <Pressable onPress={() => navRecipe(recipes.name)}>
-                        <Box w={"100%"}>
-                            <HStack space={4}>
-                                <Image key={index} source={{
-                                    uri: recipes.img
-                                }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
-                                <VStack flexWrap={'wrap'} maxW={'148px'}>
-                                    <Text>{recipes.name}</Text>
-                                    <Text>Categoria: {recipes.category}</Text>
-                                    <Text>Tiempo: {recipes.time} min</Text>
-                                </VStack>
-                            </HStack>
-                        </Box>
-                    </Pressable>
-                ))}
-            </VStack>
-        </Box>
+        <Center w={"85%"} ml={"7.5%"}>
+            <Box w={"100%"} bg={"white"} rounded={'xl'}>
+                <VStack m={"5%"} w={"90%"} space={5}>
+                    <Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Favoritos</Text>
+                    {recipe.length > 0 ? (
+                        recipe.map((recipes, index) => (
+                            <>
+                                <Pressable onPress={() => navRecipe(recipes.name)}>
+                                    <Box w={"100%"}>
+                                        <HStack space={4}>
+                                            <Image key={index} source={{
+                                                uri: recipes.img
+                                            }} alt="Alternate Text" rounded={"lg"} size="2xl" style={{ width: 125, height: 125 }}  ></Image>
+                                            <VStack flexWrap={'wrap'} maxW={'148px'}>
+                                                <Text>{recipes.name}</Text>
+                                                <Text>Categoria: {recipes.category}</Text>
+                                                <Text>Tiempo: {recipes.time} min</Text>
+                                            </VStack>
+                                        </HStack>
+                                    </Box>
+                                </Pressable>
+                            </>
+                        )))
+                        : (
+                            <>
+                                <Text>Aun no tienes recetas favoritas...</Text>
+                                <Text>Agrega aquellas recetas que te encantaria repetir</Text>
+                            </>
+                        )
+                    }
+                </VStack>
+            </Box>
+        </Center>
     )
 };
 
 export default () => {
     return (
-        <ScrollView flex={1} minH={'100%'} minW={"100%"} pt={"5%"} bg={"gray.200"}>
+        <View minH={'100%'} minW={"100%"} pt={"5%"} >
             <Favorites />
-        </ScrollView>
+        </View>
     );
 };

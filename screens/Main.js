@@ -112,23 +112,31 @@ const Main = () => {
             <VStack m={"5%"} w={"90%"} space={5}>
 
                 <Text Text fontSize={"2xl"} fontStyle={'italic'} fontWeight={'bold'}>Recomendaciones</Text>
-                {recipe.map((recipes, index) => (
-                    <Pressable onPress={() => navRecipe(recipes.name)}>
-                        <Box w={"100%"}>
-                            <HStack space={4}>
-                                <Image key={index} source={{
-                                    uri: recipes.img
-                                }} alt="Alternate Text" rounded={"lg"} size="2xl"
-                                    style={{ width: 125, height: 125 }}  ></Image>
-                                <VStack flexWrap={'wrap'} maxW={'148px'}>
-                                    <Text>{recipes.name}</Text>
-                                    <Text>Categoria: {recipes.category}</Text>
-                                    <Text>Tiempo: {recipes.time} min</Text>
-                                </VStack>
-                            </HStack>
-                        </Box>
-                    </Pressable>
-                ))}
+                {recipe.length > 0 ? (
+                    recipe.map((recipes, index) => (
+                        <Pressable onPress={() => navRecipe(recipes.name)}>
+                            <Box w={"100%"}>
+                                <HStack space={4}>
+                                    <Image key={index} source={{
+                                        uri: recipes.img
+                                    }} alt="Alternate Text" rounded={"lg"} size="2xl"
+                                        style={{ width: 125, height: 125 }}  ></Image>
+                                    <VStack flexWrap={'wrap'} maxW={'148px'}>
+                                        <Text>{recipes.name}</Text>
+                                        <Text>Categoria: {recipes.category}</Text>
+                                        <Text>Tiempo: {recipes.time} min</Text>
+                                    </VStack>
+                                </HStack>
+                            </Box>
+                        </Pressable>
+                    ))) :
+                    (
+                        <>
+                            <Text>Aun no existen recetas...</Text>
+                            <Text>Lo sentimos, pero esta es la oportunidad para que tu receta sea la primera</Text>
+                        </>
+                    )
+                }
             </VStack>
         </Box>
     </Center >;

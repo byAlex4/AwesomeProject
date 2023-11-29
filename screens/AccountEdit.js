@@ -173,7 +173,6 @@ function EditProfile({ props }) {
                             <Avatar bg="amber.500" source={{
                                 uri: img
                             }} size="2xl" mt={"-45%"}>
-                                <Avatar.Badge bg="green.500" />
                             </Avatar>
                         </Pressable>
                     </VStack>

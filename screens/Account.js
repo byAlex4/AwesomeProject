@@ -122,29 +122,36 @@ function Account({ props }) {
                     <Text>{phone} </Text>
                 </VStack>
                 <VStack mt={5} space={4}>
-                    <Text bold>Ultimas recetas</Text>
+                    <Text bold>Tus recetas</Text>
                     <HStack space={4} flexWrap={'wrap'}>
-                        {recipes.map((recipe) => (
-                            <>
-                                <Box w="45%" rounded="lg" mb={3} borderColor="coolGray.200"
-                                    backgroundColor={'coolGray.50'} borderWidth="1">
-                                    <Pressable onPress={() => navRecipe(recipe.name)} >
-                                        <Image source={{
-                                            uri: recipe.img
-                                        }} alt="image" style={{ width: '100%', height: 100 }} />
-                                        <Stack p="4" space={3}>
+                        {recipes.length > 0 ? (
+                            recipes.map((recipe) => (
+                                <>
+                                    <Box w="45%" rounded="lg" mb={3} borderColor="coolGray.200"
+                                        backgroundColor={'coolGray.50'} borderWidth="1">
+                                        <Pressable onPress={() => navRecipe(recipe.name)} >
+                                            <Image source={{
+                                                uri: recipe.img
+                                            }} alt="image" style={{ width: '100%', height: 100 }} />
+                                            <Stack p="4" space={3}>
 
-                                            <Heading size="md" ml="-1">
-                                                {recipe.name}
-                                            </Heading>
-                                            <Text fontWeight="400">
-                                                {recipe.time} min
-                                            </Text>
-                                        </Stack>
-                                    </Pressable>
-                                </Box>
+                                                <Heading size="md" ml="-1">
+                                                    {recipe.name}
+                                                </Heading>
+                                                <Text fontWeight="400">
+                                                    {recipe.time} min
+                                                </Text>
+                                            </Stack>
+                                        </Pressable>
+                                    </Box>
+                                </>
+                            ))
+                        ) : (
+                            <>
+                                <Text>Parece que aun no agregas una receta, te animamos a que agregues una receta...</Text>
+                                <Text>Comparte tus mejores recetas con nosotros</Text>
                             </>
-                        ))}
+                        )}
                     </HStack>
                 </VStack>
             </Box>

@@ -197,7 +197,7 @@ const FormReceta = (props) => {
                             name: value
                         })} bg={"white"} minW={"100%"} fontSize={"lg"} />
                         {'name' in errors ?
-                            <FormControl.ErrorMessage>{errors.name}</FormControl.ErrorMessage> : " "
+                            <FormControl.ErrorMessage>{errors.name}</FormControl.ErrorMessage> : ""
                         }
                     </FormControl>
                     <FormControl isRequired isInvalid={'category' in errors}>
@@ -213,7 +213,7 @@ const FormReceta = (props) => {
                             ))}
                         </Select>
                         {'category' in errors ?
-                            <FormControl.ErrorMessage>{errors.category}</FormControl.ErrorMessage> : " "
+                            <FormControl.ErrorMessage>{errors.category}</FormControl.ErrorMessage> : ""
                         }
                     </FormControl>
                     <FormControl isRequired isInvalid={'time' in errors}>
@@ -223,7 +223,7 @@ const FormReceta = (props) => {
                             time: value
                         })} bg={"white"} minW={"100%"} fontSize={"lg"} />
                         {'time' in errors ?
-                            <FormControl.ErrorMessage>{errors.time}</FormControl.ErrorMessage> : " "
+                            <FormControl.ErrorMessage>{errors.time}</FormControl.ErrorMessage> : ""
                         }
                     </FormControl>
                 </VStack>
@@ -236,7 +236,7 @@ const FormReceta = (props) => {
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} >
                 </TextArea>
                 {'description' in errors ?
-                    <FormControl.ErrorMessage>{errors.description}</FormControl.ErrorMessage> : " "
+                    <FormControl.ErrorMessage>{errors.description}</FormControl.ErrorMessage> : ""
                 }
             </FormControl>
             <FormControl isRequired isInvalid={'ingredient' in errors}>
@@ -247,7 +247,7 @@ const FormReceta = (props) => {
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} >
                 </TextArea>
                 {'ingredient' in errors ?
-                    <FormControl.ErrorMessage>{errors.ingredient}</FormControl.ErrorMessage> : " "
+                    <FormControl.ErrorMessage>{errors.ingredient}</FormControl.ErrorMessage> : ""
                 }
             </FormControl>
             <FormControl isRequired isInvalid={'steps' in errors}>
@@ -258,11 +258,10 @@ const FormReceta = (props) => {
                 })} bg={"white"} minW={"100%"} fontSize={"lg"} >
                 </TextArea>
                 {'steps' in errors ?
-                    <FormControl.ErrorMessage>{errors.steps}</FormControl.ErrorMessage> : " "
+                    <FormControl.ErrorMessage>{errors.steps}</FormControl.ErrorMessage> : ""
                 }
             </FormControl>
-
-            <HStack mt={8} space={1}>
+            <HStack mt={3} space={1}>
                 <Button style={{ backgroundColor: "#483285", width: '50%' }} onPress={onSubmit} >Guardar</Button>
                 <Button style={{ backgroundColor: "#cacaca", width: '50%' }}
                     onPress={() => navigation.goBack()}>Cancelar</Button>

@@ -46,7 +46,7 @@ function Category({ props }) {
         <Center w={"80%"} ml={"10%"}>
             <Box w={"100%"} bg={"white"} rounded={'xl'} m={"5%"}>
                 <VStack m={"5%"} w={"90%"} space={5}>
-                    {recipe.map((recipes) => (
+                    {recipe.length > 0 ? (recipe.map((recipes) => (
                         <>
                             <Pressable onPress={() => navRecipe(recipes.name)}>
                                 <Box w={"100%"}>
@@ -62,7 +62,15 @@ function Category({ props }) {
                                 </Box>
                             </Pressable>
                         </>
-                    ))}
+                    )))
+                        :
+                        (
+                            <>
+                                <Text>Aun no existen recetas con esta categoria...</Text>
+                                <Text>Lamentamos los inconvenientes, pero esta es la oportunidad para que tu receta sea la primera</Text>
+                            </>
+                        )
+                    }
                 </VStack>
             </Box>
         </Center>

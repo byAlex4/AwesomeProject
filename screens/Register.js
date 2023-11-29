@@ -24,7 +24,6 @@ const Register = () => {
   const navigation = useNavigation();
   const [formData, setData] = React.useState({});
   const [errors, setErrors] = React.useState({});
-  const [isOpen, setIsOpen] = React.useState(false);
 
   let regex_email = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
   let re = /^[A-Z][a-z0-9_-]{8,32}$/
@@ -60,11 +59,10 @@ const Register = () => {
   const createUser = (correo, contra) => {
     createUserWithEmailAndPassword(firebase.auth, correo, contra)
       .then((userCredential) => {
-        setIsOpen(true)
         console.log('Account added');
         var user = userCredential.user;
         saveUser(user.uid)
-
+        console.log('register', user);
       })
       .catch((error) => {
         console.log("Error:" + errors);
@@ -90,6 +88,7 @@ const Register = () => {
             desc: ""
           }
           await setDoc(doc(firebase.db, 'users', user.uid), data);
+          console.log('register', data);
         } catch (errors) {
           console.error("Error adding document: ", errors);
         }
@@ -99,22 +98,6 @@ const Register = () => {
         const errorMessage = error.message;
         const email = error.customData.email;
         const credential = GoogleAuthProvider.credentialFromError(error);
-      });
-  }
-
-  const signInFacebook = () => {
-    const provider = new FacebookAuthProvider();
-    const auth = getAuth();
-    signInWithPopup(auth, provider)
-      .then((result) => {
-        const user = result.user;
-        const credential = FacebookAuthProvider.credentialFromResult(result);
-        const accessToken = credential.accessToken;
-        navigation.navigate('Nav', { uid: user.uid })
-      })
-      .catch((error) => {
-        const email = error.customData.email;
-        const credential = FacebookAuthProvider.credentialFromError(error);
       });
   }
 
@@ -179,10 +162,10 @@ const Register = () => {
     <Center minH={'100%'}>
       <Image source={{
         uri: "https://i.postimg.cc/132whPYJ/pollo.png"
-      }} alt="Chef" size="2xl" style={{ width: '65%' }} resizeMode="center" />
+      }} alt="Chef" size="2xl" style={{ width: '55%' }} resizeMode="center" />
       <Image source={{
         uri: "https://i.postimg.cc/7Yhm3xfr/Sing-up.png"
-      }} alt="Txt" size="lg" mt={-15} style={{ width: '65%' }} resizeMode="contain" />
+      }} alt="Txt" size="lg" mt={'-10%'} style={{ width: '55%' }} resizeMode="contain" />
       <Box p="8" minW="100%" bottom={0} mt={'auto'} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
         <Center w={"80%"} ml={"10%"}>
           <VStack minW={"100%"} >
@@ -255,7 +238,7 @@ const Register = () => {
 
 export default function ({ porps }) {
   return (
-    <View minH={"100%"} minW={"100%"} bg={"#4b2ba0"} pt={"5%"} >
+    <View minH={"100%"} minW={"100%"} bg={"#4b2ba0"}>
       <Register />
     </View>
   )

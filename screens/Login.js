@@ -40,7 +40,7 @@ const Login = () => {
         && password.length >= 8
         && password.length <= 32
 
-    const validate = () => {
+    const validate = async () => {
         if (regex_email.test(formData.email) == false) {
             setErrors({
                 ...errors,
@@ -67,25 +67,29 @@ const Login = () => {
             });
             return false;
         }
-        signInWithEmailAndPassword(firebase.auth, formData.email, formData.password)
-            .then((userCredential) => {
-                user = userCredential.user;
-                console.log('Sesión iniciada', user);
-                navigation.navigate('Nav', { uid: user.uid });
-                return true;
-            })
-            .catch((errors) => {
-                console.log("Error:" + errors);
-                setErrors({
-                    ...errors
-                });
-                return false;
+        try {
+            const userCredential = await signInWithEmailAndPassword(firebase.auth, formData.email, formData.password);
+            user = userCredential.user;
+            console.log('Sesión iniciada', user);
+            navigation.navigate('Nav', { uid: user.uid });
+            return true;
+        } catch (error) {
+            console.log("Error:" + error);
+            setErrors({
+                ...errors,
+                password: "Credenciales invalidas"
             });
-        return true;
+            return false;
+        }
     };
 
-    const onSubmit = () => {
-        validate() ? navigation.navigate('Nav', { user }) : console.log("Validation Failed", errors, formData.email, formData.password);
+    const onSubmit = async () => {
+        const isValid = await validate();
+        if (isValid) {
+            navigation.navigate('Nav', { user });
+        } else {
+            console.log("Validation Failed", errors, formData.email, formData.password);
+        }
     };
 
     const signInGoogle = () => {
@@ -104,33 +108,16 @@ const Login = () => {
             });
     }
 
-    const signInFacebook = () => {
-        const provider = new FacebookAuthProvider();
-        const auth = getAuth();
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                const user = result.user;
-                const credential = FacebookAuthProvider.credentialFromResult(result);
-                navigation.navigate('Nav', { user })
-            })
-            .catch((error) => {
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                const email = error.customData.email;
-                const credential = FacebookAuthProvider.credentialFromError(error);
-            });
-    }
-
     return (
-        <Center minH={'100%'}>
+        <Center minH={'100%'} minW={'100%'} justifyContent="center">
             <Image source={{
                 uri: "https://i.postimg.cc/CK8Dwt3Y/sombrero.png"
-            }} alt="Chef" size="2xl" style={{ width: '80%' }} resizeMode="center" />
+            }} alt="Chef" size="2xl" mt={'15%'} style={{ width: '80%' }} resizeMode="center" />
             <Image source={{
                 uri: "https://i.postimg.cc/MTgfg8Z1/Log-In.png"
             }} alt="Txt" size="lg" mt={-15} style={{ width: '80%' }} resizeMode="contain" />
             <Box pb={'5%'} p="8" minW="100%" bottom={0} mt={'auto'} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
-                <Center w={"80%"} ml={"10%"}>
+                <Center w={"100%"}>
                     <VStack minW={"100%"} >
                         <FormControl isRequired isInvalid={'email' in errors}>
                             <FormControl.Label color={"white"}> <Text fontSize={"lg"}>Correo electronico</Text></FormControl.Label>
@@ -175,7 +162,6 @@ const Login = () => {
                             </HStack>
                             <HStack justifyContent="center" mt="4" space={4} maxH={"40px"}>
                                 <Link variant={"link"} onPress={signInGoogle}><Icon as={<AntDesign name="google" />} size={30}></Icon></Link>
-                                <Link variant={"link"} onPress={signInFacebook}><Icon as={<AntDesign name="facebook-square" />} size={30}></Icon></Link>
                             </HStack>
                             <HStack mt="6" justifyContent="center">
                                 <Text fontSize="sm" color="warmGray.500" _dark={{
@@ -202,7 +188,7 @@ const Login = () => {
 
 export default function ({ porps }) {
     return (
-        <View minH={"100%"} minW={"100%"} bg={"#4b2ba0"} p={"5%"} >
+        <View minH={"100%"} minW={"100%"} bg={"#4b2ba0"} pt={"5%"} >
             <Login />
         </View>
     )

@@ -17,7 +17,7 @@ import firebase from "../backend/Firebase";
 function HomeScreen() {
     return (
         <ScrollView >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: '100%' }}>
                 <Main />
             </View>
         </ScrollView>
@@ -27,7 +27,7 @@ function HomeScreen() {
 function ProfileScreen() {
     return (
         <ScrollView >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: '100%' }}>
                 <Profile />
             </View>
         </ScrollView>
@@ -37,7 +37,7 @@ function ProfileScreen() {
 function FavScreen() {
     return (
         <ScrollView >
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', minHeight: '100%' }}>
                 <Favs />
             </View>
         </ScrollView>
