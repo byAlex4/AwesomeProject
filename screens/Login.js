@@ -116,7 +116,7 @@ const Login = () => {
             <Image source={{
                 uri: "https://i.postimg.cc/MTgfg8Z1/Log-In.png"
             }} alt="Txt" size="lg" mt={-15} style={{ width: '80%' }} resizeMode="contain" />
-            <Box pb={'5%'} p="8" minW="100%" bottom={0} mt={'auto'} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
+            <Box pb={'5%'} p="8" minW="100%" mt={'auto'} bottom={0} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
                 <Center w={"100%"}>
                     <VStack minW={"100%"} >
                         <FormControl isRequired isInvalid={'email' in errors}>

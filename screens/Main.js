@@ -74,7 +74,7 @@ const Main = () => {
     }, []);
 
     return <Center w={"85%"} ml={"7.5%"}>
-        <Box w={"100%"} bg={"white"} rounded={'xl'}>
+        <Box w={"100%"} bg={"white"} rounded={'xl'} pt={'10%'}>
             <VStack m={"5%"} w={"90%"}>
                 <FormControl>
                     <Input

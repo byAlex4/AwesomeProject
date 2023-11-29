@@ -166,7 +166,7 @@ const Register = () => {
       <Image source={{
         uri: "https://i.postimg.cc/7Yhm3xfr/Sing-up.png"
       }} alt="Txt" size="lg" mt={'-10%'} style={{ width: '55%' }} resizeMode="contain" />
-      <Box p="8" minW="100%" bottom={0} mt={'auto'} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
+      <Box p="4" minW="100%" bottom={0} mt={'auto'} bg={"white"} roundedTopLeft={25} roundedTopRight={25}>
         <Center w={"80%"} ml={"10%"}>
           <VStack minW={"100%"} >
             <FormControl isRequired isInvalid={'name' in errors}>
